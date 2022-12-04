@@ -70,10 +70,7 @@ public class MainTest extends JFrame {
                         //TODO : 입력 변경된 내용 받아서 데이터 변경
 
                         //TODO : 저장이 완료되었다는 팝업창 뜨게 하기 ,
-                        //System.out.println("저장되었습니다.");
-                        UserInfoChange uic = new UserInfoChange(admin, "회원정보 변경", true, "회원 정보가 변경되었습니다.");
-                        uic.setLocationRelativeTo(admin);
-                        uic.show();
+                        JOptionPane.showMessageDialog(admin, "계정 변경이 완료되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
 
                         nameField.setEditable(false);
                         idField.setEditable(false);
@@ -93,28 +90,6 @@ public class MainTest extends JFrame {
                 }
             });
         }
-
-        class UserInfoChange extends JDialog implements ActionListener {
-            public UserInfoChange(JFrame frame, String title, boolean mode, String msg) {
-                super(frame, title, mode);
-                JPanel panel = new JPanel();
-                JLabel label = new JLabel(msg);
-                panel.add(label);
-                add(panel, BorderLayout.CENTER);
-
-                JPanel panel2 = new JPanel();
-                JButton ok = new JButton("확인");
-                ok.addActionListener(this);
-                panel2.add(ok);
-                add(panel2, BorderLayout.SOUTH);
-                pack();
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        }//UserInfoChange 끝
 
     }//user admin 끝
 
