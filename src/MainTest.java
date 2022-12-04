@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainTest extends JFrame {
+    static MainTest admin;
     //main에 필요한 변수
     private JTabbedPane tab;
     private JPanel jp, btnjp;
@@ -28,6 +29,7 @@ public class MainTest extends JFrame {
         super("주차관리예약시스템");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
         Container ct = getContentPane();
 
         tab = new JTabbedPane();
@@ -45,7 +47,8 @@ public class MainTest extends JFrame {
     } //mainTest 생성자 종료
 
     public static void main(String[] args) {
-        new MainTest();
+        admin = new MainTest();
+        admin.setLocationRelativeTo(null);
     }
 
     class userAdmin extends JPanel {
@@ -67,9 +70,11 @@ public class MainTest extends JFrame {
                         //TODO : 입력 변경된 내용 받아서 데이터 변경
 
                         //TODO : 저장이 완료되었다는 팝업창 뜨게 하기 ,
-                        System.out.println("저장되었습니다.");
-                        //UserInfoChange uic = new UserInfoChange(, "회원정보 변경", true, "회원 정보가 변경되었습니다.");
-                        //uic.show();
+                        //System.out.println("저장되었습니다.");
+                        UserInfoChange uic = new UserInfoChange(admin, "회원정보 변경", true, "회원 정보가 변경되었습니다.");
+                        uic.setLocationRelativeTo(admin);
+                        uic.show();
+
                         nameField.setEditable(false);
                         idField.setEditable(false);
                         carField.setEditable(false);
@@ -88,30 +93,30 @@ public class MainTest extends JFrame {
                 }
             });
         }
-    /*
-    class UserInfoChange extends JDialog implements ActionListener {
-        JButton ok;
 
-        public UserInfoChange(JFrame frame, String title, boolean mode, String msg) {
-            super(frame, title, mode);
-            JPanel panel = new JPanel();
-            JLabel label = new JLabel(msg);
-            panel.add(label);
-            add(panel, BorderLayout.CENTER);
-            ok = new JButton("확인");
-            ok.addActionListener(this);
-            add(panel, BorderLayout.SOUTH);
-            pack();
-        }
+        class UserInfoChange extends JDialog implements ActionListener {
+            public UserInfoChange(JFrame frame, String title, boolean mode, String msg) {
+                super(frame, title, mode);
+                JPanel panel = new JPanel();
+                JLabel label = new JLabel(msg);
+                panel.add(label);
+                add(panel, BorderLayout.CENTER);
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            dispose();
-        }
-    }
- */
-    }
+                JPanel panel2 = new JPanel();
+                JButton ok = new JButton("확인");
+                ok.addActionListener(this);
+                panel2.add(ok);
+                add(panel2, BorderLayout.SOUTH);
+                pack();
+            }
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        }//UserInfoChange 끝
+
+    }//user admin 끝
 
     class salesAdmin extends JPanel implements ActionListener {
 
@@ -133,7 +138,6 @@ public class MainTest extends JFrame {
                     //TODO : 쿼리문으로 결제완료 / 결제취소 구분
                 }
             });
-
             salesTable = new JTable();
         }
 
@@ -142,7 +146,6 @@ public class MainTest extends JFrame {
             System.out.println(e.getActionCommand() + " 버튼 누름");
             //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
         }
-    }
-}
- //mainTest 클래스 종료
+    }//salesAdmin 클래스 종료
+}//mainTest 클래스 종료
 
