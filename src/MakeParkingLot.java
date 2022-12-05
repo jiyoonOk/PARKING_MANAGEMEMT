@@ -5,34 +5,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class Booking extends JFrame implements ActionListener, ItemListener {
-    JLabel name, id, carNum, areaFloor, areaNum, inTime;
+public class MakeParkingLot extends JFrame implements ActionListener, ItemListener {
+    JLabel areaFloor, areaNum;
     JButton[] btn = new JButton[16];
     JComboBox floor;
     ImageIcon carImg = new ImageIcon("images/car.jpg");
-    Booking(String title) {
+    MakeParkingLot(String title) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
 
-        //우선 상수 선언하기
-        final String f_name = "양지은";
-        final String f_id = "qwertasd";
-        final String f_carNum = "38너1849";
-        final String f_inTime = "3시 30분";
-
-        JLabel label = new JLabel("주차 일반 조회");
-        JLabel l1_name = new JLabel("이        름 : ");
-        JLabel l2_id = new JLabel("아 이 디 : ");
-        JLabel l3_carNum = new JLabel("차량번호 : ");
-        JLabel l4_area = new JLabel("주차구역 : ");
-        JLabel l5_inTime = new JLabel("입차시간 : ");
-        name = new JLabel(f_name);
-        id = new JLabel(f_id);
-        carNum = new JLabel(f_carNum);
+        JLabel area = new JLabel("주차구역 : ");
         areaFloor = new JLabel("B1");
         areaNum = new JLabel();
-        inTime = new JLabel(f_inTime);
         JButton b = new JButton("확인");
 
         //주차 현황 panel
@@ -42,12 +27,11 @@ public class Booking extends JFrame implements ActionListener, ItemListener {
         for(int i=0; i<p.length; i++)
             car.add(p[i] = new JPanel());
 
-        p[1].setBackground(Color.LIGHT_GRAY); //통로
-        p[4].setBackground(Color.LIGHT_GRAY); //통로
-
         p[0].setLayout(new GridLayout(1,2)); //A열
+        p[1].setBackground(Color.LIGHT_GRAY); //통로
         p[2].setLayout(new GridLayout(1,2)); //B열
         p[3].setLayout(new GridLayout(1,2)); //C열
+        p[4].setBackground(Color.LIGHT_GRAY); //통로
         p[5].setLayout(new GridLayout(1,2)); //D열
 
         //주차구역 버튼 꾸미기
@@ -72,28 +56,21 @@ public class Booking extends JFrame implements ActionListener, ItemListener {
 
         floor.setBounds(20,50,100,30);
         car.setBounds(20,100,600,350);
-        label.setBounds(700,80,100,20);
-        l1_name.setBounds(650,130,100,20); name.setBounds(730,130,100,20);
-        l2_id.setBounds(650,170,100,20); id.setBounds(730,170,100,20);
-        l3_carNum.setBounds(650,210,100,20); carNum.setBounds(730,210,100,20);
-        l4_area.setBounds(650,250,100,20); areaFloor.setBounds(730,250,100,20); areaNum.setBounds(770,250,100,20);
-        l5_inTime.setBounds(650,290,100,20); inTime.setBounds(730,290,100,20);
+        area.setBounds(650,250,100,20);
+        areaFloor.setBounds(730,250,100,20);
+        areaNum.setBounds(770,250,100,20);
         b.setBounds(700,380,100,20);
 
-        ct.add(label);
-        ct.add(l1_name); ct.add(name);
-        ct.add(l2_id); ct.add(id);
-        ct.add(l3_carNum); ct.add(carNum);
-        ct.add(l4_area); ct.add(areaFloor); ct.add(areaNum);
-        ct.add(l5_inTime); ct.add(inTime);
-        ct.add(b);
-        ct.add(car);
-        ct.add(floor);
+        ct.add(area);       //주차구역 JLabel
+        ct.add(areaFloor);  //층수 JLabel
+        ct.add(areaNum);    //구역 JLabel
+        ct.add(b);          //확인 버튼
+        ct.add(car);        //주차장 패널
+        ct.add(floor);      //콤보박스 층수(B1, B2, B3)
 
-
-        b.addActionListener(this); //확인 버튼
-        for(int i=0; i<btn.length; i++) btn[i].addActionListener(this); //주차구역 버튼
-        floor.addItemListener(this);
+        b.addActionListener(this); //확인 버튼 클릭 시
+        for(int i=0; i<btn.length; i++) btn[i].addActionListener(this); //주차구역 선택 시
+        floor.addItemListener(this);    //층수 선택 시
     }
 
     public void itemStateChanged(ItemEvent ie) { //층수 선택 시 이벤트
@@ -128,9 +105,9 @@ public class Booking extends JFrame implements ActionListener, ItemListener {
     }
 }
 
-class BookingMain {
+class Main {
     public static void main(String[] args) {
-        Booking win = new Booking("주차");
+        MakeParkingLot win = new MakeParkingLot("주차");
         win.setSize(900, 600);
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         win.setVisible(true);
