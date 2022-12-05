@@ -121,7 +121,7 @@ public class UserMain extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //예약 페이지 불러오기
-                new ChangePanel(main_pnl, Rsv.rsv_pnl);
+
                 Rsv r = new Rsv();
                 r.setTitle("예약하기");
                 r.setSize(1000,600);
