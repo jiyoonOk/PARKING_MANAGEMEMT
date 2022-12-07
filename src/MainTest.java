@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static javax.swing.JOptionPane.YES_OPTION;
+
 public class MainTest extends JFrame {
     static MainTest admin;
     //main에 필요한 변수
@@ -28,7 +30,6 @@ public class MainTest extends JFrame {
     public MainTest() {
         super("주차관리예약시스템");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 
         Container ct = getContentPane();
 
@@ -92,7 +93,16 @@ public class MainTest extends JFrame {
                         cardField.setEditable(false);
 
                         changeUserButton.setText("계정 변경");
-                    } else {
+                    }
+                }
+            });
+            deleteUserButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                    if(user_delete == YES_OPTION){
+                        //TODO : DB에서 계정 삭제
+                        JOptionPane.showMessageDialog(admin, "계정이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             });
@@ -102,6 +112,7 @@ public class MainTest extends JFrame {
                     System.out.println("ID : " + e.getActionCommand() + " 를 검색하겠습니다.");
                 }
             });
+
         }
 
     }//user admin 끝
@@ -119,6 +130,7 @@ public class MainTest extends JFrame {
             g.add(halfRB);
             g.add(monthRB);
             g.add(weekRB);
+            g.add(dayRB);
 
             purchaseCombo.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
