@@ -12,16 +12,9 @@ public class Park extends JFrame {
 
 
     /*=================================================================*/
-    JPanel parkPnl = new JPanel(); //주차장
-    JButton[] parkBtn; //주차구역 버튼
-    String[] park_floor;  String[] park_section; //주차구역 층, 위치
-    JLabel[] parkLbl = new JLabel[40]; //주차위치 - 상수
-
     JPanel svcPnl = new JPanel(); //우측 서비스(예약,주차,조회,정산)
     /*=================================================================*/
     /*공통으로 모든 파일(UserMain, Rsv, Park, Check)에 들어있음*/
-
-
 
     JLabel title = new JLabel("주차일반"); //제목 - 문자
 
@@ -43,3 +36,14 @@ public class Park extends JFrame {
         
     }//Park 생성자 끝
 }//Park 클래스 끝
+
+class ParkMain extends JFrame{
+    public static void main(String[] args) {
+        Rsv m = new Rsv();
+        m.setTitle("주차 프로그램 - 일반주차");
+        m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        m.setSize(1000, 600);
+        m.setVisible(true);
+    }
+
+}

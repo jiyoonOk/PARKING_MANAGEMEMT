@@ -38,3 +38,14 @@ public class Check extends JFrame {
         
     }//Check 생성자 끝
 }//Check 클래스 끝
+
+class CheckMain extends JFrame{
+    public static void main(String[] args) {
+        Check m = new Check();
+        m.setTitle("주차 프로그램 - 조회");
+        m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        m.setSize(1000, 600);
+        m.setVisible(true);
+    }
+
+}

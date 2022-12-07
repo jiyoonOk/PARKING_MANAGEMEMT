@@ -46,25 +46,22 @@
 
 package UserMain;
 
-import common.ChangePanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import view.CostFrame;
+
 
 public class UserMain extends JFrame{
-    /*-----------------------Rsv 와 겹치는 내용-------------------------*/
-    String[] floor_list = {"B1", "B2"}; //층 목록(B1 기본), 상수, 데베
+    /*-----------------------------------------------------------------------*/
+    String[] floor_list = {"B1", "B2", "B3"}; //층 목록(B1 기본), 상수, 데베
     JComboBox floorCBox = new JComboBox(floor_list); //층 선택
-    /*----------------------------------------------------------------*/
+    /*-----------------------------------------------------------------------*/
 
     public static Container ct;
     public static JPanel main_pnl;
-
-
-    JLabel refresh = new JLabel("새로고침");
-    //TODO : 진짜 넣어야 하나? 필요한가?
 
     JButton fareTag = new JButton("요금표");
 
@@ -84,44 +81,41 @@ public class UserMain extends JFrame{
 
         main_pnl = new JPanel();//우측
         GridLayout g = new GridLayout(6,1);
-        g.setVgap(10);
-        g.setHgap(30);
+        g.setVgap(10); //상하여백
+        g.setHgap(30); //좌우여백
         main_pnl.setLayout(g);
 
+
         /*-----------------------Rsv 와 겹치는 내용-------------------------*/
-        JPanel park_pnl = new JPanel();//센터
+        JPanel park_pnl = new JPanel();    //CENTER
         park_pnl.setLayout(new BorderLayout());
         park_pnl.setBackground(Color.LIGHT_GRAY);
 
-        JPanel t_pnl = new JPanel();//위
-        t_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JPanel b_pnl = new JPanel();//아래
-        b_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-        /*----------------------------------------------------------------*/
+        JPanel t_pnl = new JPanel();       //NORTH
+        t_pnl.setLayout(new FlowLayout((FlowLayout.LEFT)));
+        /*---------------CENTER, NORTH 에 위치하는 Panel 들----------------*/
 
 
-        fareTag.addActionListener(new ActionListener() {//요금표
+
+        fareTag.addActionListener(new ActionListener() {    //요금표 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                //요금표 불러오기
-                JOptionPane.showMessageDialog(null, "요금표");
+                CostFrame costFrame = new CostFrame("요금표");
+                costFrame.setSize(300,300);
+                costFrame.setVisible(true);
             }
         });
 
-        menu.addActionListener(new ActionListener() {//메뉴
+        menu.addActionListener(new ActionListener() {       //메뉴 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                //메뉴 불러오기
                 JOptionPane.showMessageDialog(null, "메뉴");
             }
         });
 
-        rsv.addActionListener(new ActionListener() {//예약
+        rsv.addActionListener(new ActionListener() {        //예약 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                //예약 페이지 불러오기
-
                 Rsv r = new Rsv();
                 r.setTitle("예약하기");
                 r.setSize(1000,600);
@@ -130,7 +124,7 @@ public class UserMain extends JFrame{
             }
         });
 
-        park.addActionListener(new ActionListener() {//주차
+        park.addActionListener(new ActionListener() {       //주차 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
                 //주차 페이지 불러오기
@@ -138,7 +132,7 @@ public class UserMain extends JFrame{
             }
         });
 
-        check.addActionListener(new ActionListener() {//조회
+        check.addActionListener(new ActionListener() {      //조회 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
                 //조회 페이지 불러오기
@@ -146,7 +140,7 @@ public class UserMain extends JFrame{
             }
         });
 
-        pay.addActionListener(new ActionListener() {//정산
+        pay.addActionListener(new ActionListener() {        //정산 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
                 //정산 페이지 불러오기
@@ -159,11 +153,7 @@ public class UserMain extends JFrame{
         fare_menu.add(menu);
 
         t_pnl.add(floorCBox);
-
         park_pnl.add(t_pnl, BorderLayout.NORTH);
-        park_pnl.add(b_pnl, BorderLayout.SOUTH);
-
-        b_pnl.add(refresh);
 
         main_pnl.add(fare_menu);
         main_pnl.add(rsv);
@@ -171,8 +161,12 @@ public class UserMain extends JFrame{
         main_pnl.add(check);
         main_pnl.add(pay);
 
-        ct.add(park_pnl, BorderLayout.CENTER);
-        ct.add(main_pnl, BorderLayout.EAST);
+        t_pnl.setBounds(0,0,800, 60);
+        park_pnl.setBounds(0,60,800, 540);
+        main_pnl.setBounds(800, 0, 200, 600);
+        ct.add(t_pnl);
+        ct.add(park_pnl);
+        ct.add(main_pnl);
 
 
 
@@ -184,6 +178,15 @@ public class UserMain extends JFrame{
 
 }//UserMain 클래스 끝
 
+class Main extends JFrame{
+    public static void main(String[] args) {
+        UserMain m = new UserMain();
+        m.setTitle("주차 프로그램 - 메인");
+        m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        m.setSize(1000, 600);
+        m.setVisible(true);
+    }
 
+}
 
 

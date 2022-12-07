@@ -6,11 +6,11 @@ import java.awt.*;
 
 public class Rsv extends JFrame {
     /*-----------------------UserMain 과 겹치는 내용-------------------------*/
-    String[] floor_list = {"B1", "B2"}; //층 목록(B1 기본), 상수, 데베
+    String[] floor_list = {"B1", "B2", "B3"}; //층 목록(B1 기본), 상수, 데베
     JComboBox floorCBox = new JComboBox(floor_list); //층 선택
     /*---------------------------------------------------------------------*/
 
-    public static JPanel rsv_pnl;
+    public static JPanel rsv_pnl; //우측 패널 계속 사용
 
     JLabel title = new JLabel("주차예약"); //제목 - 문자
     JLabel name = new JLabel("이름: "/*{회원 DB}에서 불러오기*/); //이름
@@ -32,14 +32,14 @@ public class Rsv extends JFrame {
 
 
     //예약일시
-    String[] m = {"1","2","3"}; //월 - 상수
+    String[] m = {"1","2","3","4","5","6","7","8","9","10","11","12"}; //월 - 상수
     JComboBox rsvMonth = new JComboBox(m);
     String[] d = {"1","2","3"}; //일 - 상수
     // TODO : 일 수를 월별로 어떻게 다르게 보이지?
     JComboBox rsvDate = new JComboBox(d);
-    String[] h = {"1","2","3"}; //시 - 상수
+    String[] h = {"1","2","3","4","5","6","7","8","9","10","11","12"}; //시 - 상수
     JComboBox rsvHour = new JComboBox(h);
-    String[] min = {"1","2","3"}; //분 - 상수(10분단위)
+    String[] min = {"00","10","20","30","40","50"}; //분 - 상수(10분단위)
     JComboBox rsvMinute = new JComboBox(min);
 
 
@@ -48,7 +48,7 @@ public class Rsv extends JFrame {
     JComboBox timeComBox = new JComboBox(choose_time);
 
     //포인트 사용
-    JTextField usePoint = new JTextField();
+    JTextField usePoint = new JTextField(); //TODO : 기본 크기 지정하기
     JButton usePntBtn = new JButton("사용");
 
     //예약 결정 버튼 - 문자
@@ -59,22 +59,19 @@ public class Rsv extends JFrame {
     public Rsv() {
 
         rsv_pnl = new JPanel(); //우측 서비스(예약,주차,조회,정산)
-        rsv_pnl.setLayout(null);
+        rsv_pnl.setLayout(new FlowLayout((FlowLayout.LEFT)));
         rsv_pnl.setBackground(Color.YELLOW);
 
         /*---------------------UserMain 과 겹치는 내용-----------------------*/
-        JPanel park_pnl = new JPanel();
+        JPanel park_pnl = new JPanel(); //주차장(임시)
         park_pnl.setLayout(new BorderLayout());
         park_pnl.setBackground(Color.LIGHT_GRAY);
 
-        JPanel t_pnl = new JPanel();//위
+        JPanel t_pnl = new JPanel();//위쪽
         t_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JPanel b_pnl = new JPanel();//아래
-        b_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
         /*-----------------------------------------------------------------*/
 
-
+        /*
         title.setBounds(100, 20, 80, 30); //주차예약
 
         name.setBounds(50, 60, 80, 30); //이름
@@ -109,10 +106,11 @@ public class Rsv extends JFrame {
 
         rsv_go.setBounds(45, 460, 90, 40); //예약하기버튼
         RsvClickActionListener rsvc = new RsvClickActionListener();
-        rsv_go.addActionListener(rsvc); //TODO : 해야함
+        rsv_go.addActionListener(rsvc); //TODO : 액션리스너 해야함
         rsv_cancel.setBounds(150, 460, 60, 40); //취소버튼
         CancleClickActionListener cc = new CancleClickActionListener();
-        rsv_cancel.addActionListener(cc); //TODO : 해야함
+        rsv_cancel.addActionListener(cc); //TODO : 액션리스너 해야함
+        */
 
         rsv_pnl.add(title); //주차예약
         rsv_pnl.add(name);   rsv_pnl.add(carNum); //이름, 차량번호
@@ -130,12 +128,23 @@ public class Rsv extends JFrame {
         rsv_pnl.add(rsv_go); rsv_pnl.add(rsv_cancel); //예약, 취소 버튼
 
         t_pnl.add(floorCBox);
-        park_pnl.add(t_pnl, BorderLayout.NORTH);
-        park_pnl.add(b_pnl, BorderLayout.SOUTH);
 
-        UserMain.ct.add(park_pnl, BorderLayout.CENTER);
-        UserMain.ct.add(rsv_pnl, BorderLayout.EAST);
+        Container c = getContentPane();
+        c.add(t_pnl, BorderLayout.NORTH);
+        c.add(park_pnl, BorderLayout.CENTER);
+        c.add(rsv_pnl, BorderLayout.EAST);
 
     }//Rsv 생성자 끝
 
 }//Rsv 클래스 끝
+
+class RsvMain extends JFrame{
+    public static void main(String[] args) {
+        Rsv m = new Rsv();
+        m.setTitle("주차 프로그램 - 주차예약");
+        m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        m.setSize(1000, 600);
+        m.setVisible(true);
+    }
+
+}

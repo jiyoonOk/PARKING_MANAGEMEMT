@@ -12,4 +12,4 @@ public class ChangePanel {
         UserMain.ct.revalidate();
         UserMain.ct.repaint();
     }
-}
+}//TODO : JPanel 추가/삭제로 컨테이너 하나에서 화면전환
