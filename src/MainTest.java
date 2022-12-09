@@ -29,8 +29,6 @@ public class MainTest extends JFrame {
     private JRadioButton yearRB, halfRB, monthRB, weekRB, dayRB;
     private JLabel purchaseLabel;
     private JTable salesTable;
-    private JTabbedPane tabbedPane1;
-    private JTabbedPane tabbedPane2;
     private UserAdmin user;
 
     public MainTest() {
