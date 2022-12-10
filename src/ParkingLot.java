@@ -4,28 +4,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.font.ImageGraphicAttribute;
 
-public class MakeParkingLot extends JFrame {
-    MakeParkingLot(String title) {
+public class ParkingLot extends JFrame {
+    ParkingLot(String title) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
 
         JButton[][] btn = new JButton[3][16]; //구역 버튼
         JComboBox floor; //층수 콤보박스
-        ImageIcon[] carIcons = {
-                new ImageIcon("images/car.jpg"),
-                new ImageIcon("images/woman.jpg"),
-                new ImageIcon("images/disabled.jpg"),
-                new ImageIcon("images/smallCar.jpg"),
-                new ImageIcon("images/checkedWoman.jpg"),
-                new ImageIcon("images/checkedDisabled.jpg"),
-                new ImageIcon("images/checkedSmallCar.jpg")
-        };
         JLabel area = new JLabel("주차구역 : ");
-        JLabel areaFloor = new JLabel("B1"); //사용자선택값 층수(초기값-B1층)
-        JLabel areaNum = new JLabel(); //사용자선택값 구역
+        JLabel userFloor = new JLabel("B1"); //사용자선택값 층수(초기값-B1층)
+        JLabel userNum = new JLabel(); //사용자선택값 구역
+        ImageIcon[] carIcons = {
+                new ImageIcon("images/Car.jpg"), //일반, checked
+                new ImageIcon("images/woman.jpg"), //여성
+                new ImageIcon("images/disabled.jpg"), //장애인
+                new ImageIcon("images/smallCar.jpg"), //경차
+                new ImageIcon("images/checkedWoman.jpg"), // 여성, checked
+                new ImageIcon("images/checkedDisabled.jpg"), //장애인, checked
+                new ImageIcon("images/checkedSmallCar.jpg") //경차, checked
+        };
 
         //주차 현황 panel
         JPanel car = new JPanel();
@@ -77,20 +76,20 @@ public class MakeParkingLot extends JFrame {
         floor.setBounds(20, 50, 100, 30); //층수 콤보박스
         car.setBounds(20, 100, 500, 400); //주차장 패널
         area.setBounds(650, 250, 100, 20); //주차구역 라벨
-        areaFloor.setBounds(730, 250, 100, 20); //층수 (사용자선택)
-        areaNum.setBounds(770, 250, 100, 20); //구역 (사용자선택0
+        userFloor.setBounds(730, 250, 100, 20); //층수 (사용자선택)
+        userNum.setBounds(770, 250, 100, 20); //구역 (사용자선택0
 
         ct.add(floor);      //콤보박스 주차층수(B1, B2, B3)
         ct.add(car);        //주차장 패널
         ct.add(area);       //주차구역 JLabel
-        ct.add(areaFloor);  //사용자가 선택한 주차층수 JLabel
-        ct.add(areaNum);    //사용자가 선택한 주차구역 JLabel
+        ct.add(userFloor);  //사용자가 선택한 주차층수 JLabel
+        ct.add(userNum);    //사용자가 선택한 주차구역 JLabel
 
         //주차층수 리스너 객체 생성 및 선언
-        FloorItemListener floorIL = new FloorItemListener(areaNum, floor, p, btn, carIcons);
+        FloorItemListener floorIL = new FloorItemListener(userNum, floor, p, btn, carIcons);
         floor.addItemListener(floorIL);
         //주차구역 리스너 객체 생성 및 선언
-        AreaActionListener areaAL = new AreaActionListener(areaFloor, areaNum, floor, btn, carIcons);
+        AreaActionListener areaAL = new AreaActionListener(userFloor, userNum, floor, btn, carIcons);
         for (int i = 0; i < btn.length; i++)
             for (int j=0; j<btn[0].length; j++)
                 btn[i][j].addActionListener(areaAL);
@@ -99,14 +98,14 @@ public class MakeParkingLot extends JFrame {
 
 //층수 선택 시 이벤트 추가 클래스
 class FloorItemListener implements ItemListener {
-    JLabel jAreaNum;
+    JLabel jUserNum;
     JComboBox jFloor;
     JPanel[] jP;
     JButton[][] jBtn;
     ImageIcon[] jCarIcons;
     int i, j;
-    FloorItemListener(JLabel areaNum, JComboBox floor, JPanel p[], JButton btn[][], ImageIcon carIcons[]) {
-        jAreaNum = areaNum; //선택된 구역
+    FloorItemListener(JLabel userNum, JComboBox floor, JPanel p[], JButton btn[][], ImageIcon carIcons[]) {
+        jUserNum = userNum; //선택된 구역
         jFloor = floor; //층수 콤보박스
         jP = p.clone(); //패널(실인수-클래스 매개변수) 배열 복사
         jBtn = new JButton[btn.length][btn[0].length];
@@ -116,7 +115,6 @@ class FloorItemListener implements ItemListener {
     }
     public void itemStateChanged(ItemEvent ie) {
         String f = (String)jFloor.getSelectedItem();
-        //for (i=0; i<3; i++) for (j=4; j<12; j++) jBtn[i][j].setIcon(null);
         for (i=0; i<jBtn.length; i++) {
             for (j=0; j<2; j++)   jBtn[i][j].setIcon(jCarIcons[1]); //A1, A2
             for (j=2; j<4; j++)   jBtn[i][j].setIcon(jCarIcons[2]); //A3, A4
@@ -147,14 +145,14 @@ class FloorItemListener implements ItemListener {
 }
 //주차구역 선택 시 이벤트 추가 클래스
 class AreaActionListener implements ActionListener {
-    JLabel jAreaFloor, jAreaNum;
+    JLabel jUserFloor, jUserNum;
     JComboBox jFloor;
     JButton[][] jBtn;
     ImageIcon[] jCarIcons;
     int i,j;
-    AreaActionListener(JLabel areaFloor, JLabel areaNum, JComboBox floor, JButton btn[][], ImageIcon carIcons[]) {
-        jAreaFloor = areaFloor; //선택된 층수
-        jAreaNum = areaNum;
+    AreaActionListener(JLabel userFloor, JLabel userNum, JComboBox floor, JButton btn[][], ImageIcon carIcons[]) {
+        jUserFloor = userFloor; //선택된 층수
+        jUserNum = userNum;
         jFloor = floor;
         jBtn = new JButton[btn.length][btn[0].length];
         for (i=0; i<jBtn.length; i++)
@@ -164,8 +162,8 @@ class AreaActionListener implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         String s = ae.getActionCommand();
         String f = (String)jFloor.getSelectedItem();
-        jAreaFloor.setText(f);
-        jAreaNum.setText(s);
+        jUserFloor.setText(f);
+        jUserNum.setText(s);
         switch(s) {
             case "A1" : settingIcon(0, 4);  break; //여성
             case "A2" : settingIcon(1, 4);  break;
@@ -203,7 +201,7 @@ class AreaActionListener implements ActionListener {
 }
 class Main {
     public static void main(String[] args) {
-        MakeParkingLot win = new MakeParkingLot("주차");
+        ParkingLot win = new ParkingLot("주차");
         win.setSize(900, 600);
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         win.setVisible(true);
