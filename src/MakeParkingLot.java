@@ -5,12 +5,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 public class MakeParkingLot extends JFrame {
+
     MakeParkingLot(String title) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
 
-        JButton[] btn = new JButton[16];
+        JButton[][] btn = new JButton[3][16];
         JComboBox floor;
         ImageIcon carImg = new ImageIcon("images/car.jpg");
         JLabel area = new JLabel("주차구역 : ");
@@ -32,98 +33,155 @@ public class MakeParkingLot extends JFrame {
         p[4].setBackground(Color.LIGHT_GRAY); //통로
         p[5].setLayout(new GridLayout(1, 2)); //D열
 
-        //주차구역 버튼 꾸미기
-        String[] parkingLot = {"A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"}; //주차구역
-        for (int i = 0; i < btn.length; i++) {
-            btn[i] = new JButton(parkingLot[i]);
-            //btn[i].setBorderPainted(false);   //외곽선 없애기
-            btn[i].setOpaque(false);            //이미지 외 영역 투명하게
-            btn[i].setBackground(Color.WHITE);  //흰색 배경
-            btn[i].setContentAreaFilled(false); //내용 영역 채우기 없애기
-        }
-
-        //Panel P에 버튼 추가
-        for (int i = 0; i < 4; i++) p[0].add(btn[i]); //A열
-        for (int i = 4; i < 8; i++) p[2].add(btn[i]); //B열
-        for (int i = 8; i < 12; i++) p[3].add(btn[i]); //C열
-        for (int i = 12; i < 16; i++) p[5].add(btn[i]); //D열
-
         //층수 JCombobox
         String[] sfloor = {"B1", "B2", "B3"}; //층수
         floor = new JComboBox(sfloor);
 
-        floor.setBounds(20, 50, 100, 30);
-        car.setBounds(20, 100, 600, 350);
-        area.setBounds(650, 250, 100, 20);
-        areaFloor.setBounds(730, 250, 100, 20);
-        areaNum.setBounds(770, 250, 100, 20);
-        b.setBounds(700, 380, 100, 20);
+        //주차구역 버튼 꾸미기
+        String[] parkingLot = {"A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"}; //주차구역
+        //층수에 따른 버튼 배열 btn[3][16] 만들기
+        for (int i=0; i<sfloor.length; i++) {
+            for (int j = 0; j < parkingLot.length; j++) {
+                btn[i][j] = new JButton(parkingLot[j]);
+                //btn[i].setBorderPainted(false);   //외곽선 없애기
+                btn[i][j].setOpaque(false);            //이미지 외 영역 투명하게
+                btn[i][j].setBackground(Color.WHITE);  //흰색 배경
+                btn[i][j].setContentAreaFilled(false); //내용 영역 채우기 없애기
+            }
+        }
 
-        ct.add(area);       //주차구역 JLabel
-        ct.add(areaFloor);  //층수 JLabel
-        ct.add(areaNum);    //구역 JLabel
-        ct.add(b);          //확인 버튼
+        //초기값으로 Panel P에 B1층 주차구역 버튼들 추가
+        for (int i = 0; i < 4; i++) p[0].add(btn[0][i]); //A열
+        for (int i = 4; i < 8; i++) p[2].add(btn[0][i]); //B열
+        for (int i = 8; i < 12; i++) p[3].add(btn[0][i]); //C열
+        for (int i = 12; i < 16; i++) p[5].add(btn[0][i]); //D열
+
+        //setBounds 위치 지정
+        floor.setBounds(20, 50, 100, 30); //층수 콤보박스
+        car.setBounds(20, 100, 600, 350); //주차장 패널
+        area.setBounds(650, 250, 100, 20); //주차구역 라벨
+        areaFloor.setBounds(730, 250, 100, 20); //층수 (사용자선택)
+        areaNum.setBounds(770, 250, 100, 20); //구역 (사용자선택0
+        b.setBounds(700, 380, 100, 20); //확인 버튼
+
+        ct.add(floor);      //콤보박스 주차층수(B1, B2, B3)
         ct.add(car);        //주차장 패널
-        ct.add(floor);      //콤보박스 층수(B1, B2, B3)
+        ct.add(area);       //주차구역 JLabel
+        ct.add(areaFloor);  //사용자가 선택한 주차층수 JLabel
+        ct.add(areaNum);    //사용자가 선택한 주차구역 JLabel
+        ct.add(b);          //확인 버튼
 
-        FloorItemListener floorIL = new FloorItemListener(areaFloor, areaNum, floor, btn); //층수 리스너
-        floor.addItemListener(floorIL);   //층수 콤보박스 선택 시 이벤트 연결
-        AreaActionListener areaAL = new AreaActionListener(areaNum, btn, carImg);
-        for (int i = 0; i < btn.length; i++) btn[i].addActionListener(areaAL); //주차구역 버튼 선택 시 이벤트 연결
+        //주차층수 리스너 객체 생성 및 선언
+        FloorItemListener floorIL = new FloorItemListener(areaFloor, areaNum, floor, p, btn);
+        floor.addItemListener(floorIL);
+        //주차구역 리스너 객체 생성 및 선언
+        AreaActionListener areaAL = new AreaActionListener(areaNum, floor, btn, carImg);
+        for (int i = 0; i < btn.length; i++)
+            for (int j=0; j<btn[0].length; j++)
+               btn[i][j].addActionListener(areaAL);
     }
 }
+
+//층수 선택 시 이벤트 추가 클래스 
 class FloorItemListener implements ItemListener {
     JLabel jAreaFloor, jAreaNum;
     JComboBox jFloor;
-    JButton[] jBtn = new JButton[16];
-    FloorItemListener(JLabel areaFloor, JLabel areaNum, JComboBox floor, JButton btn[]) {
-        jAreaFloor = areaFloor;
-        jAreaNum = areaNum;
-        jFloor = floor;
-        for(int i=0; i<btn.length; i++)
-            jBtn[i] = btn[i];
+    JPanel[] jP;
+    JButton[][] jBtn;
+    FloorItemListener(JLabel areaFloor, JLabel areaNum, JComboBox floor, JPanel p[], JButton btn[][]) {
+        jAreaFloor = areaFloor; //선택된 층수
+        jAreaNum = areaNum; //선택된 구역
+        jFloor = floor; //층수 콤보박스
+        jP = p.clone(); //패널(실인수-클래스 매개변수) 배열 복사
+        jBtn = new JButton[btn.length][btn[0].length];
+        for (int i=0; i<jBtn.length; i++)
+            System.arraycopy(btn[i],0,jBtn[i],0,btn[0].length); //버튼(실인수-클래스 매개변수) 배열 복사
     }
     public void itemStateChanged(ItemEvent ie) {
         String f = (String)jFloor.getSelectedItem();
-        jAreaFloor.setText(f);
-        for(int i=0; i<jBtn.length; i++) {
-            jBtn[i].setIcon(null); //콤보박스 다른 층수 선택될 때마다 버튼 이미지 리셋
-            jAreaNum.setText("");
+        jAreaFloor.setText(f);  //선택된 주차층수 출력
+        jAreaNum.setText("");   //주차구역 리셋
+        switch (f) {
+            case "B1" : //panel jP에 1층 버튼 추가 및 2,3층 버튼 삭제
+                for (int i = 0; i < 4; i++  ) {jP[0].add(jBtn[0][i]); jP[0].remove(jBtn[1][i]); jP[0].remove(jBtn[2][i]);} //A열
+                for (int i = 4; i < 8; i++)   {jP[2].add(jBtn[0][i]); jP[2].remove(jBtn[1][i]); jP[2].remove(jBtn[2][i]);} //B열
+                for (int i = 8; i < 12; i++)  {jP[3].add(jBtn[0][i]); jP[3].remove(jBtn[1][i]); jP[3].remove(jBtn[2][i]);} //C열
+                for (int i = 12; i < 16; i++) {jP[5].add(jBtn[0][i]); jP[5].remove(jBtn[1][i]); jP[5].remove(jBtn[2][i]);} //D열
+                for (int i=0; i<3; i++) for (int j=0; j<16; j++) jBtn[i][j].setIcon(null);
+                break; 
+            case "B2" : //panel jP에 2층 버튼 추가 및 1,3층 버튼 삭제
+                for (int i = 0; i < 4; i++)   {jP[0].add(jBtn[1][i]); jP[0].remove(jBtn[0][i]); jP[0].remove(jBtn[2][i]);} //A열
+                for (int i = 4; i < 8; i++)   {jP[2].add(jBtn[1][i]); jP[2].remove(jBtn[0][i]); jP[2].remove(jBtn[2][i]);} //B열
+                for (int i = 8; i < 12; i++)  {jP[3].add(jBtn[1][i]); jP[3].remove(jBtn[0][i]); jP[3].remove(jBtn[2][i]);} //C열
+                for (int i = 12; i < 16; i++) {jP[5].add(jBtn[1][i]); jP[5].remove(jBtn[0][i]); jP[5].remove(jBtn[2][i]);} //D열
+                for (int i=0; i<3; i++) for (int j=0; j<16; j++) jBtn[i][j].setIcon(null);
+                break;
+            case "B3" : //panel jP에 3층 버튼 추가 및 1,2층 버튼 삭제
+                for (int i = 0; i < 4; i++)   {jP[0].add(jBtn[2][i]); jP[0].remove(jBtn[0][i]); jP[0].remove(jBtn[1][i]);} //A열
+                for (int i = 4; i < 8; i++)   {jP[2].add(jBtn[2][i]); jP[2].remove(jBtn[0][i]); jP[2].remove(jBtn[1][i]);} //B열
+                for (int i = 8; i < 12; i++)  {jP[3].add(jBtn[2][i]); jP[3].remove(jBtn[0][i]); jP[3].remove(jBtn[1][i]);} //C열
+                for (int i = 12; i < 16; i++) {jP[5].add(jBtn[2][i]); jP[5].remove(jBtn[0][i]); jP[5].remove(jBtn[1][i]);} //D열
+                for (int i=0; i<3; i++) for (int j=0; j<16; j++) jBtn[i][j].setIcon(null);
+                break;
         }
     }
 }
+//주차구역 선택 시 이벤트 추가 클래스
 class AreaActionListener implements ActionListener {
     JLabel jAreaNum;
-    JButton[] jBtn = new JButton[16];
-    ImageIcon jCarImg = new ImageIcon("images/car.jpg");
-    AreaActionListener(JLabel areaNum, JButton btn[], ImageIcon jCarImg) {
+    JComboBox jFloor;
+    JButton[][] jBtn;
+    ImageIcon jCarImg;
+    AreaActionListener(JLabel areaNum, JComboBox floor, JButton btn[][], ImageIcon CarImg) {
         jAreaNum = areaNum;
-        for(int i=0; i<btn.length; i++)
-            jBtn[i] = btn[i];
+        jFloor = floor;
+        jBtn = new JButton[btn.length][btn[0].length];
+        for (int i=0; i<jBtn.length; i++)
+            System.arraycopy(btn[i],0,jBtn[i],0,btn[0].length);
+        jCarImg = CarImg;
     }
     public void actionPerformed(ActionEvent ae) {
         String s = ae.getActionCommand();
         switch(s) {
-            case "A1" : {jBtn[0].setIcon(jCarImg); jAreaNum.setText("A1"); for(int i=1; i<jBtn.length; i++) {jBtn[i].setIcon(null);} break;}
-            case "A2" : {jBtn[1].setIcon(jCarImg); jAreaNum.setText("A2"); for(int i=0; i<jBtn.length; i++) {if(i!=1) jBtn[i].setIcon(null);} break;}
-            case "A3" : {jBtn[2].setIcon(jCarImg); jAreaNum.setText("A3"); for(int i=0; i<jBtn.length; i++) {if(i!=2) jBtn[i].setIcon(null);} break;}
-            case "A4" : {jBtn[3].setIcon(jCarImg); jAreaNum.setText("A4"); for(int i=0; i<jBtn.length; i++) {if(i!=3) jBtn[i].setIcon(null);} break;}
-            case "B1" : {jBtn[4].setIcon(jCarImg); jAreaNum.setText("B1"); for(int i=0; i<jBtn.length; i++) {if(i!=4) jBtn[i].setIcon(null);} break;}
-            case "B2" : {jBtn[5].setIcon(jCarImg); jAreaNum.setText("B2"); for(int i=0; i<jBtn.length; i++) {if(i!=5) jBtn[i].setIcon(null);} break;}
-            case "B3" : {jBtn[6].setIcon(jCarImg); jAreaNum.setText("B3"); for(int i=0; i<jBtn.length; i++) {if(i!=6) jBtn[i].setIcon(null);} break;}
-            case "B4" : {jBtn[7].setIcon(jCarImg); jAreaNum.setText("B4"); for(int i=0; i<jBtn.length; i++) {if(i!=7) jBtn[i].setIcon(null);} break;}
-            case "C1" : {jBtn[8].setIcon(jCarImg); jAreaNum.setText("C1"); for(int i=0; i<jBtn.length; i++) {if(i!=8) jBtn[i].setIcon(null);} break;}
-            case "C2" : {jBtn[9].setIcon(jCarImg); jAreaNum.setText("C2"); for(int i=0; i<jBtn.length; i++) {if(i!=9) jBtn[i].setIcon(null);} break;}
-            case "C3" : {jBtn[10].setIcon(jCarImg); jAreaNum.setText("C3"); for(int i=0; i<jBtn.length; i++) {if(i!=10) jBtn[i].setIcon(null);} break;}
-            case "C4" : {jBtn[11].setIcon(jCarImg); jAreaNum.setText("C4"); for(int i=0; i<jBtn.length; i++) {if(i!=11) jBtn[i].setIcon(null);} break;}
-            case "D1" : {jBtn[12].setIcon(jCarImg); jAreaNum.setText("D1"); for(int i=0; i<jBtn.length; i++) {if(i!=12) jBtn[i].setIcon(null);} break;}
-            case "D2" : {jBtn[13].setIcon(jCarImg); jAreaNum.setText("D2"); for(int i=0; i<jBtn.length; i++) {if(i!=13) jBtn[i].setIcon(null);} break;}
-            case "D3" : {jBtn[14].setIcon(jCarImg); jAreaNum.setText("D3"); for(int i=0; i<jBtn.length; i++) {if(i!=14) jBtn[i].setIcon(null);} break;}
-            case "D4" : {jBtn[15].setIcon(jCarImg); jAreaNum.setText("D4"); for(int i=0; i<jBtn.length; i++) {if(i!=15) jBtn[i].setIcon(null);} break;}
+            case "A1" : settingIcon(0); jAreaNum.setText("A1"); break; //실인수 : 배열 원소 순서
+            case "A2" : settingIcon(1); jAreaNum.setText("A2"); break;
+            case "A3" : settingIcon(2); jAreaNum.setText("A3"); break;
+            case "A4" : settingIcon(3); jAreaNum.setText("A4"); break;
+            case "B1" : settingIcon(4); jAreaNum.setText("B1"); break;
+            case "B2" : settingIcon(5); jAreaNum.setText("B2"); break;
+            case "B3" : settingIcon(6); jAreaNum.setText("B3"); break;
+            case "B4" : settingIcon(7); jAreaNum.setText("B4"); break;
+            case "C1" : settingIcon(8); jAreaNum.setText("C1"); break;
+            case "C2" : settingIcon(9); jAreaNum.setText("C2"); break;
+            case "C3" : settingIcon(10); jAreaNum.setText("C3"); break;
+            case "C4" : settingIcon(11); jAreaNum.setText("C4"); break;
+            case "D1" : settingIcon(12); jAreaNum.setText("D1"); break;
+            case "D2" : settingIcon(13); jAreaNum.setText("D2"); break;
+            case "D3" : settingIcon(14); jAreaNum.setText("D3"); break;
+            case "D4" : settingIcon(15); jAreaNum.setText("D4"); break;
             //case "확인": dispose(); break;
         }
     }
+    //주차 아이콘 추가 및 삭제 메소드
+    public void settingIcon(int n) { //f=층수, n=배열 원소
+        String f = (String)jFloor.getSelectedItem();
+        switch (f) {
+            case "B1" :
+                jBtn[0][n].setIcon(jCarImg); //해당 버튼에 주차아이콘 출력
+                for(int i=0; i<jBtn[0].length; i++) if(i!=n) jBtn[0][i].setIcon(null); //해당 버튼 빼고 전부 버튼 주차아이콘 리셋
+                break;
+            case "B2" :
+                jBtn[1][n].setIcon(jCarImg);
+                for(int i=0; i<jBtn[0].length; i++) if(i!=n) jBtn[1][i].setIcon(null);
+                break;
+            case "B3" :
+                jBtn[2][n].setIcon(jCarImg);
+                for(int i=0; i<jBtn[0].length; i++) if(i!=n) jBtn[2][i].setIcon(null);
+                break;
+        }
+    }
 }
+
 class Main {
     public static void main(String[] args) {
         MakeParkingLot win = new MakeParkingLot("주차");
@@ -132,6 +190,8 @@ class Main {
         win.setVisible(true);
     }
 }
+
+
 
 
 
