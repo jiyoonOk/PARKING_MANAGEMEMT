@@ -1,0 +1,129 @@
+
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.text.JTextComponent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import java.sql.*;
+
+public class question_write extends JFrame implements ActionListener {
+	JTextArea jta; //문의작성내용
+	JTextField title; //제목
+	
+	public question_write() {
+		Container ct = getContentPane();
+		
+		
+		 title = new JTextField("제목을 작성해주세요!");
+		 title.setBounds(33,75,320,30);
+		
+		 JLabel no = new JLabel("문의사항");
+		 no.setBounds(150,25,70,30);
+		 no.setSize(150,20);
+		 Font font=new Font("맑은 고딕",Font.BOLD,20); //폰트, 굵기 지정
+		 
+		 JLabel question = new JLabel("문의하기");
+		 question.setBounds(33,50,320,20);
+		 
+		 jta=new JTextArea("문의사항을 입력하세요!",20,20);
+		 jta.setBounds(33,110,320,240);  //문의사항 작성하는 공간생성
+		 
+		 
+		 JButton reg = new JButton("등록하기");
+			reg.setBounds(60,360,80,30);
+			reg.setSize(90,30);
+			
+		 JButton del = new JButton("취소");
+			del.setBounds(235,360,80,30);
+			del.setSize(90,30);
+		 
+		 
+		 
+		 ct.setLayout(null);
+		 ct.add(no);
+		 no.setFont(font);
+		 ct.add(question);
+		 ct.add(jta);
+		 ct.add(reg);
+		 ct.add(del);
+		 ct.add(title);
+		 
+		 reg.addActionListener(this);
+		 del.addActionListener(this);
+		
+	
+		 
+	}
+	
+	public void actionPerformed(ActionEvent ae) {
+		String s=ae.getActionCommand();
+		String strsql;
+		String t_question_title="",t_question_contents=""; 
+		SimpleDateFormat t_question_date;
+		int t_question_id=1;
+
+		t_question_title=title.getText();
+		t_question_contents=jta.getText();
+		
+		if(s=="등록하기") { 
+			String text=jta.getText(); 	
+			String text2=title.getText(); //등록하기 버튼 누를시 팝업 이벤트 발생
+			
+		if(text.length()>0&&text2.length()>0) {
+		JOptionPane.showMessageDialog
+			(this, "문의 등록이 완료되었습니다.","등록완료",JOptionPane.INFORMATION_MESSAGE);
+		dispose();
+		question in1= new question();
+		in1.setSize(400,500);
+		in1.setTitle("문의사항");
+		in1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		in1.setVisible(true);
+		
+		t_question_id=t_question_id++; //문의번호 1씩증가
+		t_question_date= new SimpleDateFormat("yyyy/MM/dd"); //문의일자 년,월,일 들어감
+		
+		
+		//strsql="UPDATE Inquiry_info SET question_contents='"+t_question_contents+"',question_title='"+t_question_title+"',question_id='"+t_question_id+"',question_date='"+t_question_date"';";
+		//dbSt.executeUpdate(strsql);
+		//문의 번호, 작성 일자는 등록완료 시 번호랑 일자 들어감
+		//번호는 적은 순서대로 작성번호 입력됨
+		//일자는 버튼 누르자마자 그 년,월,일 들어감
+		} 
+		else{ //문의사항이 작성되지 않았을 경우 예외처리
+				 JOptionPane.showMessageDialog
+				(this, "문의사항을 입력하세요!","문의사항 등록실패",JOptionPane.INFORMATION_MESSAGE);}
+				
+		}
+		
+	
+		if(s=="취소") { //문의사항 작성 창만 닫힘
+			 dispose();
+				question in1= new question();
+				in1.setSize(400,500);
+				in1.setTitle("문의사항");
+				in1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				in1.setVisible(true);	 
+		}
+	  
+	}
+	
+	
+
+	public static void main(String[] args) {
+		question_write in2=new question_write();
+		in2.setSize(400,500);
+		in2.setTitle("문의사항");
+		in2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		in2.setVisible(true);
+
+
+	
+			
+
+	}
+
+}
