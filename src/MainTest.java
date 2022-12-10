@@ -9,34 +9,43 @@ import static javax.swing.JOptionPane.YES_OPTION;
 
 public class MainTest extends JFrame {
     static MainTest admin;
+
     //main에 필요한 변수
     private JTabbedPane tab;
     private JPanel jp, btnjp;
     private JButton pwChangeB, logoutB;
-    private JPanel salesAdminJp, userAdminJp;
+    private JPanel salesAdminJp, userAdminJp, qnaJp, noticeJp;
 
-    //userAdmin에 필요한 변수
+    //userAdminTab에 필요한 변수
     private JTextField userSearch;
     private JPanel userInfoPanel;
     private JTextField nameField, idField, carField, numberField, cardField;
-    private JButton deleteUserButton, changeUserButton;
+    private JButton userDeleteButton, userChangeButton;
     private JTable userTable, userParkingTable;
     private JScrollPane userScrollPane, userParkingScrollPane;
 
-    //salesAdmin에 필요한 변수
+    //salesAdminTab에 필요한 변수
     private JComboBox purchaseCombo;
     private JRadioButton yearRB, halfRB, monthRB, weekRB, dayRB;
     private JLabel purchaseLabel;
     private JTable salesTable;
-    private JPanel panel1;
-    private JTextField textField1;
-    private JTextArea textArea1;
-    private JButton 삭제Button;
-    private JButton 답변작성Button;
-    private JTable table1;
-    private JTextField textField2;
-    private JButton 추가Button;
-    private UserAdmin user;
+    private JScrollPane salesScrollPane;
+
+    //QnATab 에 필요한 변수
+    private JTextField qnaTitleField, qnaIDField;
+    private JTextArea qnaContensArea;
+    private JButton qnaAddButton, qnaDeleteButton;
+    private JTable qnaJTable;
+    private JScrollPane qnaScrollPane;
+
+    //noticeTab에 필요한 변수
+    private JTextField noticeTitleField;
+    private JTextArea noticeContentsArea;
+    private JButton noticeAddButton, noticeChangeButton, noticeDeleteButton;
+    private JScrollPane noticeScrollPane;
+    private JTable noticeJTable;
+
+
 
     public MainTest() {
         super("주차관리예약시스템");
@@ -45,14 +54,16 @@ public class MainTest extends JFrame {
         Container ct = getContentPane();
 
         tab = new JTabbedPane();
-        user = new UserAdmin();
+        UserAdmin user = new UserAdmin();
         SalesAdmin sales = new SalesAdmin();
+
 
         tab.addTab("회원정보관리", user);
         tab.addTab("매출관리", sales);
 
         ct.add(jp);
 
+        //TODO : 패스워드 변경하고, 로그아웃하는 버튼리스너 클래스 분리
         pwChangeB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 PwChange change = new PwChange(admin, "비밀번호 변경", true);
@@ -74,9 +85,11 @@ public class MainTest extends JFrame {
     public static void main(String[] args) {
         admin = new MainTest();
         admin.setLocationRelativeTo(null);
-    }
+    } //admin 관리창 여는 main 함수
 
+    //TODO : JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
+        // 모든 유저 조회하는 JTable
         Vector<String> columnName = new Vector<String>();
         columnName.add("회원번호"); columnName.add("이름"); columnName.add("아이디"); columnName.add("차량번호");
         Vector<Vector<String>> rowData = new Vector<Vector<String>>();
@@ -84,20 +97,38 @@ public class MainTest extends JFrame {
         userTable = new JTable(model);
         userScrollPane = new JScrollPane(userTable);
 
+        // 회원 주차 이력 JTable
         Vector<String> columnName2 = new Vector<String>();
         columnName2.add("날짜"); columnName2.add("주차 구역"); columnName2.add("이용 날짜");
         Vector<Vector<String>> rowData2 = new Vector<Vector<String>>();
         DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2);
         userParkingTable = new JTable(model2);
         userParkingScrollPane = new JScrollPane(userParkingTable);
+
+        // 문의사항 JTable
+        Vector<String> columnName3 = new Vector<String>();
+        columnName3.add("문의번호"); columnName3.add("제목"); columnName3.add("내용"); columnName3.add("차량번호");
+        Vector<Vector<String>> rowData3 = new Vector<Vector<String>>();
+        DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3);
+        qnaJTable = new JTable(model3);
+        qnaScrollPane = new JScrollPane(qnaJTable);
+
+        // 공지사항 JTable
+        Vector<String> columnName4 = new Vector<String>();
+        columnName4.add("회원번호"); columnName4.add("이름"); columnName4.add("아이디"); columnName4.add("차량번호");
+        Vector<Vector<String>> rowData4 = new Vector<Vector<String>>();
+        DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4);
+        noticeJTable = new JTable(model4);
+        noticeScrollPane = new JScrollPane(noticeJTable);
     }
 
+    // 회원관리 탭 클래스
     class UserAdmin extends JPanel implements ActionListener {
         public UserAdmin() {
 
             TextHint hint = new TextHint(userSearch, "ID를 입력하세요.");
-            changeUserButton.addActionListener(this);
-            deleteUserButton.addActionListener(this);
+            userChangeButton.addActionListener(this);
+            userDeleteButton.addActionListener(this);
 
             //TODO : ID 검색뿐만 아니라, 이름, 차량번호로도 검색하는 방법 추가할 수 있음.
             userSearch.addActionListener(new ActionListener() {
@@ -108,6 +139,8 @@ public class MainTest extends JFrame {
             });
         }
 
+
+        //TODO : 이거 무조건 따로 클래스 빼기!!! 계정 변경 -> 저장 , 삭제
         @Override
         public void actionPerformed(ActionEvent e) {
             String s = e.getActionCommand();
@@ -118,7 +151,7 @@ public class MainTest extends JFrame {
                 numberField.setEditable(true);
                 cardField.setEditable(true);
 
-                changeUserButton.setText("저장");
+                userChangeButton.setText("저장");
 
             } else if (s.equals("저장")) {
                 //TODO : 입력 변경된 내용 받아서 데이터 변경
@@ -132,7 +165,7 @@ public class MainTest extends JFrame {
                 numberField.setEditable(false);
                 cardField.setEditable(false);
 
-                changeUserButton.setText("계정 변경");
+                userChangeButton.setText("계정 변경");
             } else if (s.equals("계정 삭제")) {
                 int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                 if (user_delete == YES_OPTION) {
@@ -143,6 +176,7 @@ public class MainTest extends JFrame {
         }
     }//user admin 끝
 
+    // 매출관리 탭 클래스
     class SalesAdmin extends JPanel implements ActionListener {
 
         public SalesAdmin() {
@@ -173,8 +207,29 @@ public class MainTest extends JFrame {
             //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
         }
     }//salesAdmin 클래스 종료
+
+    // 문의사항 탭 클래스
+    class qnaAdmin extends JPanel implements ActionListener {
+
+        public qnaAdmin() {
+            //TODO : 제목, 아이디, 내용 DB 연결하기
+
+            qnaAddButton.addActionListener(this);
+            qnaDeleteButton.addActionListener(this);
+        }
+
+        //TODO : 문의 답변, 삭제 이벤트리스너 따로 클래스 빼기
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "답변 작성": ; break;
+                case "삭제" : ; break;
+            }
+        }
+    }
 }//mainTest 클래스 종료
 
+    // 관리자 비밀번호 변경 팝업창 클래스
     class PwChange extends JDialog {
         private JPasswordField currentPw, newPw, rePw;
         private JButton pass, check, ok, cancel;

@@ -151,7 +151,7 @@
                       <text value="카드 번호 : "/>
                     </properties>
                   </component>
-                  <component id="53c1b" class="javax.swing.JButton" binding="deleteUserButton">
+                  <component id="53c1b" class="javax.swing.JButton" binding="userDeleteButton">
                     <constraints>
                       <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -159,7 +159,7 @@
                       <text value="계정 삭제"/>
                     </properties>
                   </component>
-                  <component id="a6d40" class="javax.swing.JButton" binding="changeUserButton">
+                  <component id="a6d40" class="javax.swing.JButton" binding="userChangeButton">
                     <constraints>
                       <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="93" height="30"/>
@@ -267,16 +267,6 @@
                   <text value="월/일 ~ 월/일"/>
                 </properties>
               </component>
-              <component id="44a2e" class="javax.swing.JTable" binding="salesTable">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <preferredScrollableViewportSize width="800" height="700"/>
-                </properties>
-              </component>
               <component id="5d826" class="javax.swing.JRadioButton" binding="dayRB">
                 <constraints>
                   <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -288,9 +278,24 @@
                   <text value="오늘"/>
                 </properties>
               </component>
+              <scrollpane id="d3dd9" binding="salesScrollPane" custom-create="true">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="44a2e" class="javax.swing.JTable" binding="salesTable" custom-create="true">
+                    <constraints/>
+                    <properties>
+                      <preferredScrollableViewportSize width="800" height="700"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
           </grid>
-          <grid id="7b2f0" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="5" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="7b2f0" binding="qnaJp" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="문의사항 관리"/>
@@ -306,7 +311,7 @@
                   <text value="제목 : "/>
                 </properties>
               </component>
-              <component id="95ab5" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+              <component id="95ab5" class="javax.swing.JTextField" binding="qnaTitleField">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -316,7 +321,7 @@
                   <editable value="false"/>
                 </properties>
               </component>
-              <component id="fe479" class="javax.swing.JTextArea" binding="textArea1" default-binding="true">
+              <component id="fe479" class="javax.swing.JTextArea" binding="qnaContensArea">
                 <constraints>
                   <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="50"/>
@@ -334,29 +339,21 @@
                   <text value="내용 : "/>
                 </properties>
               </component>
-              <component id="f10fc" class="javax.swing.JButton" binding="삭제Button" default-binding="true">
+              <component id="f10fc" class="javax.swing.JButton" binding="qnaDeleteButton">
                 <constraints>
-                  <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="삭제"/>
                 </properties>
               </component>
-              <component id="3c35e" class="javax.swing.JButton" binding="답변작성Button" default-binding="true">
+              <component id="3c35e" class="javax.swing.JButton" binding="qnaAddButton">
                 <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="답변 작성"/>
                 </properties>
-              </component>
-              <component id="fa7e0" class="javax.swing.JTable" binding="table1" default-binding="true">
-                <constraints>
-                  <grid row="0" column="0" row-span="5" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                </constraints>
-                <properties/>
               </component>
               <component id="7cf6f" class="javax.swing.JLabel">
                 <constraints>
@@ -366,7 +363,7 @@
                   <text value="I  D :  "/>
                 </properties>
               </component>
-              <component id="37cf6" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+              <component id="37cf6" class="javax.swing.JTextField" binding="qnaIDField">
                 <constraints>
                   <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -376,9 +373,22 @@
                   <editable value="false"/>
                 </properties>
               </component>
+              <scrollpane id="60434" binding="qnaScrollPane" custom-create="true">
+                <constraints>
+                  <grid row="0" column="0" row-span="4" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="18b46" class="javax.swing.JTable" binding="qnaJTable" custom-create="true">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
           </grid>
-          <grid id="2db40" default-binding="true" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="2db40" binding="noticeJp" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="공지사항"/>
@@ -386,7 +396,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="a13be" class="javax.swing.JTextField" default-binding="true">
+              <component id="a13be" class="javax.swing.JTextField" binding="noticeTitleField">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -396,7 +406,7 @@
                   <editable value="false"/>
                 </properties>
               </component>
-              <component id="39538" class="javax.swing.JTextArea" default-binding="true">
+              <component id="39538" class="javax.swing.JTextArea" binding="noticeContentsArea">
                 <constraints>
                   <grid row="1" column="3" row-span="2" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="50"/>
@@ -407,7 +417,7 @@
                   <text value=""/>
                 </properties>
               </component>
-              <component id="78689" class="javax.swing.JButton" default-binding="true">
+              <component id="78689" class="javax.swing.JButton" binding="noticeDeleteButton">
                 <constraints>
                   <grid row="3" column="4" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -415,7 +425,7 @@
                   <text value="삭제"/>
                 </properties>
               </component>
-              <component id="78166" class="javax.swing.JButton" default-binding="true">
+              <component id="78166" class="javax.swing.JButton" binding="noticeChangeButton">
                 <constraints>
                   <grid row="3" column="3" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -423,15 +433,7 @@
                   <text value="수정"/>
                 </properties>
               </component>
-              <component id="11738" class="javax.swing.JTable" default-binding="true">
-                <constraints>
-                  <grid row="0" column="0" row-span="5" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="73384" class="javax.swing.JButton" binding="추가Button" default-binding="true">
+              <component id="73384" class="javax.swing.JButton" binding="noticeAddButton">
                 <constraints>
                   <grid row="3" column="1" row-span="2" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -455,6 +457,19 @@
                   <text value="제목 : "/>
                 </properties>
               </component>
+              <scrollpane id="adaee" binding="noticeScrollPane" custom-create="true">
+                <constraints>
+                  <grid row="0" column="0" row-span="5" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="8ceec" class="javax.swing.JTable" binding="noticeJTable" custom-create="true">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
           </grid>
         </children>
