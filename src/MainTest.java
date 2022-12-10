@@ -13,7 +13,7 @@ public class MainTest extends JFrame {
     private JTabbedPane tab;
     private JPanel jp, btnjp;
     private JButton pwChangeB, logoutB;
-    private JPanel salesAdminJp, userAdminJp;
+    private JPanel salesAdminJp, userAdminJp, qnaJp, noticeJp;
 
     //userAdmin에 필요한 변수
     private JTextField userSearch;
@@ -28,15 +28,23 @@ public class MainTest extends JFrame {
     private JRadioButton yearRB, halfRB, monthRB, weekRB, dayRB;
     private JLabel purchaseLabel;
     private JTable salesTable;
-    private JPanel panel1;
-    private JTextField textField1;
-    private JTextArea textArea1;
-    private JButton 삭제Button;
-    private JButton 답변작성Button;
-    private JTable table1;
-    private JTextField textField2;
-    private JButton 추가Button;
     private UserAdmin user;
+    private JScrollPane salesScrollPane;
+
+    //QnATab 에 필요한 변수
+    private JTextField qnaTitleField, qnaIDField;
+    private JTextArea qnaContensArea;
+    private JButton qnaAddButton, qnaDeleteButton;
+    private JTable qnaJTable;
+    private JScrollPane qnaScrollPane;
+
+    //noticeTab에 필요한 변수
+    private JTextField noticeTitleField;
+    private JTextArea noticeContentsArea;
+    private JButton noticeAddButton, noticeChangeButton, noticeDeleteButton;
+    private JScrollPane noticeScrollPane;
+    private JTable noticeJTable;
+
 
     public MainTest() {
         super("주차관리예약시스템");
@@ -47,9 +55,13 @@ public class MainTest extends JFrame {
         tab = new JTabbedPane();
         user = new UserAdmin();
         SalesAdmin sales = new SalesAdmin();
+        QnaAdmin qna = new QnaAdmin();
+        NoticeAdmin notice = new NoticeAdmin();
 
         tab.addTab("회원정보관리", user);
         tab.addTab("매출관리", sales);
+        tab.addTab("문의사항관리", qna);
+        tab.addTab("공지사항", notice);
 
         ct.add(jp);
 
@@ -74,9 +86,11 @@ public class MainTest extends JFrame {
     public static void main(String[] args) {
         admin = new MainTest();
         admin.setLocationRelativeTo(null);
-    }
+    } //admin 관리창 여는 main 함수
 
+    //TODO : JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
+        // 모든 유저 조회하는 JTable
         Vector<String> columnName = new Vector<String>();
         columnName.add("회원번호"); columnName.add("이름"); columnName.add("아이디"); columnName.add("차량번호");
         Vector<Vector<String>> rowData = new Vector<Vector<String>>();
@@ -84,14 +98,41 @@ public class MainTest extends JFrame {
         userTable = new JTable(model);
         userScrollPane = new JScrollPane(userTable);
 
+        // 회원 주차 이력 JTable
         Vector<String> columnName2 = new Vector<String>();
         columnName2.add("날짜"); columnName2.add("주차 구역"); columnName2.add("이용 날짜");
         Vector<Vector<String>> rowData2 = new Vector<Vector<String>>();
         DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2);
         userParkingTable = new JTable(model2);
         userParkingScrollPane = new JScrollPane(userParkingTable);
+
+        // 문의사항 JTable
+        Vector<String> columnName3 = new Vector<String>();
+        columnName3.add("문의번호"); columnName3.add("제목"); columnName3.add("내용"); columnName3.add("날짜");
+        Vector<Vector<String>> rowData3 = new Vector<Vector<String>>();
+        DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3);
+        qnaJTable = new JTable(model3);
+        qnaScrollPane = new JScrollPane(qnaJTable);
+
+        // 공지사항 JTable
+        Vector<String> columnName4 = new Vector<String>();
+        columnName4.add("공지번호"); columnName4.add("제목"); columnName4.add("내용"); columnName4.add("날짜");
+        Vector<Vector<String>> rowData4 = new Vector<Vector<String>>();
+        DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4);
+        noticeJTable = new JTable(model4);
+        noticeScrollPane = new JScrollPane(noticeJTable);
+
+        // 매출관리 JTable
+        //TODO : 결제취소는 어떻게 표현할 건지, DB는??
+        Vector<String> columnName5 = new Vector<String>();
+        columnName5.add("이용 날짜"); columnName5.add("차량번호"); columnName5.add("금액"); columnName5.add("아이디");
+        Vector<Vector<String>> rowData5 = new Vector<Vector<String>>();
+        DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5);
+        salesTable = new JTable(model5);
+        qnaScrollPane = new JScrollPane(salesTable);
     }
 
+    // 회원관리 탭 클래스
     class UserAdmin extends JPanel implements ActionListener {
         public UserAdmin() {
 
@@ -108,6 +149,7 @@ public class MainTest extends JFrame {
             });
         }
 
+        //TODO : 이거 무조건 따로 클래스 빼기!!! 계정 변경 -> 저장 , 삭제
         @Override
         public void actionPerformed(ActionEvent e) {
             String s = e.getActionCommand();
@@ -143,6 +185,7 @@ public class MainTest extends JFrame {
         }
     }//user admin 끝
 
+    // 매출관리 탭 클래스
     class SalesAdmin extends JPanel implements ActionListener {
 
         public SalesAdmin() {
@@ -173,6 +216,47 @@ public class MainTest extends JFrame {
             //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
         }
     }//salesAdmin 클래스 종료
+
+    // 문의사항 탭 클래스
+    class QnaAdmin extends JPanel implements ActionListener {
+
+        public QnaAdmin() {
+            //TODO : 제목, 아이디, 내용 text DB 연결하기
+
+            qnaAddButton.addActionListener(this);
+            qnaDeleteButton.addActionListener(this);
+        }
+
+        //TODO : 문의 답변, 삭제 이벤트리스너 따로 클래스 빼기
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "답변 작성": ; break;
+                case "삭제" : ; break;
+            }
+        }
+    }// QnaAdmin 클래스 종료
+
+    // 공지사항 탭 클래스
+    class NoticeAdmin extends JPanel implements ActionListener {
+
+        public NoticeAdmin() {
+            //TODO : 제목, 내용 text DB 연결하기
+
+            noticeAddButton.addActionListener(this);
+            noticeChangeButton.addActionListener(this);
+            noticeDeleteButton.addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "추가": ; break;
+                case "수정" : ; break;
+                case "삭제" : ; break;
+            }
+        }
+    } //noticeAdmin 종료
 }//mainTest 클래스 종료
 
     class PwChange extends JDialog {
