@@ -56,12 +56,11 @@ import view.CostFrame;
 
 public class UserMain extends JFrame{
     /*-----------------------------------------------------------------------*/
-    String[] floor_list = {"B1", "B2", "B3"}; //층 목록(B1 기본), 상수, 데베
-    JComboBox floorCBox = new JComboBox(floor_list); //층 선택
+    String[] floor_list = {"B1", "B2", "B3"};           //층 목록
+    JComboBox floorCBox = new JComboBox(floor_list);    //층 선택
     /*-----------------------------------------------------------------------*/
 
-    public static Container ct;
-    public static JPanel main_pnl;
+    public static Container ct;     //TODO : 컨테이너랑 패널 재사용 하고싶은데..
 
     JButton fareTag = new JButton("요금표");
 
@@ -76,24 +75,24 @@ public class UserMain extends JFrame{
         ct = getContentPane();
         ct.setLayout(new BorderLayout());
 
-        JPanel fare_menu = new JPanel();//우측상단
-        fare_menu.setLayout(new FlowLayout());
+        /*-------------------Rsv, Check 와 겹치는 내용----------------------*/
+        JPanel panel = new JPanel();       //CENTER
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(Color.LIGHT_GRAY);
 
-        main_pnl = new JPanel();//우측
+        JPanel t_pnl = new JPanel();       //NORTH
+        t_pnl.setLayout(new FlowLayout((FlowLayout.LEFT)));
+        /*---------------CENTER, NORTH 에 위치하는 Panel 들----------------*/
+
+        JPanel main_pnl = new JPanel();    //EAST
         GridLayout g = new GridLayout(6,1);
         g.setVgap(10); //상하여백
         g.setHgap(30); //좌우여백
         main_pnl.setLayout(g);
 
+        JPanel fare_menu = new JPanel();//우측상단
+        fare_menu.setLayout(new FlowLayout());
 
-        /*-----------------------Rsv 와 겹치는 내용-------------------------*/
-        JPanel park_pnl = new JPanel();    //CENTER
-        park_pnl.setLayout(new BorderLayout());
-        park_pnl.setBackground(Color.LIGHT_GRAY);
-
-        JPanel t_pnl = new JPanel();       //NORTH
-        t_pnl.setLayout(new FlowLayout((FlowLayout.LEFT)));
-        /*---------------CENTER, NORTH 에 위치하는 Panel 들----------------*/
 
 
 
@@ -116,10 +115,10 @@ public class UserMain extends JFrame{
         rsv.addActionListener(new ActionListener() {        //예약 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                Rsv r = new Rsv();
-                r.setTitle("예약하기");
-                r.setSize(1000,600);
-                r.setVisible(true);
+                Rsv m = new Rsv("주차 프로그램 - 주차예약");
+                m.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                m.setSize(1000, 600);
+                m.setVisible(true);
 
             }
         });
@@ -127,8 +126,10 @@ public class UserMain extends JFrame{
         park.addActionListener(new ActionListener() {       //주차 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                //주차 페이지 불러오기
-                JOptionPane.showMessageDialog(null, "주차하기");
+                Park p = new Park("주차 프로그램 - 일반주차");
+                p.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                p.setSize(1000, 600);
+                p.setVisible(true);
             }
         });
 
@@ -149,24 +150,21 @@ public class UserMain extends JFrame{
         });
 
 
-        fare_menu.add(fareTag);
-        fare_menu.add(menu);
 
-        t_pnl.add(floorCBox);
-        park_pnl.add(t_pnl, BorderLayout.NORTH);
+        t_pnl.add(floorCBox);       //층 선택 콤보박스
 
-        main_pnl.add(fare_menu);
-        main_pnl.add(rsv);
-        main_pnl.add(park);
-        main_pnl.add(check);
-        main_pnl.add(pay);
+        fare_menu.add(fareTag);     //요금표
+        fare_menu.add(menu);        //메뉴버튼
 
-        t_pnl.setBounds(0,0,800, 60);
-        park_pnl.setBounds(0,60,800, 540);
-        main_pnl.setBounds(800, 0, 200, 600);
-        ct.add(t_pnl);
-        ct.add(park_pnl);
-        ct.add(main_pnl);
+        main_pnl.add(fare_menu);    //요금표+메뉴버튼
+        main_pnl.add(rsv);          //예약버튼
+        main_pnl.add(park);         //주차버튼
+        main_pnl.add(check);        //조회버튼
+        main_pnl.add(pay);          //정산버튼
+
+        ct.add(t_pnl, BorderLayout.NORTH);      //상단 패널
+        ct.add(panel, BorderLayout.CENTER);  //주차장 패널
+        ct.add(main_pnl, BorderLayout.EAST);    //우측 패널
 
 
 

@@ -5,39 +5,23 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Rsv extends JFrame {
-    /*-----------------------UserMain 과 겹치는 내용-------------------------*/
-    String[] floor_list = {"B1", "B2", "B3"}; //층 목록(B1 기본), 상수, 데베
-    JComboBox floorCBox = new JComboBox(floor_list); //층 선택
+    /*---------------------------------------------------------------------*/
+    String[] floor_list = {"B1", "B2", "B3"};           //층 목록
+    JComboBox floorCBox = new JComboBox(floor_list);    //층 선택
     /*---------------------------------------------------------------------*/
 
-    public static JPanel rsv_pnl; //우측 패널 계속 사용
-
-    JLabel title = new JLabel("주차예약"); //제목 - 문자
-    JLabel name = new JLabel("이름: "/*{회원 DB}에서 불러오기*/); //이름
-    JLabel carNum = new JLabel("차량번호: "/*{회원 DB}에서 불러오기*/); //차량번호
-    JLabel location = new JLabel("주차구역: ");
-    //주차선택
-    JLabel choose_floor = new JLabel(/*화면에서 선택 시 불러오기*/"층"); //층
-    JLabel choose_section = new JLabel(/*화면에서 선택 시 불러오기*/); //구역
-    JLabel rsv = new JLabel("예약일시: ");
-    JLabel month = new JLabel("월");
-    JLabel date = new JLabel("일");
-    JLabel hour = new JLabel("시");
-    JLabel minute = new JLabel("분");
-    JLabel time = new JLabel("이용시간: ");
-    JLabel point = new JLabel("포인트 사용: ");
-    //선결제금액 - 문자, 상수
-    JLabel price = new JLabel("선결제금액 : " + "원");
-    JLabel plus_point = new JLabel("(" + " point 적립 예정)");
+    Container ct;
 
 
     //예약일시
     String[] m = {"1","2","3","4","5","6","7","8","9","10","11","12"}; //월 - 상수
     JComboBox rsvMonth = new JComboBox(m);
-    String[] d = {"1","2","3"}; //일 - 상수
-    // TODO : 일 수를 월별로 어떻게 다르게 보이지?
+    String[] d = {"1","2","3","4","5","6","7","8","9","10",            //일 - 상수
+            "11","12","13","14","15","16","17","..."}; //TODO : 일 수를 월별로 어떻게 다르게 보이지?
     JComboBox rsvDate = new JComboBox(d);
-    String[] h = {"1","2","3","4","5","6","7","8","9","10","11","12"}; //시 - 상수
+    String[] h = {"01","02","03","04","05","06",
+            "07","08","09","10","11","12",
+            "13","14","..."}; //시 - 상수
     JComboBox rsvHour = new JComboBox(h);
     String[] min = {"00","10","20","30","40","50"}; //분 - 상수(10분단위)
     JComboBox rsvMinute = new JComboBox(min);
@@ -48,28 +32,49 @@ public class Rsv extends JFrame {
     JComboBox timeComBox = new JComboBox(choose_time);
 
     //포인트 사용
-    JTextField usePoint = new JTextField(); //TODO : 기본 크기 지정하기
+    JTextField usePoint = new JTextField(10);
     JButton usePntBtn = new JButton("사용");
+    JLabel myPoint = new JLabel("보유 포인트: ");
 
     //예약 결정 버튼 - 문자
     JButton rsv_go = new JButton("예약하기");
     JButton rsv_cancel = new JButton("취소");
     //TODO : 만약 다른 취소 버튼들도 같은 역할을 한다면 변수명 cancel 로 바꾸기
+    //TODO : 취소 == 내용 초기화 or 창 끄기 ?
 
-    public Rsv() {
+    public Rsv(String t) {
+        super(t);
 
-        rsv_pnl = new JPanel(); //우측 서비스(예약,주차,조회,정산)
+        /*---------------UserMain, Check 와 겹치는 내용--------------------*/
+        JPanel panel = new JPanel();        //CENTER
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(Color.LIGHT_GRAY);
+
+        JPanel t_pnl = new JPanel();        //NORTH
+        t_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
+        /*---------------CENTER, NORTH 에 위치하는 Panel 들----------------*/
+
+        JPanel rsv_pnl = new JPanel();      //EAST
         rsv_pnl.setLayout(new FlowLayout((FlowLayout.LEFT)));
         rsv_pnl.setBackground(Color.YELLOW);
 
-        /*---------------------UserMain 과 겹치는 내용-----------------------*/
-        JPanel park_pnl = new JPanel(); //주차장(임시)
-        park_pnl.setLayout(new BorderLayout());
-        park_pnl.setBackground(Color.LIGHT_GRAY);
 
-        JPanel t_pnl = new JPanel();//위쪽
-        t_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-        /*-----------------------------------------------------------------*/
+        JLabel title = new JLabel("주차예약");      //제목 - 문자
+        JLabel name = new JLabel("이름: ");        //이름
+        JLabel carNum = new JLabel("차량번호: ");   //차량번호
+        JLabel location = new JLabel("주차구역: "); //주차선택
+        JLabel choose_floor = new JLabel("층");    //층
+        JLabel choose_section = new JLabel();          //구역
+        JLabel rsv = new JLabel("예약일시: ");      //시간선택
+        JLabel month = new JLabel("월");           //월
+        JLabel date = new JLabel("일");            //일
+        JLabel hour = new JLabel("시");            //시
+        JLabel minute = new JLabel("분");          //분
+        JLabel time = new JLabel("이용시간: ");     //이용시간 선택
+        JLabel point = new JLabel("포인트 사용: "); //포인트
+        //선결제금액 - 문자, 상수
+        JLabel price = new JLabel("선결제금액 : " + "원");
+        JLabel plus_point = new JLabel("( [결제금액 * 10%] point 적립 예정)");
 
         /*
         title.setBounds(100, 20, 80, 30); //주차예약
@@ -105,11 +110,9 @@ public class Rsv extends JFrame {
         plus_point.setForeground(Color.RED);
 
         rsv_go.setBounds(45, 460, 90, 40); //예약하기버튼
-        RsvClickActionListener rsvc = new RsvClickActionListener();
-        rsv_go.addActionListener(rsvc); //TODO : 액션리스너 해야함
+        rsv_go.addActionListener(); //TODO : 액션리스너 해야함
         rsv_cancel.setBounds(150, 460, 60, 40); //취소버튼
-        CancleClickActionListener cc = new CancleClickActionListener();
-        rsv_cancel.addActionListener(cc); //TODO : 액션리스너 해야함
+        rsv_cancel.addActionListener(); //TODO : 액션리스너 해야함
         */
 
         rsv_pnl.add(title); //주차예약
@@ -129,10 +132,10 @@ public class Rsv extends JFrame {
 
         t_pnl.add(floorCBox);
 
-        Container c = getContentPane();
-        c.add(t_pnl, BorderLayout.NORTH);
-        c.add(park_pnl, BorderLayout.CENTER);
-        c.add(rsv_pnl, BorderLayout.EAST);
+        ct = getContentPane();
+        ct.add(t_pnl, BorderLayout.NORTH);
+        ct.add(panel, BorderLayout.CENTER);
+        ct.add(rsv_pnl, BorderLayout.EAST);
 
     }//Rsv 생성자 끝
 
@@ -140,8 +143,7 @@ public class Rsv extends JFrame {
 
 class RsvMain extends JFrame{
     public static void main(String[] args) {
-        Rsv m = new Rsv();
-        m.setTitle("주차 프로그램 - 주차예약");
+        Rsv m = new Rsv("주차 프로그램 - 주차예약");
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         m.setSize(1000, 600);
         m.setVisible(true);
