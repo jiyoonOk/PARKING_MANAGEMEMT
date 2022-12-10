@@ -47,10 +47,6 @@ public class MakeParkingLot extends JFrame {
 
         //주차구역 버튼 꾸미기
         String[] parkingLot = {"A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"}; //주차구역
-        String[] parkingLotA = {"A1", "A2", "A3", "A4"}; //A열
-        String[] parkingLotB = {"B1", "B2", "B3", "B4"}; //B열
-        String[] parkingLotC = {"C1", "C2", "C3", "C4"}; //C열
-        String[] parkingLotD = {"D1", "D2", "D3", "D4"}; //D열
 
         //주차구역에 따른 버튼아이콘 초기화
         for (int i=0; i< sfloor.length; i++) {
@@ -67,7 +63,7 @@ public class MakeParkingLot extends JFrame {
                 btn[i][j].setBackground(Color.WHITE);  //흰색 배경
                 btn[i][j].setContentAreaFilled(false); //내용 영역 채우기 없애기
                 btn[i][j].setForeground(Color.RED);    //글자색상 변경
-                btn[i][j].setHorizontalTextPosition(JButton.CENTER);
+                btn[i][j].setHorizontalTextPosition(JButton.CENTER); //텍스트 가운데 정렬
             }
         }
 
