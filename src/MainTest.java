@@ -1,8 +1,7 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.Vector;
 
 import static javax.swing.JOptionPane.YES_OPTION;
@@ -46,24 +45,25 @@ public class MainTest extends JFrame {
     private JTable noticeJTable;
 
 
-
     public MainTest() {
         super("주차관리예약시스템");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Container ct = getContentPane();
+        Container ct = this.getContentPane();
 
         tab = new JTabbedPane();
         UserAdmin user = new UserAdmin();
         SalesAdmin sales = new SalesAdmin();
-
+        QnaAdmin qna = new QnaAdmin();
+        NoticeAdmin notice = new NoticeAdmin();
 
         tab.addTab("회원정보관리", user);
         tab.addTab("매출관리", sales);
+        tab.addTab("문의사항관리", qna);
+        tab.addTab("공지사항", notice);
 
         ct.add(jp);
 
-        //TODO : 패스워드 변경하고, 로그아웃하는 버튼리스너 클래스 분리
         pwChangeB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 PwChange change = new PwChange(admin, "비밀번호 변경", true);
@@ -78,7 +78,6 @@ public class MainTest extends JFrame {
             }
         });
 
-        pack();
         setVisible(true);
     } //mainTest 생성자 종료
 
@@ -209,10 +208,10 @@ public class MainTest extends JFrame {
     }//salesAdmin 클래스 종료
 
     // 문의사항 탭 클래스
-    class qnaAdmin extends JPanel implements ActionListener {
+    class QnaAdmin extends JPanel implements ActionListener {
 
-        public qnaAdmin() {
-            //TODO : 제목, 아이디, 내용 DB 연결하기
+        public QnaAdmin() {
+            //TODO : 제목, 아이디, 내용 text DB 연결하기
 
             qnaAddButton.addActionListener(this);
             qnaDeleteButton.addActionListener(this);
@@ -223,6 +222,27 @@ public class MainTest extends JFrame {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
                 case "답변 작성": ; break;
+                case "삭제" : ; break;
+            }
+        }
+    }// QnaAdmin 클래스 종료
+
+    // 공지사항 탭 클래스
+    class NoticeAdmin extends JPanel implements ActionListener {
+
+        public NoticeAdmin() {
+            //TODO : 제목, 내용 text DB 연결하기
+
+            noticeAddButton.addActionListener(this);
+            noticeChangeButton.addActionListener(this);
+            noticeDeleteButton.addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "추가": ; break;
+                case "수정" : ; break;
                 case "삭제" : ; break;
             }
         }
