@@ -1,6 +1,5 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +28,14 @@ public class MainTest extends JFrame {
     private JRadioButton yearRB, halfRB, monthRB, weekRB, dayRB;
     private JLabel purchaseLabel;
     private JTable salesTable;
+    private JPanel panel1;
+    private JTextField textField1;
+    private JTextArea textArea1;
+    private JButton 삭제Button;
+    private JButton 답변작성Button;
+    private JTable table1;
+    private JTextField textField2;
+    private JButton 추가Button;
     private UserAdmin user;
 
     public MainTest() {
