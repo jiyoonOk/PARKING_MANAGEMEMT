@@ -259,12 +259,11 @@ public class MainTest extends JFrame {
 
         public NoticeAdmin() {
             //TODO : 제목, 내용 text DB 연결하기
-
-            DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
-
             noticeAddButton.addActionListener(this);
             noticeChangeButton.addActionListener(this);
             noticeDeleteButton.addActionListener(this);
+
+            DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
         }
 
         @Override
@@ -398,43 +397,43 @@ public class MainTest extends JFrame {
 
             Statement stmt = con.createStatement();
 
-            ResultSet resultAllUser = stmt.executeQuery(sql);    //DB로부터 읽어온 데이터
+            ResultSet result = stmt.executeQuery(sql);    //DB로부터 읽어온 데이터
 
-            while (resultAllUser.next()) {  //DB에서 읽어와 표에 출력하기
+            while (result.next()) {  //DB에서 읽어와 표에 출력하기
                 Vector<String> txt = new Vector<String>();
                 // 한 레코드를 읽으면 1차원 벡터로 만들어 표에 한 행씩 추가
                 switch (t){
                     case "userTable" : {
-                        txt.add(resultAllUser.getString("id"));
-                        txt.add(resultAllUser.getString("name"));
-                        txt.add(resultAllUser.getString("phone_num"));
-                        txt.add(resultAllUser.getString("car_num"));
-                        txt.add(resultAllUser.getString("point"));
+                        txt.add(result.getString("id"));
+                        txt.add(result.getString("name"));
+                        txt.add(result.getString("phone_num"));
+                        txt.add(result.getString("car_num"));
+                        txt.add(result.getString("point"));
                     }   break;
                     case "userParkingTable" : {
-                        txt.add(resultAllUser.getString("car_in"));
-                        txt.add(resultAllUser.getString("floor_num"));
-                        txt.add(resultAllUser.getString("total_fee"));
+                        txt.add(result.getString("car_in"));
+                        txt.add(result.getString("floor_num"));
+                        txt.add(result.getString("total_fee"));
                     }   break;
                     case "salesTable" : {
-                        txt.add(resultAllUser.getString("car_in"));
+                        txt.add(result.getString("car_in"));
                         //txt.add(resultAllUser.getString("car_num"));
-                        txt.add(resultAllUser.getString("total_fee"));
-                        txt.add(resultAllUser.getString("user_id"));
+                        txt.add(result.getString("total_fee"));
+                        txt.add(result.getString("user_id"));
                     }   break;
                     case "qnaJTable" : {
-                        txt.add(resultAllUser.getString("question_id"));
-                        txt.add(resultAllUser.getString("question_title"));
-                        txt.add(resultAllUser.getString("question_contents"));
-                        txt.add(resultAllUser.getString("question_date"));
-                        txt.add(resultAllUser.getString("user_id"));
+                        txt.add(result.getString("question_id"));
+                        txt.add(result.getString("question_title"));
+                        txt.add(result.getString("question_contents"));
+                        txt.add(result.getString("question_date"));
+                        txt.add(result.getString("user_id"));
                         break;
                     }
                     case "noticeJtable" : {
-                        txt.add(resultAllUser.getString("notice_id"));
-                        txt.add(resultAllUser.getString("notice_title"));
-                        txt.add(resultAllUser.getString("notice_contents"));
-                        txt.add(resultAllUser.getString("notice_date"));
+                        txt.add(result.getString("notice_id"));
+                        txt.add(result.getString("notice_title"));
+                        txt.add(result.getString("notice_contents"));
+                        txt.add(result.getString("notice_date"));
                         break;
                     }
                 }
