@@ -4,45 +4,46 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalTime;
 
 public class Park extends JFrame {
-    /*---------------------------------------------------------------------*/
-    String[] floor_list = {"B1", "B2", "B3"};           //층 목록
-    JComboBox floorCBox = new JComboBox(floor_list);    //층 선택
-    /*---------------------------------------------------------------------*/
 
     Container ct;
 
-    JButton parking_goButton = new JButton("완료");       //주차완료버튼
-    JButton parking_cancelButton = new JButton("취소");   //취소버튼
+    JButton parkingButton = new JButton("완료");       //주차완료버튼
+    JButton cancelButton = new JButton("취소");   //취소버튼
 
     public Park(String t) {
         super(t);
-        /*------------------UserMain, Rsv 와 겹치는 내용-------------------*/
-        JPanel panel = new JPanel();       //CENTER
+
+
+
+        JPanel panel = new JPanel();            //CENTER - 임시 주차장
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.LIGHT_GRAY);
 
-        JPanel t_pnl = new JPanel();       //NORTH
-        t_pnl.setLayout(new FlowLayout((FlowLayout.LEFT)));
-        /*---------------CENTER, NORTH 에 위치하는 Panel 들----------------*/
+        JPanel top_pnl = new JPanel();          //NORTH - 층선택 ComBox 들어감
+        top_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JPanel park_pnl = new JPanel();   //EAST
-        park_pnl.setLayout(new FlowLayout());
-        park_pnl.setBackground(Color.YELLOW);
+        JPanel bottom_pnl = new JPanel();       //SOUTH - 확인취소 버튼
+        bottom_pnl.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        JLabel title = new JLabel("주차일반");            //제목
+        JPanel park_pnl = new JPanel();          //EAST - 나머지 것들
+        park_pnl.setLayout(new GridLayout(6,2));
+
+
         JLabel name = new JLabel("이름: ");              //이름
         JLabel carNum = new JLabel("차량번호: ");         //차량번호
         JLabel currTime = new JLabel("현재시간 : ");      //현재시간
-        // TODO : 현재시간 월, 일, 시, 분 까지만 표시하기
+        LocalTime now = LocalTime.now();
+        JLabel time = new JLabel(now.getHour()+"시"+now.getMinute()+"분");
         JLabel location = new JLabel("주차구역: ");       //주차구역
-        JLabel park_floor = new JLabel("층");            //층
-        JLabel park_section = new JLabel(" ");          //구역
+        JLabel park_location = new JLabel(" 층"+" 구역");
 
-        parking_goButton.addActionListener(new ActionListener() {
+        parkingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "주차 되었습니다!");
                 dispose();
             }
         });
@@ -50,7 +51,7 @@ public class Park extends JFrame {
             db에 입력하는 유형이 다르면 익명리스너로 생성.
            .                  같으면 공통된 액션리스너 클래스 생성.
          */
-        parking_cancelButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
@@ -58,18 +59,18 @@ public class Park extends JFrame {
         });
 
 
-        park_pnl.add(title); //일반주차
-        park_pnl.add(name);     park_pnl.add(carNum);   //이름, 차량번호
-        park_pnl.add(currTime); //현재시간
-        park_pnl.add(location); //주차구역
-        park_pnl.add(park_floor);   park_pnl.add(park_section); //층, 구역
-        park_pnl.add(parking_goButton);   park_pnl.add(parking_cancelButton); //완료, 취소 버튼
+        park_pnl.add(name);     park_pnl.add(new JLabel(""));
+        park_pnl.add(carNum);   park_pnl.add(new JLabel(""));
+        park_pnl.add(currTime); park_pnl.add(time);
+        park_pnl.add(location); park_pnl.add(park_location);
 
-        t_pnl.add(floorCBox);
+        bottom_pnl.add(parkingButton);   bottom_pnl.add(cancelButton); //완료, 취소 버튼
+
 
         ct = getContentPane();
-        ct.add(t_pnl, BorderLayout.NORTH);
         ct.add(panel, BorderLayout.CENTER);
+        ct.add(top_pnl, BorderLayout.NORTH);
+        ct.add(bottom_pnl, BorderLayout.SOUTH);
         ct.add(park_pnl, BorderLayout.EAST);
 
 

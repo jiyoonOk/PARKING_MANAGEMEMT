@@ -8,40 +8,38 @@ import java.awt.event.ActionListener;
 import view.CostFrame;
 
 public class UserMain extends JFrame{
-    JButton fareTagButton = new JButton("요금표");
-    JButton menuButton = new JButton("메뉴");
-    JButton rsvButton = new JButton("예약");
-    JButton parkButton = new JButton("주차");
-    JButton checkButton = new JButton("조회");
-    JButton payButton = new JButton("정산");
+    JButton fareTagButton, menuButton, rsvButton, parkButton, checkButton, payButton;
 
     public UserMain() {
         Container mainCt = getContentPane();
         mainCt.setLayout(new BorderLayout());
 
-        /*-------------------Rsv, Check 와 겹치는 내용----------------------*/
+        
         JPanel parkingLot = new JPanel();       //CENTER
         parkingLot.setLayout(new BorderLayout());
         parkingLot.setBackground(Color.LIGHT_GRAY);
 
-        //TODO 1# 주차장 가져오기
-
-
+        //TODO !# 주차장 불러오기
 
         JPanel topPanel = new JPanel();       //NORTH
         topPanel.setLayout(new FlowLayout((FlowLayout.LEFT)));
-        /*---------------CENTER, NORTH 에 위치하는 Panel 들----------------*/
+        
+        JPanel bottom_pnl = new JPanel();       //SOUTH - 확인취소 버튼 들어가는 곳과 규격 맞춤
+        bottom_pnl.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         JPanel mainPanel = new JPanel();    //EAST
-        GridLayout g = new GridLayout(6,1);
-        g.setVgap(10); //상하여백
-        g.setHgap(30); //좌우여백
-        mainPanel.setLayout(g);
+        GridLayout g1 = new GridLayout(6,1);
+        g1.setVgap(10); //상하여백
+        g1.setHgap(50); //좌우여백
+        mainPanel.setLayout(g1);
 
+        JPanel fare_menu_Panel = new JPanel();  //요금표랑 메뉴버튼 넣을 Panel
+        fare_menu_Panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        fareTagButton.addActionListener(new ActionListener() {    //요금표 액션이벤트
+        fareTagButton = new JButton("요금표");
+        fareTagButton.addActionListener(new ActionListener() {    //요금표 클릭 시
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {          //요금표 팝업
                 CostFrame costFrame = new CostFrame("요금표");
                 costFrame.setSize(300,300);
                 costFrame.setVisible(true);
@@ -49,10 +47,12 @@ public class UserMain extends JFrame{
             }
         });
 
-        menuButton.addActionListener(new ActionListener() {       //메뉴 액션이벤트
+
+        menuButton = new JButton("메뉴");
+        menuButton.addActionListener(new ActionListener() {       //메뉴버튼 클릭 시
             @Override
             public void actionPerformed(ActionEvent e) {
-                Menu menu = new Menu();
+                Menu menu = new Menu();                           //메뉴창 팝업
                 // TODO #### 메뉴창 가져오는거 왜 안돼지?
                     /*
                 menu.setTitle("메뉴");
@@ -63,6 +63,7 @@ public class UserMain extends JFrame{
             }
         });
 
+        rsvButton = new JButton("예약");
         rsvButton.addActionListener(new ActionListener() {        //예약 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -74,6 +75,7 @@ public class UserMain extends JFrame{
             }
         });
 
+        parkButton = new JButton("주차");
         parkButton.addActionListener(new ActionListener() {       //주차 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -84,6 +86,7 @@ public class UserMain extends JFrame{
             }
         });
 
+        checkButton = new JButton("조회");
         checkButton.addActionListener(new ActionListener() {      //조회 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -92,10 +95,11 @@ public class UserMain extends JFrame{
             }
         });
 
+        payButton = new JButton("정산");
         payButton.addActionListener(new ActionListener() {        //정산 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                //정산 페이지 불러오기
+                //TODO !# 결제창 불러오기
                 JOptionPane.showMessageDialog(null, "정산하기");
             }
         });
@@ -106,17 +110,18 @@ public class UserMain extends JFrame{
         TODO 2# ComboBox 추가하기
  */
 
+        fare_menu_Panel.add(fareTagButton); //요금표
+        fare_menu_Panel.add(menuButton);    //메뉴버튼
 
-        mainPanel.add(fareTagButton);    //요금표+메뉴버튼
-        mainPanel.add(menuButton);
-        mainPanel.add(rsvButton);          //예약버튼
-        mainPanel.add(parkButton);         //주차버튼
-        mainPanel.add(checkButton);        //조회버튼
-        mainPanel.add(payButton);          //정산버튼
+        mainPanel.add(fare_menu_Panel);     //요금표+메뉴버튼
+        mainPanel.add(rsvButton);           //예약버튼
+        mainPanel.add(parkButton);          //주차버튼
+        mainPanel.add(checkButton);         //조회버튼
+        mainPanel.add(payButton);           //정산버튼
 
         mainCt.add(topPanel, BorderLayout.NORTH);      //상단 패널
-        mainCt.add(parkingLot, BorderLayout.CENTER);  //주차장 패널
-        mainCt.add(mainPanel, BorderLayout.EAST);    //우측 패널
+        mainCt.add(parkingLot, BorderLayout.CENTER);   //주차장 패널
+        mainCt.add(mainPanel, BorderLayout.EAST);      //우측 패널
 
 
 
