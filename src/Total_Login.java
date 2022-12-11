@@ -12,9 +12,9 @@ class Login extends JFrame implements ActionListener{
 		ImageIcon carImg = new ImageIcon("images/carImg.jpg");
 		JLabel lgCarPic = new JLabel(carImg);
 		JLabel lgTextI = new JLabel("ID : ");
-		JTextField lgId = new JTextField();   
+		lgId = new JTextField();   
 		JLabel lgTextPw = new JLabel("PASSWORD : ");
-		JTextField lgPw = new JPasswordField();
+		lgPw = new JPasswordField();
 		JButton loginBtn = new JButton("LOGIN");
 		JButton joinBtn = new JButton("JOIN");
 		JButton mngBtn = new JButton("관리자");
@@ -48,6 +48,7 @@ class Login extends JFrame implements ActionListener{
 	
 	public void actionPerformed(ActionEvent ae) {
 		String s = ae.getActionCommand();
+		
 		if(s=="LOGIN") {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
@@ -57,15 +58,14 @@ class Login extends JFrame implements ActionListener{
 			}
 			try {
 				Connection con = DriverManager.getConnection
-				("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", "root", "root");
+				("jdbc:mysql://localhost:3306/purchase?serverTimezone=UTC", "root", "root");
 				System.out.println("DB 연결 완료했습니다.");
 				Statement dbSt = con.createStatement();
 				System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 				
-				String strSql; String t_lgId, t_lgPw;
-				t_lgId = lgId.getText(); t_lgPw = lgPw.getText();
-				
-				strSql = "SELECT * FROM parkingLogin WHERE id='"+t_lgId+"'and password = '"+t_lgPw+"';";
+				String strSql; String id, pw;
+				id = lgId.getText(); pw = lgPw.getText();
+				strSql = "SELECT * FROM user WHERE user_id='"+id+"'and passwd = '"+pw+"';";
 				ResultSet result = dbSt.executeQuery(strSql);
 				if (result.next())
 				{
@@ -84,124 +84,131 @@ class Login extends JFrame implements ActionListener{
 			Join join = new Join();
 			join.setTitle("JOIN");
 			join.setSize(400, 600);
+			join.setLocationRelativeTo(null);
 			join.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			join.setVisible(true);
 		}else if(s=="관리자") {
 			MngLogin mngLogin = new MngLogin();
 			mngLogin.setTitle("MANAGER LOGIN");
 			mngLogin.setSize(300, 200);
+			mngLogin.setLocationRelativeTo(null);
 			mngLogin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			mngLogin.setVisible(true);
 		}
 	}//Login 이벤트 처리 끝
 }//Login 매소드 끝	
 
-class Join extends JFrame implements ActionListener {
-	JTextField jName, jId, jEmail, jCarNum, jPhone, jCardNum, jRecomm;
+class Join extends JFrame implements ActionListener{
+	JTextField jName, jId, jEmail, jCarNum, jPhone, jCardNum, jRecomm, select;
 	JPasswordField jPw1, jPw2;
+	int isFemail, isDisable, isSmallcar;
+	JCheckBox jSmallcar, jFemail, jDisable;
 	
 	Join() {
 		JLabel jTitle = new JLabel("JOIN");
 		jTitle.setFont(jTitle.getFont().deriveFont(45.0f));
-		JLabel jTextN = new JLabel("이름 : ");
+		JLabel jinfo = new JLabel("*표시는 필수 사항입니다.");
+		JLabel jTextN = new JLabel("*이름 : ");
 		jName = new JTextField(8);
-		JLabel jTextI = new JLabel("아이디 : ");
+		JLabel jTextI = new JLabel("*아이디 : ");
 		jId = new JTextField(8);
 		JButton jCheckId = new JButton("중복확인"); //check overlap
-		JLabel jTextPw1 = new JLabel("비밀번호 : ");
+		JLabel jTextPw1 = new JLabel("*비밀번호 : ");
 		jPw1 = new JPasswordField(8);
-		JLabel jTextPw2 = new JLabel("비밀번호 재입력 : ");
-		//JLabel jCheckPw = new JLabel(""); //
+		JLabel jTextPw2 = new JLabel("*비밀번호 재입력 : ");
 		jPw2 = new JPasswordField(8);
-		JLabel jTextE = new JLabel("이메일 : ");
+		JLabel jTextE = new JLabel("*이메일 : ");
 		jEmail = new JTextField(20);
-		JLabel jTextCar = new JLabel("차량번호 : ");
+		JLabel jTextCar = new JLabel("*차량번호 : ");
 		jCarNum = new JTextField(8);
-		JLabel jTextP = new JLabel("전화번호 : ");
+		JLabel jTextP = new JLabel("*전화번호 : ");
 		jPhone = new JTextField(8);
-		JLabel jTextCard = new JLabel("카드번호 : ");
+		JLabel jTextCard = new JLabel("*카드번호 : ");
 		jCardNum = new JTextField(16);
 		JLabel jTextS = new JLabel("해당 사항 선택 : ");
-		JCheckBox jLightCar = new JCheckBox("경차");
-		JCheckBox jFemail = new JCheckBox("여성");
-		JCheckBox jDisable = new JCheckBox("장애인");
+		jSmallcar = new JCheckBox("경차");
+		jFemail = new JCheckBox("여성");
+		jDisable = new JCheckBox("장애인");
 		JLabel jTextRcm = new JLabel("추천인ID : ");
 		jRecomm = new JTextField(8);
+		select = new JTextField("");
 		JButton jBtn = new JButton("JOIN");
+		
 		
 		//컴포넌트에 위치 크기 설정
 		jTitle.setBounds(140, 10, 200, 100);
-		jTextN.setBounds(20, 100, 100, 20);
-		jName.setBounds(150, 100, 100, 20);
-		jTextI.setBounds(20, 130, 100, 20);
-		jId.setBounds(150, 130, 100, 20);
-		jCheckId.setBounds(270, 130, 90, 20);
-		jTextPw1.setBounds(20, 170, 100, 20);
-		jPw1.setBounds(150, 170, 100, 20);
-		//비밀번호 위에것과 맞게 췄는지 체크
-		jTextPw2.setBounds(20, 200, 100, 20);
-		jPw2.setBounds(150, 200, 100, 20);
-		//jCheckPw.setBounds(40, 230, 100, 20);
-		jTextE.setBounds(20, 260, 100, 20);
-		jEmail.setBounds(150, 260, 150, 20);
-		jTextCar.setBounds(20, 290, 100, 20);
-		jCarNum.setBounds(150, 290, 150, 20);
-		jTextP.setBounds(20, 320, 100, 20);
-		jPhone.setBounds(150, 320, 100, 20);
-		jTextCard.setBounds(20, 350, 100, 20);
-		jCardNum.setBounds(150, 350, 100, 20);
+		jinfo.setBounds(20, 100, 150, 20);
+		jTextN.setBounds(20, 130, 100, 20);
+		jName.setBounds(150, 130, 100, 20);
+		jTextI.setBounds(20, 160, 100, 20);
+		jId.setBounds(150, 160, 100, 20);
+		jCheckId.setBounds(270, 160, 90, 20);
+		jTextPw1.setBounds(20, 190, 100, 20);
+		jPw1.setBounds(150, 190, 100, 20);
+		jTextPw2.setBounds(20, 220, 120, 20);
+		jPw2.setBounds(150, 220, 100, 20);
+		jTextE.setBounds(20, 250, 100, 20);
+		jEmail.setBounds(150, 250, 150, 20);
+		jTextCar.setBounds(20, 280, 100, 20);
+		jCarNum.setBounds(150, 280, 150, 20);
+		jTextP.setBounds(20, 310, 100, 20);
+		jPhone.setBounds(150, 310, 150, 20);
+		jTextCard.setBounds(20, 340, 100, 20);
+		jCardNum.setBounds(150, 340, 150, 20);
 		jTextS.setBounds(20, 380, 200, 20);
-		jLightCar.setBounds(40, 410, 80, 20);
+		jSmallcar.setBounds(40, 410, 80, 20);
 		jFemail.setBounds(150, 410, 80, 20);
 		jDisable.setBounds(270, 410, 80, 20);
-		jTextRcm.setBounds(20, 440, 100, 20);
-		jRecomm.setBounds(150, 440, 100, 20);
-		jBtn.setBounds(160, 470, 80, 20);
+		jTextRcm.setBounds(20, 450, 100, 20);
+		jRecomm.setBounds(150, 450, 100, 20);
+		select.setBounds(20, 480, 200, 40);
+		jBtn.setBounds(160, 520, 80, 20);
 		
-		JPanel jOption = new JPanel();
 		
-		jOption.add(jTextN);
-		jOption.add(jName);
-		jOption.add(jTextI);
-		jOption.add(jId);
-		jOption.add(jCheckId);
-		jOption.add(jTextPw1);
-		jOption.add(jPw1);
-		jOption.add(jTextPw2);
-		jOption.add(jPw2);
-		jOption.add(jTextE);
-		jOption.add(jEmail);
-		jOption.add(jTextCar);
-		jOption.add(jCarNum);
-		jOption.add(jTextP);
-		jOption.add(jPhone);
-		jOption.add(jTextCard);
-		jOption.add(jCardNum);
-		jOption.add(jTextS);
-		jOption.add(jLightCar);
-		jOption.add(jFemail);
-		jOption.add(jDisable);
-		jOption.add(jTextRcm);
-		jOption.add(jRecomm);
-		jOption.add(jBtn);
+		Container joinCt = getContentPane();
+		joinCt.add(jTitle);
+		
+		joinCt.add(jinfo);
+		joinCt.add(jTextN);
+		joinCt.add(jName);
+		joinCt.add(jTextI);
+		joinCt.add(jId);
+		joinCt.add(jCheckId);
+		joinCt.add(jTextPw1);
+		joinCt.add(jPw1);
+		joinCt.add(jTextPw2);
+		joinCt.add(jPw2);
+		joinCt.add(jTextE);
+		joinCt.add(jEmail);
+		joinCt.add(jTextCar);
+		joinCt.add(jCarNum);
+		joinCt.add(jTextP);
+		joinCt.add(jPhone);
+		joinCt.add(jTextCard);
+		joinCt.add(jCardNum);
+		joinCt.add(jTextS);
+		joinCt.add(jSmallcar);
+		joinCt.add(jFemail);
+		joinCt.add(jDisable);
+		joinCt.add(jTextRcm);
+		joinCt.add(jRecomm);
+		joinCt.add(jBtn);
 		
 		jCheckId.addActionListener(this);
 		jBtn.addActionListener(this);
 		
-		Container joinCt = getContentPane();
-		joinCt.add(jTitle);
+		jSmallcar.addActionListener(this); 
+		jFemail.addActionListener(this);   
+		jDisable.addActionListener(this);
+		
 		joinCt.setLayout(null);
-		joinCt.add(jOption);
-		jOption.setLayout(null);
-		jOption.setBounds(0,0,400, 600);	
-		
-		
-		
+		joinCt.setBounds(0,0,400, 600);	
+			
 	}//Join 생성자 끝
 	public void actionPerformed(ActionEvent ae) {
 		String s = ae.getActionCommand();
-		String t_jName, t_jId, t_jEmail, t_jCarNum, t_jPhone, t_jCardNum, t_jRecomm,
-		t_jPw1, strSql;
+		String name, id, pw1, pw2, email, carNum, phone, cardNum, referal_id;
+		boolean is_idCheck=true; //중복확인 버튼 클릭 유무
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			System.err.println("JDBC 드라이버를 정상적으로 로드했습니다.");
@@ -210,39 +217,73 @@ class Join extends JFrame implements ActionListener {
 		}
 		try {
 			Connection con = DriverManager.getConnection
-					("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", 
+					("jdbc:mysql://localhost:3306/purchase?serverTimezone=UTC", 
 							"root", "root");
 			System.out.println("DB 연결 완료");
 			Statement dbSt = con.createStatement();
-			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-			t_jId = jId.getText();  
-			
+			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다."); 
+			String strSql;
+			name = jName.getText(); id = jId.getText(); email = jEmail.getText(); carNum=jCarNum.getText(); 
+			phone = jPhone.getText(); cardNum = jCardNum.getText(); referal_id=jRecomm.getText();
+			pw1 = jPw1.getText(); pw2=jPw2.getText();
 			if(s=="중복확인") {
-				strSql = "SELECT * FROM user WHERE id =' "+ t_jId + "';";
-				boolean ok = true; String msg;
+				strSql = "SELECT * FROM user WHERE user_id =' "+ id + "';";
+				String msg;
 				ResultSet result = dbSt.executeQuery(strSql);
-				while (result.next())
-					ok = false;
-				if (ok) msg = "사용가능한 id입니다.";
+				while (result.next()) {
+					is_idCheck = false;
+					System.out.println("호호");
+					}
+				System.out.println("하하");
+				if (is_idCheck==true) msg = "사용가능한 id입니다.";
+				
 				else msg = "사용중인 id입니다.";
 				JOptionPane.showMessageDialog(this, msg, "확인창",
 						JOptionPane.INFORMATION_MESSAGE);
-			}else if(s=="JOIN"){
-				t_jName = jName.getText(); t_jId = jId.getText(); t_jEmail = jEmail.getText(); t_jCarNum=jCarNum.getText(); 
-				t_jPhone = jPhone.getText(); t_jCardNum = jCardNum.getText(); t_jRecomm=jRecomm.getText();
-				t_jPw1 = jPw1.getText();
-				strSql = "INSERT INTO join(name, id, passwd, email, phone, carNum )VALUES('"+ t_jName + " ',' "+ t_jId +" ','" + t_jEmail + "','" + t_jCarNum + " ','" 
-						+t_jPhone+ " ',' " + t_jCardNum + "','" +  t_jRecomm + " ',' " + t_jPw1 + " ');";
-				dbSt.executeUpdate(strSql);
-				JOptionPane.showMessageDialog(this, "회원가입되었습니다", "확인창",
-						JOptionPane.INFORMATION_MESSAGE);
-				System.out.println("데이터 삽입이 완료되었습니다.");
+			}
+			// 선택 사항 처리
+			if(jSmallcar.isSelected()) {	
+				isSmallcar = 1;	
+			}
+			if(jFemail.isSelected()) {
+				isFemail = 1;
+			}
+			if(jDisable.isSelected()) {
+				isDisable = 1;
+			}
+			if(s=="JOIN"){
+				//필수사항 입력 확인하는 조건문
+				if(name.equals("")|| id.equals("")||pw1.equals("")||pw2.equals("")|| email.equals("")||carNum.equals("")||phone.equals("")||cardNum.equals("")) {
+					JOptionPane.showMessageDialog(this, "필수 사항을 입력해주세요!", "회원가입 안내창",
+							JOptionPane.INFORMATION_MESSAGE);
+				}else if(!pw1.equals(pw2)){
+					JOptionPane.showMessageDialog(this, "비밀번호가 같지 않습니다!", "회원가입 안내창",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+				else if(is_idCheck=false){
+					JOptionPane.showMessageDialog(this, "아이디 중복확인을 해주세요!", "회원가입 안내창",
+							JOptionPane.INFORMATION_MESSAGE);
+				}else {
+					strSql = "INSERT INTO user(user_id, passwd, name, email, phone_num, car_num, card_num, referal_id, point )VALUES('"+ id + " ',' "+ pw1 +" ','" + name +" ',' " + email + "','" + phone + " ','" 
+							+carNum+ " ',' " + cardNum + "','" +  referal_id + " ',' " + 0 + " ');";
+					dbSt.executeUpdate(strSql);
+					strSql = "INSERT INTO user_special_needs(user_id, woman, small_car, handicap)VALUES('"+ id + " ',' "+ isFemail + "','"+ isSmallcar + "','"+isDisable + " ');";
+					dbSt.executeUpdate(strSql);
+					if (!referal_id.equals("")) {
+						strSql = "UPDATE user SET point = point + 5000 where referal_id='"+referal_id+"';";
+						dbSt.executeUpdate(strSql);
+					}
+					JOptionPane.showMessageDialog(this, "회원가입되었습니다", "확인창",
+							JOptionPane.INFORMATION_MESSAGE);
+					System.out.println("데이터 삽입이 완료되었습니다.");
+				}
+				
+				
 			}
 		}catch (SQLException e) {
 			System.out.println("SQLException : " + e.getMessage());
 		}
 	}//JOIN 액션이벤트 끝
-	
 }//Join 메소드 끝
 class MngLogin extends JFrame implements ActionListener{
 	JPasswordField mngPw;
@@ -267,7 +308,7 @@ class MngLogin extends JFrame implements ActionListener{
 		mngLgCt.add(mngLgBtn);
 		
 		mngLgBtn.addActionListener(this);
-		
+	
 	}//MngLogin 생성자 끝
 	//액션이벤트
 	public void actionPerformed(ActionEvent ae) {
@@ -301,13 +342,15 @@ class MngLogin extends JFrame implements ActionListener{
 				System.out.println("SQLException: "+e.getMessage());
 			}
 		}
-}//MngLogin 메소드 끝
+	} //mngLogin 액션이벤트 끝
+}	//MngLogin 메소드 끝
 public class Total_Login {
 
 	public static void main(String[] args) {
 		Login login = new Login();
 		login.setTitle("LOGIN");
 		login.setSize(400, 600);
+		login.setLocationRelativeTo(null);
 		login.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		login.setVisible(true);
 	}
