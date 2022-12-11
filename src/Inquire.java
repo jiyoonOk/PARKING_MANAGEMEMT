@@ -23,8 +23,9 @@ public class Inquire extends JFrame implements ActionListener {
         JLabel userCarNum = new JLabel("123나1234");
         JLabel userFloor  = new JLabel("B1");
         JLabel userArea   = new JLabel("A4");
-        JLabel userInTime = new JLabel("2022-12-15 12:00:00"); //입차시간
-        JLabel userOutTime = new JLabel("2022-12-17 17:00:00"); //출차예정시간
+        JLabel userInTime = new JLabel("2022-12-15 12:00:00"); //일반-입차시간
+        JLabel userRsvInTime = new JLabel("2022-12-17 13:00:00"); //예약-입차(예정)시간
+        JLabel userRsvOutTime = new JLabel("2022-12-17 17:00:00"); //예약-출차예정시간
 
         //주차장 패널 (조최용)
         JButton[] btn = new JButton[16]; //구역 버튼
@@ -89,15 +90,15 @@ public class Inquire extends JFrame implements ActionListener {
 
         //주차 조회 패널 만들기
         gPanel.setLayout(new GridLayout(7, 1));
+        GridLayout gridLayout = new GridLayout(7,1);
 
-        JPanel p2[] = new JPanel[6];
+        JPanel p2[] = new JPanel[7];
         for (int i = 0; i < p2.length; i++){
             gPanel.add(p2[i] = new JPanel());
             p2[i].setLayout(new FlowLayout(FlowLayout.LEFT));
         }
         JLabel gtitle = new JLabel("주차 일반 조회");
         gtitle.setFont(new Font("D2Coding", Font.BOLD, 20));
-        gtitle.setFont(gtitle.getFont().deriveFont(15.0f));
         JLabel rsvtitle = new JLabel("주차 예약 조회");
         rsvtitle.setFont(new Font("D2Coding", Font.BOLD, 20));
         JLabel name = new JLabel("이        름 : ");
@@ -105,7 +106,8 @@ public class Inquire extends JFrame implements ActionListener {
         JLabel carNum = new JLabel("차량번호 : ");
         JLabel area = new JLabel("주차구역 : ");
         JLabel inTime = new JLabel("입차시간 : ");
-        JLabel OutTime = new JLabel("출차예정시간 : ");
+        JLabel rsvInTime = new JLabel("입차(예정)시간 : ");
+        JLabel rsvOutTime = new JLabel("출차예정시간 : ");
 
         p2[1].add(name);   p2[1].add(userName);
         p2[2].add(id);     p2[2].add(userId);
@@ -115,11 +117,12 @@ public class Inquire extends JFrame implements ActionListener {
         //예약 유무에 따른 패널 출력값 설정
         if (is_reserved == true) {
             p2[0].add(rsvtitle);
-            p2[5].add(inTime); p2[5].add(userInTime);
+            p2[5].add(rsvInTime); p2[5].add(userRsvInTime);
+            p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
             ct.add(gPanel);
         } else {
             p2[0].add(gtitle);
-            p2[5].add(OutTime); p2[5].add(userOutTime);
+            p2[5].add(inTime); p2[5].add(userInTime);
             ct.add(rsvPanel);
         }
 
