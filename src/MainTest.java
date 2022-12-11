@@ -1,8 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.sql.*;
 import java.util.Vector;
 
 import static javax.swing.JOptionPane.YES_OPTION;
@@ -20,14 +20,15 @@ public class MainTest extends JFrame {
     private JPanel userInfoPanel;
     private JTextField nameField, idField, carField, numberField, cardField;
     private JButton deleteUserButton, changeUserButton;
-    private JTable userTable, userParkingTable;
+    JTable userTable, userParkingTable;
     private JScrollPane userScrollPane, userParkingScrollPane;
+    Vector<Vector<String>> rowData, rowData2, rowData3, rowData4, rowData5;
 
     //salesAdmin에 필요한 변수
     private JComboBox purchaseCombo;
     private JRadioButton yearRB, halfRB, monthRB, weekRB, dayRB;
     private JLabel purchaseLabel;
-    private JTable salesTable;
+    JTable salesTable;
     private UserAdmin user;
     private JScrollPane salesScrollPane;
 
@@ -35,7 +36,7 @@ public class MainTest extends JFrame {
     private JTextField qnaTitleField, qnaIDField;
     private JTextArea qnaContensArea;
     private JButton qnaAddButton, qnaDeleteButton;
-    private JTable qnaJTable;
+    JTable qnaJTable;
     private JScrollPane qnaScrollPane;
 
     //noticeTab에 필요한 변수
@@ -43,8 +44,7 @@ public class MainTest extends JFrame {
     private JTextArea noticeContentsArea;
     private JButton noticeAddButton, noticeChangeButton, noticeDeleteButton;
     private JScrollPane noticeScrollPane;
-    private JTable noticeJTable;
-
+    JTable noticeJTable;
 
     public MainTest() {
         super("주차관리예약시스템");
@@ -85,31 +85,31 @@ public class MainTest extends JFrame {
 
     public static void main(String[] args) {
         admin = new MainTest();
-        admin.setLocationRelativeTo(null);
+        admin.setLocationRelativeTo(null);  //노트북 화면 기준으로 가운데에 창 출력시켜줌!
     } //admin 관리창 여는 main 함수
 
     //TODO : JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
         // 모든 유저 조회하는 JTable
         Vector<String> columnName = new Vector<String>();
-        columnName.add("회원번호"); columnName.add("이름"); columnName.add("아이디"); columnName.add("차량번호");
-        Vector<Vector<String>> rowData = new Vector<Vector<String>>();
+        columnName.add("ID"); columnName.add("이름"); columnName.add("전화번호"); columnName.add("차량번호"); columnName.add("포인트");
+        rowData = new Vector<Vector<String>>();
         DefaultTableModel model = new DefaultTableModel(rowData, columnName);
         userTable = new JTable(model);
         userScrollPane = new JScrollPane(userTable);
 
         // 회원 주차 이력 JTable
         Vector<String> columnName2 = new Vector<String>();
-        columnName2.add("날짜"); columnName2.add("주차 구역"); columnName2.add("이용 날짜");
-        Vector<Vector<String>> rowData2 = new Vector<Vector<String>>();
+        columnName2.add("날짜"); columnName2.add("주차 구역"); columnName2.add("이용 금액");
+        rowData2 = new Vector<Vector<String>>();
         DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2);
         userParkingTable = new JTable(model2);
         userParkingScrollPane = new JScrollPane(userParkingTable);
 
         // 문의사항 JTable
         Vector<String> columnName3 = new Vector<String>();
-        columnName3.add("문의번호"); columnName3.add("제목"); columnName3.add("내용"); columnName3.add("날짜");
-        Vector<Vector<String>> rowData3 = new Vector<Vector<String>>();
+        columnName3.add("문의번호"); columnName3.add("제목"); columnName3.add("내용"); columnName3.add("날짜"); columnName3.add("ID");
+        rowData3 = new Vector<Vector<String>>();
         DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3);
         qnaJTable = new JTable(model3);
         qnaScrollPane = new JScrollPane(qnaJTable);
@@ -117,7 +117,7 @@ public class MainTest extends JFrame {
         // 공지사항 JTable
         Vector<String> columnName4 = new Vector<String>();
         columnName4.add("공지번호"); columnName4.add("제목"); columnName4.add("내용"); columnName4.add("날짜");
-        Vector<Vector<String>> rowData4 = new Vector<Vector<String>>();
+        rowData4 = new Vector<Vector<String>>();
         DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4);
         noticeJTable = new JTable(model4);
         noticeScrollPane = new JScrollPane(noticeJTable);
@@ -125,8 +125,8 @@ public class MainTest extends JFrame {
         // 매출관리 JTable
         //TODO : 결제취소는 어떻게 표현할 건지, DB는??
         Vector<String> columnName5 = new Vector<String>();
-        columnName5.add("이용 날짜"); columnName5.add("차량번호"); columnName5.add("금액"); columnName5.add("아이디");
-        Vector<Vector<String>> rowData5 = new Vector<Vector<String>>();
+        columnName5.add("이용 날짜"); /*columnName5.add("차량번호");*/ columnName5.add("금액"); columnName5.add("아이디");
+        rowData5 = new Vector<Vector<String>>();
         DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5);
         salesTable = new JTable(model5);
         salesScrollPane = new JScrollPane(salesTable);
@@ -135,6 +135,9 @@ public class MainTest extends JFrame {
     // 회원관리 탭 클래스
     class UserAdmin extends JPanel implements ActionListener {
         public UserAdmin() {
+
+            DBconnection allUserDB = new DBconnection("SELECT * from parking.user;", rowData, userTable);
+            DBconnection userParkingDB = new DBconnection("SELECT * from parking.purchase;", rowData2, userParkingTable);
 
             TextHint hint = new TextHint(userSearch, "ID를 입력하세요.");
             changeUserButton.addActionListener(this);
@@ -148,6 +151,7 @@ public class MainTest extends JFrame {
                 }
             });
         }
+
 
         //TODO : 이거 무조건 따로 클래스 빼기!!! 계정 변경 -> 저장 , 삭제
         @Override
@@ -201,6 +205,8 @@ public class MainTest extends JFrame {
             g.add(weekRB);
             g.add(dayRB);
 
+            DBconnection salesDB = new DBconnection("SELECT * from parking.purchase;", rowData5, salesTable);
+
             purchaseCombo.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     System.out.println(e.getActionCommand() + " 버튼 누름");
@@ -222,6 +228,8 @@ public class MainTest extends JFrame {
 
         public QnaAdmin() {
             //TODO : 제목, 아이디, 내용 text DB 연결하기
+
+            DBconnection qnaDB = new DBconnection("SELECT * from parking.question;", rowData3, qnaJTable);
 
             qnaAddButton.addActionListener(this);
             qnaDeleteButton.addActionListener(this);
@@ -247,6 +255,8 @@ public class MainTest extends JFrame {
         public NoticeAdmin() {
             //TODO : 제목, 내용 text DB 연결하기
 
+            DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
+
             noticeAddButton.addActionListener(this);
             noticeChangeButton.addActionListener(this);
             noticeDeleteButton.addActionListener(this);
@@ -267,7 +277,7 @@ public class MainTest extends JFrame {
     } //noticeAdmin 종료
 }//mainTest 클래스 종료
 
-    class PwChange extends JDialog {
+    class PwChange extends JDialog implements ActionListener{
         private JPasswordField currentPw, newPw, rePw;
         private JButton pass, check, ok, cancel;
 
@@ -281,7 +291,7 @@ public class MainTest extends JFrame {
             pass = new JButton("확인");
             pass.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    //TODO : DB에 저장되어있는 관리자 비밀번호와 동일한가?
+                    //if(currentPw.getText().equals() )
                     JOptionPane.showMessageDialog(p, "비밀번호가 동일합니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                     newPw.setEditable(true);
                     rePw.setEditable(true);
@@ -351,5 +361,90 @@ public class MainTest extends JFrame {
             add(p);
             pack();
         }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    class DBconnection {
+        //DB를 위한 변수
+        Connection con = null;
+
+        String server = "root@localhost:3306"; // 서버 주소
+        String user_name = "root"; //  접속자 id
+        String password = "wldbs1004"; // 접속자 pw
+        String sql = ""; //조회할 sql문
+        Vector<Vector<String>> rowData;
+        JTable table;
+        public DBconnection(String sql, Vector<Vector<String>> rowData, JTable table) {
+        this.sql = sql;
+        this.rowData = rowData;
+        this.table = table;
+        String t = table.nameOf();
+        // JDBC 드라이버 로드
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", user_name, password);
+            System.out.println("연결 완료!");
+
+            Statement stmt = con.createStatement();
+
+            ResultSet resultAllUser = stmt.executeQuery(sql);    //DB로부터 읽어온 데이터
+
+            while (resultAllUser.next()) {  //DB에서 읽어와 표에 출력하기
+                Vector<String> txt = new Vector<String>();
+                // 한 레코드를 읽으면 1차원 벡터로 만들어 표에 한 행씩 추가
+                switch (table){
+                    case "userTable" : {
+                        txt.add(resultAllUser.getString("id"));
+                        txt.add(resultAllUser.getString("name"));
+                        txt.add(resultAllUser.getString("phone_num"));
+                        txt.add(resultAllUser.getString("car_num"));
+                        txt.add(resultAllUser.getString("point"));
+                    }   break;
+                    case "userParkingTable" : {
+                        txt.add(resultAllUser.getString("car_in"));
+                        txt.add(resultAllUser.getString("floor_num"));
+                        txt.add(resultAllUser.getString("total_fee"));
+                    }   break;
+                    case "salesTable" : {
+                        txt.add(resultAllUser.getString("car_in"));
+                        //txt.add(resultAllUser.getString("car_num"));
+                        txt.add(resultAllUser.getString("total_fee"));
+                        txt.add(resultAllUser.getString("user_id"));
+                    }   break;
+                    case "qnaJTable" : {
+                        txt.add(resultAllUser.getString("question_id"));
+                        txt.add(resultAllUser.getString("question_title"));
+                        txt.add(resultAllUser.getString("question_contents"));
+                        txt.add(resultAllUser.getString("question_date"));
+                        txt.add(resultAllUser.getString("user_id"));
+                        break;
+                    }
+                    case "noticeJtable" : {
+                        txt.add(resultAllUser.getString("notice_id"));
+                        txt.add(resultAllUser.getString("notice_title"));
+                        txt.add(resultAllUser.getString("notice_contents"));
+                        txt.add(resultAllUser.getString("notice_date"));
+                        break;
+                    }
+                }
+
+                rowData.add(txt);
+                table.updateUI();
+            }
+            stmt.close();
+            con.close();
+        } catch (SQLException e) {
+            System.err.println("연결 오류" + e.getMessage());
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.err.println("드라이버 로드에 실패했습니다.");
+        }
+    }
     }
 
