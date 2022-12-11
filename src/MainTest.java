@@ -96,6 +96,7 @@ public class MainTest extends JFrame {
         rowData = new Vector<Vector<String>>();
         DefaultTableModel model = new DefaultTableModel(rowData, columnName);
         userTable = new JTable(model);
+        userTable.setName("userTable");
         userScrollPane = new JScrollPane(userTable);
 
         // 회원 주차 이력 JTable
@@ -104,6 +105,7 @@ public class MainTest extends JFrame {
         rowData2 = new Vector<Vector<String>>();
         DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2);
         userParkingTable = new JTable(model2);
+        userParkingTable.setName("userParkingTable");
         userParkingScrollPane = new JScrollPane(userParkingTable);
 
         // 문의사항 JTable
@@ -112,6 +114,7 @@ public class MainTest extends JFrame {
         rowData3 = new Vector<Vector<String>>();
         DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3);
         qnaJTable = new JTable(model3);
+        qnaJTable.setName("qnaJTable");
         qnaScrollPane = new JScrollPane(qnaJTable);
 
         // 공지사항 JTable
@@ -120,6 +123,7 @@ public class MainTest extends JFrame {
         rowData4 = new Vector<Vector<String>>();
         DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4);
         noticeJTable = new JTable(model4);
+        noticeJTable.setName("noticeJTable");
         noticeScrollPane = new JScrollPane(noticeJTable);
 
         // 매출관리 JTable
@@ -129,6 +133,7 @@ public class MainTest extends JFrame {
         rowData5 = new Vector<Vector<String>>();
         DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5);
         salesTable = new JTable(model5);
+        salesTable.setName("salesTable");
         salesScrollPane = new JScrollPane(salesTable);
     }
 
@@ -382,7 +387,7 @@ public class MainTest extends JFrame {
         this.sql = sql;
         this.rowData = rowData;
         this.table = table;
-        String t = table.nameOf();
+        String t = table.getName();
         // JDBC 드라이버 로드
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -398,7 +403,7 @@ public class MainTest extends JFrame {
             while (resultAllUser.next()) {  //DB에서 읽어와 표에 출력하기
                 Vector<String> txt = new Vector<String>();
                 // 한 레코드를 읽으면 1차원 벡터로 만들어 표에 한 행씩 추가
-                switch (table){
+                switch (t){
                     case "userTable" : {
                         txt.add(resultAllUser.getString("id"));
                         txt.add(resultAllUser.getString("name"));
