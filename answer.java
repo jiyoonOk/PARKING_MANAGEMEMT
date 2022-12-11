@@ -1,5 +1,4 @@
 
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -14,7 +13,7 @@ public class answer extends JFrame implements ActionListener{
 		Container ct = getContentPane();
 		
 		
-		title = new JTextField("문의사항 제목입니다");
+		title = new JTextField("문의사항 제목");
 		 title.setBounds(33,75,320,30);
 		
 		 JLabel no = new JLabel("문의사항 확인");
@@ -25,13 +24,13 @@ public class answer extends JFrame implements ActionListener{
 		 JLabel inquiry = new JLabel("문의사항 내용");
 		 inquiry.setBounds(33,50,320,20);
 		 
-		 jta=new JTextArea("문의사항 내용입니다",20,20);
+		 jta=new JTextArea("문의사항 내용이 없습니다.",20,20);
 		 jta.setBounds(33,110,320,240);  //문의사항 내용 확인
 		 
 		 JLabel answer1= new JLabel("답변 내용");
 		 answer1.setBounds(433,50,320,20);
 		 
-		 answertitle = new JTextField("답변 제목입니다");
+		 answertitle = new JTextField("답변 제목");
 		 answertitle.setBounds(433,75,320,30);
 		 
 		
