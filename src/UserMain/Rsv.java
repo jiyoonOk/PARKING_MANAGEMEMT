@@ -3,47 +3,99 @@ package UserMain;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+
 
 public class Rsv extends JFrame {
-    /*---------------------------------------------------------------------*/
-    String[] floor_list = {"B1", "B2", "B3"};           //층 목록
-    JComboBox floorCBox = new JComboBox(floor_list);    //층 선택
-    /*---------------------------------------------------------------------*/
 
-    Container ct;
-
-
-    //예약일시
-    String[] m = {"1","2","3","4","5","6","7","8","9","10","11","12"}; //월 - 상수
-    JComboBox rsvMonth = new JComboBox(m);
-    String[] d = {"1","2","3","4","5","6","7","8","9","10",            //일 - 상수
-            "11","12","13","14","15","16","17","..."}; //TODO : 일 수를 월별로 어떻게 다르게 보이지?
-    JComboBox rsvDate = new JComboBox(d);
-    String[] h = {"01","02","03","04","05","06",
-            "07","08","09","10","11","12",
-            "13","14","..."}; //시 - 상수
-    JComboBox rsvHour = new JComboBox(h);
-    String[] min = {"00","10","20","30","40","50"}; //분 - 상수(10분단위)
-    JComboBox rsvMinute = new JComboBox(min);
+    String[] month, date, hour, min, choose_time; //시간선택
+    JComboBox monthComBox, dateComBox, hourComBox, minComBox, timeComBox; //월일시분 시간선택
+    JTextField inputPoint; //사용할 포인트 입력
+    int myPoint, usePoint, paidMoney; //보유 포인트 값, 사용할 포인트 값, 결제금액
+    JButton usePointBtn, rsv_go, rsv_cancel; //포인트 사용, 예약, 취소 버튼
 
 
-    //이용시간 선택 - 문자
-    String[] choose_time = {"1시간", "2시간", "3시간"};
-    JComboBox timeComBox = new JComboBox(choose_time);
-
-    //포인트 사용
-    JTextField usePoint = new JTextField(10);
-    JButton usePntBtn = new JButton("사용");
-    JLabel myPoint = new JLabel("보유 포인트: ");
-
-    //예약 결정 버튼 - 문자
-    JButton rsv_go = new JButton("예약하기");
-    JButton rsv_cancel = new JButton("취소");
-    //TODO : 만약 다른 취소 버튼들도 같은 역할을 한다면 변수명 cancel 로 바꾸기
-    //TODO : 취소 == 내용 초기화 or 창 끄기 ?
 
     public Rsv(String t) {
         super(t);
+
+        //----------------------------------------------------------------예약일시선택
+        month = new String[12]; //월 크기 그냥 12로
+        for(int i = 0; i<12; i++) { //1~12 저장
+            month[i] = String.valueOf(i+1);
+        }
+        monthComBox = new JComboBox(month); //월 콤보박스 생성
+        dateComBox = new JComboBox();
+        monthComBox.addActionListener(new ActionListener() { //월 선택 시
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int m = monthComBox.getSelectedIndex(); //선택한 월 int 로 받기
+                Calendar cal = Calendar.getInstance();
+                cal.set(2023, m);
+                date = new String[cal.getActualMaximum(Calendar.DATE)]; //월의 마지막날로 크기지정
+                for (int i=0; i<date.length; i++) {
+                    date[i] = String.format("%02d",i+1);
+                }
+                dateComBox = new JComboBox(date); //날짜 콤보박스 생성
+            }
+        }); //월 선택 이벤트 끝
+
+        dateComBox.addActionListener(new ActionListener() { //일 선택 시
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO #### 이거 필요 없을 듯? 예약 버튼 누르면 .getSelectedItem() 으로 값 가져오기
+            }
+        }); //일 선택 이벤트 끝
+
+        hour = new String[12];
+        for(int i = 0; i<12; i++) { //1~12 저장
+            if (i<10) hour[i] = "0"+(i+1); //00으로 나오게 하기
+            hour[i] = String.valueOf(i+1);
+        }
+        hourComBox = new JComboBox(hour); //시간 콤보박스 생성
+
+        min = new String[6];
+        for(int i = 0; i<6; i++) { //1~12 저장
+            if (i == 0) min[i] = String.valueOf(00); //00으로 나오게 하기
+            else min[i] = String.valueOf((i+1)*10);
+        }
+        minComBox = new JComboBox(min); //분 콤보박스 생성
+
+        //---------------------------------------------------------------------------
+
+
+
+        inputPoint = new JTextField(10);      //사용할 포인트 입력
+        usePointBtn = new JButton("사용");      //사용 버튼
+        //TODO DB : myPoint = DB 에서 가져와서 저장
+
+        usePointBtn.addActionListener(new ActionListener() { //포인트 사용 버튼 클릭 시
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = Integer.parseInt(inputPoint.getText());
+                if (i <= myPoint) usePoint = i; //보유 포인트 내에서 사용하는지 확인 후 저장
+            }
+        });
+
+        rsv_go = new JButton("예약하기");
+        rsv_go.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int result = JOptionPane.showConfirmDialog(null, "예약 하시겠습니까?\n(확인 시 결제로 넘어감)", "주차예약", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
+                    //TODO !# 결제창으로 넘어가기
+                    //TODO DB : (myPoint-usePoint)(잔여포인트)와 paidMoney(결제금액) 넘기기
+                    JOptionPane.showMessageDialog(null, "결제가 완료되었습니다!");
+
+                }
+                else { //결제 no 한 경우
+                    dispose();
+                }
+            }
+        });
+        rsv_cancel = new JButton("취소");
 
         /*---------------UserMain, Check 와 겹치는 내용--------------------*/
         JPanel panel = new JPanel();        //CENTER
@@ -72,70 +124,37 @@ public class Rsv extends JFrame {
         JLabel minute = new JLabel("분");          //분
         JLabel time = new JLabel("이용시간: ");     //이용시간 선택
         JLabel point = new JLabel("포인트 사용: "); //포인트
+        JLabel showMyPoint = new JLabel("보유 포인트: " + myPoint);   //보유(사용가능) 포인트 출력
         //선결제금액 - 문자, 상수
         JLabel price = new JLabel("선결제금액 : " + "원");
         JLabel plus_point = new JLabel("( [결제금액 * 10%] point 적립 예정)");
 
-        /*
-        title.setBounds(100, 20, 80, 30); //주차예약
-
-        name.setBounds(50, 60, 80, 30); //이름
-        carNum.setBounds(50, 80, 80, 30); //차량번호
-
-        location.setBounds(50, 110, 80, 30); //주차구역
-        choose_floor.setBounds(140, 110, 50, 30); //층
-        choose_section.setBounds(200, 110, 50, 30);
-
-        rsv.setBounds(50, 140, 80, 30); //예약일시
-
-        rsvMonth.setBounds(50, 180, 50, 30); //월선택
-        month.setBounds(110, 180, 30, 30); //월
-        rsvDate.setBounds(150, 180, 50, 30); //일선택
-        date.setBounds(210, 180, 30, 30); //일
-
-        rsvHour.setBounds(50, 220, 50, 30); //시선택
-        hour.setBounds(110, 220, 30, 30); //시
-        rsvMinute.setBounds(150, 220, 50, 30); //분선택
-        minute.setBounds(210, 220, 30, 30); //분
-
-        time.setBounds(50, 270, 80, 30); //이용시간
-        timeComBox.setBounds(120, 270, 80, 30); //이용시간선택
-
-        point.setBounds(50, 310, 80, 30); //포인트사용
-        usePoint.setBounds(50, 340, 100, 30); //포인트입력
-        usePntBtn.setBounds(160, 340, 60, 30); //포인트사용버튼
-
-        price.setBounds(50, 390, 80, 30); //선결제금액
-        plus_point.setBounds(50, 410, 100, 20); //적립예정포인트
-        plus_point.setForeground(Color.RED);
-
-        rsv_go.setBounds(45, 460, 90, 40); //예약하기버튼
-        rsv_go.addActionListener(); //TODO : 액션리스너 해야함
-        rsv_cancel.setBounds(150, 460, 60, 40); //취소버튼
-        rsv_cancel.addActionListener(); //TODO : 액션리스너 해야함
-        */
 
         rsv_pnl.add(title); //주차예약
-        rsv_pnl.add(name);   rsv_pnl.add(carNum); //이름, 차량번호
-        rsv_pnl.add(location); //주차구역
+        rsv_pnl.add(name);   rsv_pnl.add(carNum); //이름 :, 차량번호 :
+        rsv_pnl.add(location); //주차구역 :
         rsv_pnl.add(choose_floor);   rsv_pnl.add(choose_section); //층, 구역
-        rsv_pnl.add(rsv); //예약일시
-        rsv_pnl.add(rsvMonth);   rsv_pnl.add(month); //월
-        rsv_pnl.add(rsvDate);    rsv_pnl.add(date); //일
-        rsv_pnl.add(rsvHour);    rsv_pnl.add(hour); //시
-        rsv_pnl.add(rsvMinute);  rsv_pnl.add(minute); //분
-        rsv_pnl.add(time);   rsv_pnl.add(timeComBox); //이용시간, 시간선택
-        rsv_pnl.add(point);  rsv_pnl.add(usePoint);   rsv_pnl.add(usePntBtn); //포인트 사용, JTextField, 버튼
+        rsv_pnl.add(rsv); //예약일시 :
+        rsv_pnl.add(monthComBox);   rsv_pnl.add(month); //월
+        rsv_pnl.add(dateComBox);    rsv_pnl.add(date); //일
+        rsv_pnl.add(hourComBox);    rsv_pnl.add(hour); //시
+        rsv_pnl.add(minComBox);  rsv_pnl.add(minute); //분
+        rsv_pnl.add(time);   rsv_pnl.add(timeComBox); //이용시간 :, 시간선택
+        rsv_pnl.add(point);  rsv_pnl.add(inputPoint);   rsv_pnl.add(usePointBtn); //포인트 사용 : , JTextField, 버튼
+        rsv_pnl.add(showMyPoint); //보유포인트
         rsv_pnl.add(price); //선결제금액
         rsv_pnl.add(plus_point); //point 적립예정
         rsv_pnl.add(rsv_go); rsv_pnl.add(rsv_cancel); //예약, 취소 버튼
 
+/*
         t_pnl.add(floorCBox);
+        TODO 2# ComboBox 추가하기
+ */
 
-        ct = getContentPane();
-        ct.add(t_pnl, BorderLayout.NORTH);
-        ct.add(panel, BorderLayout.CENTER);
-        ct.add(rsv_pnl, BorderLayout.EAST);
+        Container rsvCt = getContentPane();
+        rsvCt.add(t_pnl, BorderLayout.NORTH);
+        rsvCt.add(panel, BorderLayout.CENTER);
+        rsvCt.add(rsv_pnl, BorderLayout.EAST);
 
     }//Rsv 생성자 끝
 

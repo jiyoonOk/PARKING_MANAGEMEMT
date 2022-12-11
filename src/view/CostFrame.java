@@ -3,7 +3,7 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 
-public class CostFrame extends JFrame {       //요금표 Dialog 클래스 객체 생성
+public class CostFrame extends JFrame {       //요금표 popup 클래스 객체 생성
     public CostFrame(String title) {
         setTitle(title);
         Container ct = getContentPane();

@@ -1,5 +1,3 @@
-package totalLogin;
-
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -244,6 +242,7 @@ class Join extends JFrame implements ActionListener {
 	}//JOIN 액션이벤트 끝
 	
 }//Join 메소드 끝
+
 class MngLogin extends JFrame implements ActionListener{
 	JPasswordField mngPw;
 	
@@ -276,31 +275,34 @@ class MngLogin extends JFrame implements ActionListener{
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
 				System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드했습니다.");
-			}catch(ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				System.err.println("드라이버 로드에 실패했습니다.");
 			}
 			try {
 				Connection con = DriverManager.getConnection
-			("jdbc:mysql://localhost:3306/parkingmanager?serverTimezone=UTC", "root", "root");
+						("jdbc:mysql://localhost:3306/parkingmanager?serverTimezone=UTC", "root", "root");
 				System.out.println("DB 연결이 완료되었습니다.");
 				Statement dbSt = con.createStatement();
 				System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-				String strSql; String t_passwd;
+				String strSql;
+				String t_passwd;
 				t_passwd = mngPw.getText();
-				strSql = "SELECT*FROM parkingManager WHERE password='"+t_passwd+"';";
+				strSql = "SELECT*FROM parkingManager WHERE password='" + t_passwd + "';";
 				ResultSet result = dbSt.executeQuery(strSql);
-				if(result.next()) {
+				if (result.next()) {
 					JOptionPane.showMessageDialog(this, "매니저 계정으로 로그인 되었습니다.", "매니처로그인창",
 							JOptionPane.INFORMATION_MESSAGE);
-				}else {
+				} else {
 					JOptionPane.showMessageDialog(this, "매니저 비밀번호가 틀렸습니다.", "매니저로그인창",
 							JOptionPane.INFORMATION_MESSAGE);
-				}dbSt.close();
+				}
+				dbSt.close();
 				con.close();
-			}catch(SQLException e) {
-				System.out.println("SQLException: "+e.getMessage());
+			} catch (SQLException e) {
+				System.out.println("SQLException: " + e.getMessage());
 			}
 		}
+	}
 }//MngLogin 메소드 끝
 public class Total_Login {
 
@@ -313,3 +315,4 @@ public class Total_Login {
 	}
 	
 }
+

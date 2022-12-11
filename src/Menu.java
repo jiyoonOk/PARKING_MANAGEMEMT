@@ -1,4 +1,3 @@
-package menu;
 
 import java.awt.*;
 import javax.swing.*;
@@ -30,13 +29,7 @@ public class Menu extends JFrame{
 		menuCt.add(mQuest);
 		menuCt.add(mAbout);
 		menuCt.add(mLogout);
-	}
-	public static void main(String[] args) {
-		Menu menu = new Menu();
-		menu.setTitle("MENU");
-		menu.setSize(400, 600);
-		menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		menu.setVisible(true);
+
 	}
 
 }

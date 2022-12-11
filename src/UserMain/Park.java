@@ -13,8 +13,8 @@ public class Park extends JFrame {
 
     Container ct;
 
-    JButton parking_go = new JButton("완료");       //주차완료버튼
-    JButton parking_cancel = new JButton("취소");   //취소버튼
+    JButton parking_goButton = new JButton("완료");       //주차완료버튼
+    JButton parking_cancelButton = new JButton("취소");   //취소버튼
 
     public Park(String t) {
         super(t);
@@ -40,7 +40,7 @@ public class Park extends JFrame {
         JLabel park_floor = new JLabel("층");            //층
         JLabel park_section = new JLabel(" ");          //구역
 
-        parking_go.addActionListener(new ActionListener() {
+        parking_goButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
@@ -50,6 +50,12 @@ public class Park extends JFrame {
             db에 입력하는 유형이 다르면 익명리스너로 생성.
            .                  같으면 공통된 액션리스너 클래스 생성.
          */
+        parking_cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
 
 
         park_pnl.add(title); //일반주차
@@ -57,7 +63,7 @@ public class Park extends JFrame {
         park_pnl.add(currTime); //현재시간
         park_pnl.add(location); //주차구역
         park_pnl.add(park_floor);   park_pnl.add(park_section); //층, 구역
-        park_pnl.add(parking_go);   park_pnl.add(parking_cancel); //완료, 취소 버튼
+        park_pnl.add(parking_goButton);   park_pnl.add(parking_cancelButton); //완료, 취소 버튼
 
         t_pnl.add(floorCBox);
 
