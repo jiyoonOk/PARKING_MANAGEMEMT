@@ -7,8 +7,8 @@ import java.util.Vector;
 
 import static javax.swing.JOptionPane.YES_OPTION;
 
-public class MainTest extends JFrame {
-    static MainTest admin;
+public class AdminMain extends JFrame {
+    static AdminMain admin;
     //main에 필요한 변수
     private JTabbedPane tab;
     private JPanel jp, btnjp;
@@ -46,7 +46,12 @@ public class MainTest extends JFrame {
     private JScrollPane noticeScrollPane;
     JTable noticeJTable;
 
-    public MainTest() {
+    //DB에 필요한 변수들
+    static Connection con = null;
+    static String user_name = "root"; //  접속자 id
+    static String password = "wldbs1004"; // 접속자 pw
+
+    public AdminMain() {
         super("주차관리예약시스템");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -84,7 +89,7 @@ public class MainTest extends JFrame {
     } //mainTest 생성자 종료
 
     public static void main(String[] args) {
-        admin = new MainTest();
+        admin = new AdminMain();
         admin.setLocationRelativeTo(null);  //노트북 화면 기준으로 가운데에 창 출력시켜줌!
     } //admin 관리창 여는 main 함수
 
@@ -284,42 +289,27 @@ public class MainTest extends JFrame {
     class PwChange extends JDialog implements ActionListener{
         private JPasswordField currentPw, newPw, rePw;
         private JButton pass, check, ok, cancel;
+        private JPanel p;
 
         public PwChange(JFrame parent, String title, boolean modal) {
             super(parent, title, modal);
 
-            JPanel p = new JPanel();
+            p = new JPanel();
             p.setLayout(new GridLayout(4, 3));
 
             currentPw = new JPasswordField(10);
             pass = new JButton("확인");
-            pass.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    //if(currentPw.getText().equals() )
-                    JOptionPane.showMessageDialog(p, "비밀번호가 동일합니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                    newPw.setEditable(true);
-                    rePw.setEditable(true);
-                    check.setEnabled(true);
-                /*
-                else {
-                    JOptionPane.showMessageDialog(p, "비밀번호가 동일하지 않습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                    currentPw.setText("");
-                }
-                 */
-                }
-            });
+            pass.addActionListener(this);
 
             p.add(new JLabel("현재 비밀번호 : "));
             p.add(currentPw);
             p.add(pass);
-
 
             newPw = new JPasswordField(10);
             newPw.setEditable(false);
             p.add(new JLabel("신규 비밀번호 : "));
             p.add(newPw);
             p.add(new JLabel(""));
-
 
             rePw = new JPasswordField(10);
             rePw.setEditable(false);
@@ -341,16 +331,9 @@ public class MainTest extends JFrame {
             p.add(rePw);
             p.add(check);
 
-
-            ok = new JButton("확인");
+            ok = new JButton("변경");
             ok.setEnabled(false);
-            ok.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    //TODO : 변경된 비밀번호 DB에 저장
-                    JOptionPane.showMessageDialog(p, "비밀번호가 변경되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                    dispose();
-                }
-            });
+            ok.addActionListener(this);
             cancel = new JButton("취소");
             cancel.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -367,23 +350,56 @@ public class MainTest extends JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent ae) {
+            String sql = "", s = ae.getActionCommand();
+            ResultSet result;
 
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+
+                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
+                System.out.println("연결 완료!");
+
+                Statement stmt = AdminMain.con.createStatement();
+
+                switch (s){
+                    case "확인" : sql = "select manager_pw from parking.manager where manager_pw='"+ currentPw.getText() +"';";
+                        result = stmt.executeQuery(sql);
+                        if (result.next()) {
+                            JOptionPane.showMessageDialog(p, "비밀번호가 동일합니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                            newPw.setEditable(true);
+                            rePw.setEditable(true);
+                            check.setEnabled(true);
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(p, "비밀번호가 동일하지 않습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                            currentPw.setText("");
+                        }
+                        break;
+                    case "변경" : sql = "update parking.manager set manager_pw = '"+ newPw.getText() +"' where (manager_pw = '"+ currentPw.getText() +"');";
+                        stmt.executeQuery(sql);
+                        JOptionPane.showMessageDialog(p, "비밀번호가 변경되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                        break;
+                }
+                stmt.close();
+                AdminMain.con.close();
+            } catch (SQLException e) {
+                System.err.println("연결 오류" + e.getMessage());
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                System.err.println("드라이버 로드에 실패했습니다.");
+            }
         }
-    }
+    }//Pwchange class 종료
 
     class DBconnection {
         //DB를 위한 변수
-        Connection con = null;
-
-        String server = "root@localhost:3306"; // 서버 주소
-        String user_name = "root"; //  접속자 id
-        String password = "wldbs1004"; // 접속자 pw
-        String sql = ""; //조회할 sql문
+        String sql = "";
         Vector<Vector<String>> rowData;
         JTable table;
         public DBconnection(String sql, Vector<Vector<String>> rowData, JTable table) {
-        this.sql = sql;
+        sql = sql;
         this.rowData = rowData;
         this.table = table;
         String t = table.getName();
@@ -392,10 +408,10 @@ public class MainTest extends JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", user_name, password);
+            AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
             System.out.println("연결 완료!");
 
-            Statement stmt = con.createStatement();
+            Statement stmt = AdminMain.con.createStatement();
 
             ResultSet result = stmt.executeQuery(sql);    //DB로부터 읽어온 데이터
 
@@ -412,7 +428,7 @@ public class MainTest extends JFrame {
                     }   break;
                     case "userParkingTable" : {
                         txt.add(result.getString("car_in"));
-                        txt.add(result.getString("floor_num"));
+                        txt.add(result.getString("area"));
                         txt.add(result.getString("total_fee"));
                     }   break;
                     case "salesTable" : {
@@ -442,7 +458,7 @@ public class MainTest extends JFrame {
                 table.updateUI();
             }
             stmt.close();
-            con.close();
+            AdminMain.con.close();
         } catch (SQLException e) {
             System.err.println("연결 오류" + e.getMessage());
             e.printStackTrace();
