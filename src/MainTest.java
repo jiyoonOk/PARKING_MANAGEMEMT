@@ -129,7 +129,7 @@ public class MainTest extends JFrame {
         Vector<Vector<String>> rowData5 = new Vector<Vector<String>>();
         DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5);
         salesTable = new JTable(model5);
-        qnaScrollPane = new JScrollPane(salesTable);
+        salesScrollPane = new JScrollPane(salesTable);
     }
 
     // 회원관리 탭 클래스
@@ -232,7 +232,11 @@ public class MainTest extends JFrame {
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
                 case "답변 작성": ; break;
-                case "삭제" : ; break;
+                case "삭제" : int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                    if (question_delete == YES_OPTION) {
+                        //TODO : DB에서 계정 삭제
+                        JOptionPane.showMessageDialog(admin, "문의가 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                    }; break;
             }
         }
     }// QnaAdmin 클래스 종료
@@ -251,9 +255,13 @@ public class MainTest extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
-                case "추가": ; break;
-                case "수정" : ; break;
-                case "삭제" : ; break;
+                case "추가" :  break; //TODO : 추가창 만들기
+                case "수정" : break; //TODO : DB 수정
+                case "삭제" : int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                    if (notice_delete == YES_OPTION) {
+                        //TODO : DB에서 계정 삭제
+                        JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                    }; break;
             }
         }
     } //noticeAdmin 종료

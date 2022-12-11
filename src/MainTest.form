@@ -278,14 +278,14 @@
                   <text value="오늘"/>
                 </properties>
               </component>
-              <scrollpane id="94c01" binding="salesScrollPane">
+              <scrollpane id="94c01" binding="salesScrollPane" custom-create="true">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="44a2e" class="javax.swing.JTable" binding="salesTable">
+                  <component id="44a2e" class="javax.swing.JTable" binding="salesTable" custom-create="true">
                     <constraints/>
                     <properties>
                       <preferredScrollableViewportSize width="800" height="700"/>
