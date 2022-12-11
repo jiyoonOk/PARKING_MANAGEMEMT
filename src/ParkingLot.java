@@ -14,7 +14,7 @@ public class ParkingLot extends JFrame {
         JButton[][] btn = new JButton[3][16]; //구역 버튼
         JComboBox floor; //층수 콤보박스
         JLabel area = new JLabel("주차구역 : ");
-        JLabel userFloor = new JLabel("B1"); //사용자선택값 층수(초기값-B1층)
+        JLabel userFloor = new JLabel(); //사용자선택값 층수(초기값-B1층)
         JLabel userNum = new JLabel(); //사용자선택값 구역
         ImageIcon[] carIcons = {
                 new ImageIcon("images/Car.jpg"), //일반, checked
@@ -75,9 +75,9 @@ public class ParkingLot extends JFrame {
         //setBounds 위치 지정
         floor.setBounds(20, 50, 100, 30); //층수 콤보박스
         car.setBounds(20, 100, 500, 400); //주차장 패널
-        area.setBounds(650, 250, 100, 20); //주차구역 라벨
-        userFloor.setBounds(730, 250, 100, 20); //층수 (사용자선택)
-        userNum.setBounds(770, 250, 100, 20); //구역 (사용자선택0
+        area.setBounds(350, 50, 100, 20); //주차구역 라벨
+        userFloor.setBounds(420, 50, 100, 20); //층수 (사용자선택)
+        userNum.setBounds(450, 50, 100, 20); //구역 (사용자선택0
 
         ct.add(floor);      //콤보박스 주차층수(B1, B2, B3)
         ct.add(car);        //주차장 패널
@@ -196,9 +196,10 @@ class AreaActionListener implements ActionListener {
 class Main {
     public static void main(String[] args) {
         ParkingLot win = new ParkingLot("주차");
-        win.setSize(900, 600);
+        win.setSize(600, 600);
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         win.setVisible(true);
+        win.setLocationRelativeTo(null);
     }
 }
 

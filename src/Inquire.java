@@ -3,9 +3,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ParkingSearch extends JFrame implements ActionListener{
+public class Inquire extends JFrame implements ActionListener{
     JButton b;
-    ParkingSearch() {
+    Inquire() {
         Container ct = getContentPane();
         ct.setLayout(null);
 
@@ -18,10 +18,13 @@ public class ParkingSearch extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent ae) {
         //setVisible(false);
         //if () {} //주차일반조회 객체 생성
+        UnbookedInquire inquire = new UnbookedInquire("주차일반조회");
+        inquire.setSize(900,600);
+        inquire.setVisible(true);
         // else {} //주차예약조회 객체 생성
-        Search1 sch1 = new Search1("주차일반조회");
-        sch1.setSize(900,600);
-        sch1.setVisible(true);
+        //BookedInquire bookedInquire = new BookedInquire("주차예약조회");
+        //bookedInquire.setSize(900,600);
+        //bookedInquire.setVisible(true);
     }
 }
 
@@ -33,8 +36,8 @@ public class ParkingSearch extends JFrame implements ActionListener{
 패널을 지우고 새로 올린다는게 클래스 내에서 한다는거야?
 
  */
-class Search1 extends JFrame implements ActionListener {
-    Search1(String title) {
+class UnbookedInquire extends JFrame implements ActionListener {
+    UnbookedInquire(String title) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
@@ -118,9 +121,9 @@ class Search1 extends JFrame implements ActionListener {
     }
 }
 
-class SearchMain {
+class InquireMain {
     public static void main(String[] args) {
-        ParkingSearch win = new ParkingSearch();
+        Inquire win = new Inquire();
         win.setSize(900, 600);
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         win.setVisible(true);
