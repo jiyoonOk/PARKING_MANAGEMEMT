@@ -115,12 +115,6 @@ class FloorItemListener implements ItemListener {
     }
     public void itemStateChanged(ItemEvent ie) {
         String f = (String)jFloor.getSelectedItem();
-        for (i=0; i<jBtn.length; i++) {
-            for (j=0; j<2; j++)   jBtn[i][j].setIcon(jCarIcons[1]); //A1, A2
-            for (j=2; j<4; j++)   jBtn[i][j].setIcon(jCarIcons[2]); //A3, A4
-            for (j=4; j<12; j++)  jBtn[i][j].setIcon(null);         //B, C열
-            for (j=12; j<16; j++) jBtn[i][j].setIcon(jCarIcons[3]); //D열
-        }
         switch (f) {
             case "B1" : //panel jP에 1층 버튼 추가 및 2,3층 버튼 삭제
                 for (i = 0; i < 4; i++  ) {jP[0].add(jBtn[0][i]); jP[0].remove(jBtn[1][i]); jP[0].remove(jBtn[2][i]);} //A열
@@ -185,19 +179,19 @@ class AreaActionListener implements ActionListener {
     }
     //주차 아이콘 설정 메소드
     public void settingIcon(int n, int m) { //n=버튼 배열 원소, m=주차아이콘 배열 원소
-        String f = (String)jFloor.getSelectedItem();
-        switch (f) {
-            case "B1" : jBtn[0][n].setIcon(jCarIcons[m]);
-            case "B2" : jBtn[1][n].setIcon(jCarIcons[m]);
-            case "B3" : jBtn[2][n].setIcon(jCarIcons[m]);
-        }
-        for (i=0; i<jBtn.length; i++) {
-            for (j = 0; j < 2; j++) if (j != n) jBtn[i][j].setIcon(jCarIcons[1]);
-            for (j = 2; j < 4; j++) if (j != n) jBtn[i][j].setIcon(jCarIcons[2]);
-            for (j = 4; j < 12; j++) if (j != n) jBtn[i][j].setIcon(null);
-            for (j = 12; j < 16; j++) if (j != n) jBtn[i][j].setIcon(jCarIcons[3]);
-        }
+    String f = (String)jFloor.getSelectedItem();
+    switch (f) {
+        case "B1" : jBtn[0][n].setIcon(jCarIcons[m]); break;
+        case "B2" : jBtn[1][n].setIcon(jCarIcons[m]); break;
+        case "B3" : jBtn[2][n].setIcon(jCarIcons[m]); break;
     }
+    for (i=0; i<3; i++) {
+        for (j = 0; j < 2; j++) if (j != n) jBtn[i][j].setIcon(jCarIcons[1]);
+        for (j = 2; j < 4; j++) if (j != n) jBtn[i][j].setIcon(jCarIcons[2]);
+        for (j = 4; j < 12; j++) if (j != n) jBtn[i][j].setIcon(null);
+        for (j = 12; j < 16; j++) if (j != n) jBtn[i][j].setIcon(jCarIcons[3]);
+    }
+}
 }
 class Main {
     public static void main(String[] args) {
