@@ -1,5 +1,4 @@
 
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -27,7 +26,8 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 	
 	public  Mypage(){
 		Container ct = getContentPane();
-		//ResultSet result=dbSt.executeQuery(strSql);
+		
+		
 		
 		
 		 title = new JLabel("마이페이지");
@@ -114,37 +114,35 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 			ct.add(cb1); ct.add(special);
 			ct.add(cb2); ct.add(cb3);
 			update.addActionListener(this); 
-			del.addActionListener(this); 
+			del.addActionListener(this);
 			
-	} //생성자 끝
+			}
 	
-	/*try { 
-		Class.forName("com.mysql.cj.jdbc.Driver"); // mysql의 jdbc Driver 연결하기
-		System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-		// 내가 mysql에 만든 student 데이터베이스에 연결하기
-		Connection con=DriverManager.getConnection
-		("jdbc:mysql://localhost:3306/student?serverTimezone=UTC", 
-		"root", "java2020");
-		System.out.println("DB 연결 완료."); 
-		Statement dbSt = con.createStatement();
-		String strSql */
+	
 	
 	public void actionPerformed(ActionEvent ae) {
-	String t_name="",t_id="",t_passwd="",t_carn="",t_call="",t_card="";
-	String strsql;
+	String t_name="",t_id="",t_passwd="",t_carn="",t_call="",t_card="",t_specialneeds="";
 
 	t_name=name2.getText(); t_id=id2.getText(); t_passwd=passwd2.getText();
 	t_carn=carn2.getText(); t_call=call2.getText(); t_card=card2.getText();
 
 		String s=ae.getActionCommand(); 
+		/*
+		 * try { Class.forName("com.mysql.cj.jdbc.Driver");
+		 * System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함"); }
+		 * catch(ClassNotFoundException e) { System.err.println("드라이버 로드에 실패했습니다."); }
+		 * try { Connection con=DriverManager.getConnection(
+		 * "jdbc:mysql://localhost:3306/test?serverTimezone=UTC", "root", "java2020");
+		 * System.out.println("DB 연결 완료."); Statement dbSt = con.createStatement();
+		 * System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다."); String strsql;
+		 */
+		//ResultSet result=dbSt.executeQuery(strSql);
 		
 		if(s=="수정하기") { //수정하기 버튼 누를 시 팝업 이벤트발생, 적힌 정보 DB에 업데이트
 
 			
-	//strsql="UPDATE user SET name='"t_name+"',id='"+t_id+"',passwd='"+t_passwd+
-	//"',carn='"+t_carn+"'call='"+t_call+
-	//"',card='"+t_card+"',specialneeds='"+t_specialneeds"';";  //!한줄로 작성!
-	//dbSt.executeUpdate(strsql); //sql질의어 실행
+//	strsql="UPDATE user SET name='"+t_name+"',id='"+t_id+"',passwd='"+t_passwd+"',carn='"+t_carn+"'call='"+t_call+"',card='"+t_card+"',specialneeds='"+t_specialneeds+"';";  //!한줄로 작성!
+//	dbSt.executeUpdate(strsql); //sql질의어 실행
 
 		JOptionPane.showMessageDialog
 			(this, "정보가 수정되었습니다.","수정완료",JOptionPane.INFORMATION_MESSAGE);
@@ -158,27 +156,31 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 				(this, "정말 계정을 삭제하시겠습니까?", "계정탈퇴",JOptionPane.OK_CANCEL_OPTION );
 			
 			if(answer == JOptionPane.YES_OPTION){ //사용자가 확인을 눌렀을 떄 DB 정보 삭제
-//strsql="DELETE FROM user WHERE id='"+t_id+"';";
-	//dbSt.executeUpdate(strsql);
+				
+//				strsql="DELETE FROM user WHERE id='"+t_id+"';";
+//				dbSt.executeUpdate(strsql); 	
 				
 	//DB정보 삭제 후 로그인화면으로 전환
-				
 				JOptionPane.showMessageDialog
 				(this, "계정이 삭제되었습니다.","계정탈퇴",JOptionPane.INFORMATION_MESSAGE);}
 			} else{ //사용자가 취소를 눌렀을 때 팝업창 사라짐
 			}
-	}
-/* catch(ClassNotFoundException e) { 
-System.err.println("드라이버 로드에 실패했습니다."); 
-} catch (SQLException e) { 
-System.out.println("SQLException : "+e.getMessage()); } */
+		if(s=="이전으로"){
+//		  dbSt.close(); 
+//		    con.close(); // DB연동 끊기
+		}
+//		    } catch (SQLException e) { 
+//		    System.out.println("SQLException : "+e.getMessage()); } 
+}
 
 		
     public void itemStateChanged(ItemEvent e) {
     	t_specialneeds=e.getSource()+" "; //특이사항 선택시 변수저장
              
         }
-	
+    
+  
+
 
 
 	public static void main(String[] args) {

@@ -1,5 +1,4 @@
 
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -7,6 +6,8 @@ import java.awt.event.*;
 import java.sql.*;
 
 public class Notice extends JFrame implements ActionListener  {
+	JButton btn1,btn2,btn3,btn4,btn5;
+	JButton back;
 	
 public Notice() {
 	Container ct = getContentPane();
@@ -19,27 +20,27 @@ public Notice() {
 	 
 	 LineBorder line = new LineBorder(Color.black,1,true);
 	 
-	 JButton btn1 = new JButton("1.0.0 업데이트 사항");
+	  btn1 = new JButton("1.0.0 업데이트 사항");
 	 btn1.setBounds(-10,70,70,30);
 	 btn1.setSize(400,50);
 	 
-	 JButton btn2 = new JButton("1.0.0 업데이트 사항");
+	  btn2 = new JButton("1.0.0 업데이트 사항");
 	 btn2.setBounds(-10,119,70,30);
 	 btn2.setSize(400,50);
 	 
-	 JButton btn3 = new JButton("1.0.0 업데이트 사항");
+	  btn3 = new JButton("1.0.0 업데이트 사항");
 	 btn3.setBounds(-10,168,70,30);
 	 btn3.setSize(400,50);
 	 
-	 JButton btn4 = new JButton("1.0.0 업데이트 사항");
+	  btn4 = new JButton("1.0.0 업데이트 사항");
 	 btn4.setBounds(-10,217,70,30);
 	 btn4.setSize(400,50);
 	 
-	 JButton btn5 = new JButton("1.0.0 업데이트 사항");
+	  btn5 = new JButton("1.0.0 업데이트 사항");
 	 btn5.setBounds(-10,266,70,30);
 	 btn5.setSize(400,50);
 	 
-	 JButton back = new JButton("이전");
+	  back = new JButton("이전");
 		back.setBounds(145,360,80,30);
 		back.setSize(90,30);
 	 
@@ -69,15 +70,18 @@ public void actionPerformed(ActionEvent ae) {
 
 	String s = ae.getActionCommand();
 
-	if (s == "1.0.0 업데이트 사항") { 
+	if (ae.getSource()==btn1||ae.getSource()==btn2||ae.getSource()==btn3||ae.getSource()==btn4||ae.getSource()==btn5) {
+		
 		Noticecheck nocheck = new Noticecheck();
 		nocheck.setSize(400, 500);
 		nocheck.setLocation(400,0);
 		nocheck.setTitle("공지사항 확인");
 		nocheck.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		nocheck.setVisible(true);}
+		nocheck.setVisible(true);
 		
-	//else if ; //이전 버튼 눌렀을 때 메인메뉴창으로...
+	}
+		
+	//else if (s=="이전"){ }; //이전 버튼 눌렀을 때 메인메뉴창으로...
 	
 }
 	

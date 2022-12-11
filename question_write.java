@@ -1,5 +1,4 @@
 
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -61,13 +60,23 @@ public class question_write extends JFrame implements ActionListener {
 	
 	public void actionPerformed(ActionEvent ae) {
 		String s=ae.getActionCommand();
-		String strsql;
 		String t_question_title="",t_question_contents=""; 
 		SimpleDateFormat t_question_date;
 		int t_question_id=1;
 
 		t_question_title=title.getText();
 		t_question_contents=jta.getText();
+		
+		/*
+		 * try { Class.forName("com.mysql.cj.jdbc.Driver");
+		 * System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함"); }
+		 * catch(ClassNotFoundException e) { System.err.println("드라이버 로드에 실패했습니다."); }
+		 * try { Connection con=DriverManager.getConnection(
+		 * "jdbc:mysql://localhost:3306/test?serverTimezone=UTC", "root", "java2020");
+		 * System.out.println("DB 연결 완료."); Statement dbSt = con.createStatement();
+		 * System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다."); String strsql;
+		 */
+			
 		
 		if(s=="등록하기") { 
 			String text=jta.getText(); 	
@@ -76,7 +85,7 @@ public class question_write extends JFrame implements ActionListener {
 		if(text.length()>0&&text2.length()>0) {
 		JOptionPane.showMessageDialog
 			(this, "문의 등록이 완료되었습니다.","등록완료",JOptionPane.INFORMATION_MESSAGE);
-		dispose();
+		
 		question in1= new question();
 		in1.setSize(400,500);
 		in1.setTitle("문의사항");
@@ -84,15 +93,15 @@ public class question_write extends JFrame implements ActionListener {
 		in1.setVisible(true);
 		
 		t_question_id=t_question_id++; //문의번호 1씩증가
-		t_question_date= new SimpleDateFormat("yyyy/MM/dd"); //문의일자 년,월,일 들어감
+		t_question_date= new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //문의일자 년,월,일 들어감
 		
+		dispose();
 		
-		//strsql="UPDATE Inquiry_info SET question_contents='"+t_question_contents+"',question_title='"+t_question_title+"',question_id='"+t_question_id+"',question_date='"+t_question_date"';";
-		//dbSt.executeUpdate(strsql);
+//		strsql="UPDATE Inquiry_info SET question_contents='"+t_question_contents+"',question_title='"+t_question_title+"',question_id='"+t_question_id+"',question_date='"+t_question_date+"';";
+//		dbSt.executeUpdate(strsql);
 		//문의 번호, 작성 일자는 등록완료 시 번호랑 일자 들어감
-		//번호는 적은 순서대로 작성번호 입력됨
-		//일자는 버튼 누르자마자 그 년,월,일 들어감
 		} 
+		
 		else{ //문의사항이 작성되지 않았을 경우 예외처리
 				 JOptionPane.showMessageDialog
 				(this, "문의사항을 입력하세요!","문의사항 등록실패",JOptionPane.INFORMATION_MESSAGE);}
@@ -107,7 +116,13 @@ public class question_write extends JFrame implements ActionListener {
 				in1.setTitle("문의사항");
 				in1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				in1.setVisible(true);	 
+				
+//				dbSt.close(); 
+//				con.close(); // DB연동 끊기
 		}
+		
+//		} catch (SQLException e) {
+//		System.out.println("SQLException : "+e.getMessage()); }
 	  
 	}
 	
