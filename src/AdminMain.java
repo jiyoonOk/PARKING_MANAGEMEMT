@@ -31,6 +31,7 @@ public class AdminMain extends JFrame {
     JTable salesTable;
     private UserAdmin user;
     private JScrollPane salesScrollPane;
+    private JTextField total;
 
     //QnATab 에 필요한 변수
     private JTextField qnaTitleField, qnaIDField;
@@ -99,7 +100,11 @@ public class AdminMain extends JFrame {
         Vector<String> columnName = new Vector<String>();
         columnName.add("ID"); columnName.add("이름"); columnName.add("전화번호"); columnName.add("차량번호"); columnName.add("포인트");
         rowData = new Vector<Vector<String>>();
-        DefaultTableModel model = new DefaultTableModel(rowData, columnName);
+        DefaultTableModel model = new DefaultTableModel(rowData, columnName){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }};
         userTable = new JTable(model);
         userTable.setName("userTable");
         userScrollPane = new JScrollPane(userTable);
@@ -108,7 +113,11 @@ public class AdminMain extends JFrame {
         Vector<String> columnName2 = new Vector<String>();
         columnName2.add("날짜"); columnName2.add("주차 구역"); columnName2.add("이용 금액");
         rowData2 = new Vector<Vector<String>>();
-        DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2);
+        DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }};
         userParkingTable = new JTable(model2);
         userParkingTable.setName("userParkingTable");
         userParkingScrollPane = new JScrollPane(userParkingTable);
@@ -117,7 +126,11 @@ public class AdminMain extends JFrame {
         Vector<String> columnName3 = new Vector<String>();
         columnName3.add("문의번호"); columnName3.add("제목"); columnName3.add("내용"); columnName3.add("날짜"); columnName3.add("ID");
         rowData3 = new Vector<Vector<String>>();
-        DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3);
+        DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }};
         qnaJTable = new JTable(model3);
         qnaJTable.setName("qnaJTable");
         qnaScrollPane = new JScrollPane(qnaJTable);
@@ -126,7 +139,11 @@ public class AdminMain extends JFrame {
         Vector<String> columnName4 = new Vector<String>();
         columnName4.add("공지번호"); columnName4.add("제목"); columnName4.add("내용"); columnName4.add("날짜");
         rowData4 = new Vector<Vector<String>>();
-        DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4);
+        DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }};
         noticeJTable = new JTable(model4);
         noticeJTable.setName("noticeJTable");
         noticeScrollPane = new JScrollPane(noticeJTable);
@@ -136,10 +153,26 @@ public class AdminMain extends JFrame {
         Vector<String> columnName5 = new Vector<String>();
         columnName5.add("이용 날짜"); /*columnName5.add("차량번호");*/ columnName5.add("금액"); columnName5.add("아이디");
         rowData5 = new Vector<Vector<String>>();
-        DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5);
+        DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }};
         salesTable = new JTable(model5);
         salesTable.setName("salesTable");
         salesScrollPane = new JScrollPane(salesTable);
+
+        /*int sum = 0;
+        for(int i =0;i<salesTable.getRowCount();i++){
+            sum += Integer.parseInt(salesTable.getValueAt(i, 2).toString());
+            //here i is the row wise iteration and 2 is the column number of mycalculation attribute
+        }*/
+        Vector<String> ex = new Vector<String>();
+        Integer sum = 0;
+        for(int i=0;i<rowData5.size();i++) {
+            ex = rowData5.get(i);
+            sum+=Integer.parseInt(ex.get(2)); }
+        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");
     }
 
     // 회원관리 탭 클래스
@@ -223,7 +256,7 @@ public class AdminMain extends JFrame {
                     //TODO : 쿼리문으로 결제완료 / 결제취소 구분
                 }
             });
-            salesTable = new JTable();
+                //getSum();
         }
 
         @Override
@@ -231,6 +264,16 @@ public class AdminMain extends JFrame {
             System.out.println(e.getActionCommand() + " 버튼 누름");
             //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
         }
+
+        /*public void getSum() {
+
+            int sum = 0;
+            for(int i =0;i<salesTable.getRowCount();i++){
+                sum = sum +Integer.parseInt(salesTable.getValueAt(i, 2).toString());
+                //here i is the row wise iteration and 2 is the column number of mycalculation attribute
+            }
+            total.setText(Integer.toString(sum));
+        }*/
     }//salesAdmin 클래스 종료
 
     // 문의사항 탭 클래스
@@ -398,73 +441,76 @@ public class AdminMain extends JFrame {
         String sql = "";
         Vector<Vector<String>> rowData;
         JTable table;
+
         public DBconnection(String sql, Vector<Vector<String>> rowData, JTable table) {
-        sql = sql;
-        this.rowData = rowData;
-        this.table = table;
-        String t = table.getName();
-        // JDBC 드라이버 로드
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+            sql = sql;
+            this.rowData = rowData;
+            this.table = table;
+            String t = table.getName();
+            // JDBC 드라이버 로드
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
-            AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
-            System.out.println("연결 완료!");
+                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
+                System.out.println("연결 완료!");
 
-            Statement stmt = AdminMain.con.createStatement();
+                Statement stmt = AdminMain.con.createStatement();
 
-            ResultSet result = stmt.executeQuery(sql);    //DB로부터 읽어온 데이터
+                ResultSet result = stmt.executeQuery(sql);    //DB로부터 읽어온 데이터
 
-            while (result.next()) {  //DB에서 읽어와 표에 출력하기
-                Vector<String> txt = new Vector<String>();
-                // 한 레코드를 읽으면 1차원 벡터로 만들어 표에 한 행씩 추가
-                switch (t){
-                    case "userTable" : {
-                        txt.add(result.getString("id"));
-                        txt.add(result.getString("name"));
-                        txt.add(result.getString("phone_num"));
-                        txt.add(result.getString("car_num"));
-                        txt.add(result.getString("point"));
-                    }   break;
-                    case "userParkingTable" : {
-                        txt.add(result.getString("car_in"));
-                        txt.add(result.getString("area"));
-                        txt.add(result.getString("total_fee"));
-                    }   break;
-                    case "salesTable" : {
-                        txt.add(result.getString("car_in"));
-                        //txt.add(resultAllUser.getString("car_num"));
-                        txt.add(result.getString("total_fee"));
-                        txt.add(result.getString("user_id"));
-                    }   break;
-                    case "qnaJTable" : {
-                        txt.add(result.getString("question_id"));
-                        txt.add(result.getString("question_title"));
-                        txt.add(result.getString("question_contents"));
-                        txt.add(result.getString("question_date"));
-                        txt.add(result.getString("user_id"));
+                while (result.next()) {  //DB에서 읽어와 표에 출력하기
+                    Vector<String> txt = new Vector<String>();
+                    // 한 레코드를 읽으면 1차원 벡터로 만들어 표에 한 행씩 추가
+                    switch (t) {
+                        case "userTable": {
+                            txt.add(result.getString("id"));
+                            txt.add(result.getString("name"));
+                            txt.add(result.getString("phone_num"));
+                            txt.add(result.getString("car_num"));
+                            txt.add(result.getString("point"));
+                        }
                         break;
-                    }
-                    case "noticeJtable" : {
-                        txt.add(result.getString("notice_id"));
-                        txt.add(result.getString("notice_title"));
-                        txt.add(result.getString("notice_contents"));
-                        txt.add(result.getString("notice_date"));
+                        case "userParkingTable": {
+                            txt.add(result.getString("car_in"));
+                            txt.add(result.getString("area"));
+                            txt.add(result.getString("total_fee"));
+                        }
                         break;
+                        case "salesTable": {
+                            txt.add(result.getString("car_in"));
+                            //txt.add(resultAllUser.getString("car_num"));
+                            txt.add(result.getString("total_fee"));
+                            txt.add(result.getString("user_id"));
+                        }
+                        break;
+                        case "qnaJTable": {
+                            txt.add(result.getString("question_id"));
+                            txt.add(result.getString("question_title"));
+                            txt.add(result.getString("question_contents"));
+                            txt.add(result.getString("question_date"));
+                            txt.add(result.getString("user_id"));
+                            break;
+                        }
+                        case "noticeJtable": {
+                            txt.add(result.getString("notice_id"));
+                            txt.add(result.getString("notice_title"));
+                            txt.add(result.getString("notice_contents"));
+                            txt.add(result.getString("notice_date"));
+                            break;
+                        }
                     }
+                    rowData.add(txt);
+                    table.updateUI();
                 }
-
-                rowData.add(txt);
-                table.updateUI();
+                stmt.close();
+                AdminMain.con.close();
+            } catch (SQLException e) {
+                System.err.println("연결 오류" + e.getMessage());
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                System.err.println("드라이버 로드에 실패했습니다.");
             }
-            stmt.close();
-            AdminMain.con.close();
-        } catch (SQLException e) {
-            System.err.println("연결 오류" + e.getMessage());
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("드라이버 로드에 실패했습니다.");
         }
-    }
     }
 
