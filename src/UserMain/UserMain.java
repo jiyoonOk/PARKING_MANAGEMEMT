@@ -5,36 +5,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import common.MakeParkingLot;
 import view.CostFrame;
 
 public class UserMain extends JFrame{
+    public static final int TOP_OF_FRAME = 30, TOP_OF_PARK = 100; //전체 기준
+    public static final int FIRST_OF_FRAME = 50, FIRST_OF_INFO = 725; //주차장 기준
+    public static final int WIDTH_OF_MAIN_BUTTON = 225, HEIGHT_OF_MAIN_BUTTON = 100; //메인 버튼
     JButton fareTagButton, menuButton, rsvButton, parkButton, checkButton, payButton;
 
     public UserMain() {
+        //---------------------------------------------------------------------------패널생성
         Container mainCt = getContentPane();
-        mainCt.setLayout(new BorderLayout());
+        mainCt.setLayout(null);
 
-        
-        JPanel parkingLot = new JPanel();       //CENTER
-        parkingLot.setLayout(new BorderLayout());
-        parkingLot.setBackground(Color.LIGHT_GRAY);
 
-        //TODO !# 주차장 불러오기
+        //---------------------------------------------------------------------------
 
-        JPanel topPanel = new JPanel();       //NORTH
-        topPanel.setLayout(new FlowLayout((FlowLayout.LEFT)));
-        
-        JPanel bottom_pnl = new JPanel();       //SOUTH - 확인취소 버튼 들어가는 곳과 규격 맞춤
-        bottom_pnl.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        JPanel mainPanel = new JPanel();    //EAST
-        GridLayout g1 = new GridLayout(6,1);
-        g1.setVgap(10); //상하여백
-        g1.setHgap(50); //좌우여백
-        mainPanel.setLayout(g1);
-
-        JPanel fare_menu_Panel = new JPanel();  //요금표랑 메뉴버튼 넣을 Panel
-        fare_menu_Panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         fareTagButton = new JButton("요금표");
         fareTagButton.addActionListener(new ActionListener() {    //요금표 클릭 시
@@ -107,27 +95,27 @@ public class UserMain extends JFrame{
             }
         });
 
+        MakeParkingLot park = new MakeParkingLot();
+        park.floor.setBounds(FIRST_OF_FRAME, TOP_OF_FRAME, 100, 30);   //주차층수 콤보박스(B1, B2, B3)
+        park.car.setBounds(FIRST_OF_FRAME, TOP_OF_PARK, 650, 450);                   //주차장 패널
 
-/*
-        topPanel.add(floorCBox);       //층 선택 콤보박스
-        TODO !# ComboBox 추가하기
- */
+        fareTagButton.setBounds(FIRST_OF_INFO,TOP_OF_FRAME, 100, 30);            //요금표 버튼
+        menuButton.setBounds(855, TOP_OF_FRAME, 95, 30);                      //메뉴 버튼
 
-        fare_menu_Panel.add(fareTagButton); //요금표
-        fare_menu_Panel.add(menuButton);    //메뉴버튼
-
-        mainPanel.add(fare_menu_Panel);     //요금표+메뉴버튼
-        mainPanel.add(rsvButton);           //예약버튼
-        mainPanel.add(parkButton);          //주차버튼
-        mainPanel.add(checkButton);         //조회버튼
-        mainPanel.add(payButton);           //정산버튼
-
-        mainCt.add(topPanel, BorderLayout.NORTH);      //상단 패널
-        mainCt.add(parkingLot, BorderLayout.CENTER);   //주차장 패널
-        mainCt.add(mainPanel, BorderLayout.EAST);      //우측 패널
+        rsvButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+10, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //예약 버튼
+        parkButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+110, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);            //주차 버튼
+        checkButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+220, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);           //조회 버튼
+        payButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+330, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //정산 버튼
 
 
-
+        mainCt.add(park.floor);   //주차층수 콤보박스
+        mainCt.add(park.car);                   //주차장패널
+        mainCt.add(fareTagButton);          //요금표
+        mainCt.add(menuButton);             //메뉴버튼
+        mainCt.add(rsvButton);              //예약버튼
+        mainCt.add(parkButton);             //주차버튼
+        mainCt.add(checkButton);            //조회버튼
+        mainCt.add(payButton);              //정산버튼
 
 
     }//UserMain 생성자 끝

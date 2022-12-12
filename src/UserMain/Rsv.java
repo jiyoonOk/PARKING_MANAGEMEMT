@@ -6,10 +6,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.util.Calendar;
+
+import common.MakeParkingLot;
 
 
 public class Rsv extends JFrame {
+
+    public static final int FIRST_OF_HALF_INFO = 840, GAP = 5, DEFAULT_SIZE = 110;
 
     String month;
     String[] date, hour, min, time; //시간선택
@@ -17,6 +20,7 @@ public class Rsv extends JFrame {
     JTextField inputPoint_JTF; //사용할 포인트 입력
     public int myPoint_int, usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
     JButton usePointBtn, useAllPointBtn, rsvBtn, cancelBtn; //포인트 사용, 전액사용, 예약, 취소 버튼
+
 
 
 
@@ -89,7 +93,7 @@ public class Rsv extends JFrame {
         //TODO DB : 포인트 가져와서 초기화하기
         inputPoint_JTF = new JTextField(8);      //사용할 포인트 입력
         usePointBtn = new JButton("사용");            //사용 버튼
-        useAllPointBtn = new JButton("전액사용");
+        useAllPointBtn = new JButton("ALL");
         usePointBtn.addActionListener(new ActionListener() { //포인트 사용 버튼 클릭 시
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -97,10 +101,11 @@ public class Rsv extends JFrame {
                 if (i <= myPoint_int){ //보유 포인트 내에서 사용하는지 확인
                     if (i > paidMoney_int) {
                         JOptionPane.showMessageDialog(null, "결제 금액을 초과하여 쓸 수 없습니다.");
+                    } else {
+                        usePoint_int = i; // 확인 후 저장
+                        paidMoney_int -= usePoint_int; //결제금액에서 포인트금액만큼 빼기
+                        price.setText("선결제금액: " + paidMoney_int + "원");
                     }
-                    usePoint_int = i; // 확인 후 저장
-                    paidMoney_int -= usePoint_int; //결제금액에서 포인트금액만큼 빼기
-                    price.setText("선결제금액: "+paidMoney_int+"원");
                 } else { //보유 포인트 범위 벗어남
                     JOptionPane.showMessageDialog(null, "보유 포인트를 확인해주세요");
                 }
@@ -138,89 +143,78 @@ public class Rsv extends JFrame {
 
 
 
+        Container rsvCt = getContentPane();
+        rsvCt.setLayout(null);
 
-        JPanel panel = new JPanel();            //CENTER - 임시 주차장
-        panel.setLayout(new BorderLayout());
-        panel.setBackground(Color.LIGHT_GRAY);
-
-        JPanel top_pnl = new JPanel();          //NORTH - 층선택 ComBox 들어감
-        top_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JPanel bottom_pnl = new JPanel();       //SOUTH - 확인취소 버튼
-        bottom_pnl.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        JPanel rsv_pnl = new JPanel();          //EAST - 나머지 것들
-        rsv_pnl.setLayout(new GridLayout(4,1));
-
-
-
-        JPanel p1 = new JPanel();       //rsv_pnl 첫번째 칸
-        p1.setLayout(new GridLayout(4,2));
         //TODO DB : 이름, 차량번호 가져오기
-        JLabel name_JLabel = new JLabel("이름: ");        //이름:  -(1,1)
-        JLabel name = new JLabel("이다은");               //이름 -(1,2)
+        JLabel title = new JLabel("주차예약");
+        JLabel name_JLabel = new JLabel("이    름: ");         //이름:  -(1,1)
+        JLabel name = new JLabel("이다은");                //이름 -(1,2)
         JLabel carNum_JLabel = new JLabel("차량번호: ");   //차량번호 -(2,1)
         JLabel carNum = new JLabel("12오4453");           //차량번호 -(2,2)
         JLabel location_JLabel = new JLabel("주차구역: "); //주차선택 -(3,1)
-        JLabel choose_location = new JLabel("층" + "구역");    //층, 구역 -(3,2)
+        JLabel choose_areaFloor = MakeParkingLot.areaFloor;   //주차위치(층)
+        JLabel choose_areaNum = MakeParkingLot.areaNum;       //주차위치(구역)
         JLabel rsv = new JLabel("예약일시: ");      //시간선택 -(4,1)
-
-        p1.add(name_JLabel);   p1.add(name);
-        p1.add(carNum_JLabel);  p1.add(carNum);
-        p1.add(location_JLabel); p1.add(choose_location);
-        p1.add(rsv);
-
-
-        JPanel p2 = new JPanel();       //rsv_pnl 두번쨰 칸
-        p2.setLayout(new GridLayout(3,4));
         JLabel month = new JLabel("월");           //월 -(1,2)
         JLabel date = new JLabel("일");            //일 -(1,4)
         JLabel hour = new JLabel("시");            //시 -(2,2)
         JLabel minute = new JLabel("분");          //분 -(2,4)
-
-        p2.add(monthComBox);    p2.add(month);      p2.add(dateComBox);     p2.add(date);
-        p2.add(hourComBox);     p2.add(hour);       p2.add(minComBox);      p2.add(minute);
-
-
-        JPanel p3 = new JPanel();
-        p3.setLayout(new GridLayout(4,2));
         JLabel time = new JLabel("이용시간: ");     //이용시간 선택 -(1,1)
         JLabel point = new JLabel("포인트 사용: "); //포인트 -(2,1)
         JLabel showMyPoint = new JLabel("보유 포인트: " + myPoint_int);   //보유(사용가능) 포인트 출력 -(4,1)
         showMyPoint.setForeground(Color.RED);
-
-        p3.add(time);   p3.add(timeComBox);
-        p3.add(point);  p3.add(new JLabel(""));
-        p3.add(inputPoint_JTF); p3.add(usePointBtn); p3.add(useAllPointBtn);
-        p3.add(showMyPoint);
-
-
-        JPanel p4 = new JPanel();
-        p4.setLayout(new GridLayout(2,1));
-        //price 는 미리 정의
         JLabel plus_point = new JLabel("( [결제금액 * 3%] point 적립 예정)"); //-(2)
 
-        p4.add(price);  p4.add(plus_point);
 
 
+        title.setBounds(800, 50, 75, 30);
 
-        rsv_pnl.add(p1);
-        rsv_pnl.add(p2);
-        rsv_pnl.add(p3);
-        rsv_pnl.add(p4);
+        name_JLabel.setBounds(UserMain.FIRST_OF_INFO, 100, DEFAULT_SIZE, 25); name.setBounds(FIRST_OF_HALF_INFO, 100, DEFAULT_SIZE, 25);
+        carNum_JLabel.setBounds(UserMain.FIRST_OF_INFO, 130, DEFAULT_SIZE, 25); carNum.setBounds(FIRST_OF_HALF_INFO, 130, DEFAULT_SIZE, 25);
+        location_JLabel.setBounds(UserMain.FIRST_OF_INFO, 160, DEFAULT_SIZE, 25);
+        choose_areaFloor.setBounds(FIRST_OF_HALF_INFO, 160, 25, 25); choose_areaNum.setBounds(870, 160, 25, 25);
 
-        bottom_pnl.add(rsvBtn); bottom_pnl.add(cancelBtn); //예약, 취소 버튼
+        rsv.setBounds(UserMain.FIRST_OF_INFO, 190, DEFAULT_SIZE, 25);
+        monthComBox.setBounds(UserMain.FIRST_OF_INFO, 220, 80, 25); month.setBounds(810, 220, 25, 25);
+        dateComBox.setBounds(FIRST_OF_HALF_INFO, 220, 80, 25); date.setBounds(925, 220, 25, 25);
+        hourComBox.setBounds(UserMain.FIRST_OF_INFO, 250, 80, 25); hour.setBounds(810, 250, 25, 25);
+        minComBox.setBounds(FIRST_OF_HALF_INFO, 250, 80, 25); minute.setBounds(925, 250, 25, 25);
 
-/*
-        top_pnl.add(floorCBox);
-        TODO !# ComboBox 추가하기
- */
+        time.setBounds(UserMain.FIRST_OF_INFO, 280, DEFAULT_SIZE, 25); timeComBox.setBounds(FIRST_OF_HALF_INFO, 280, DEFAULT_SIZE, 25);
 
-        Container rsvCt = getContentPane();
-        rsvCt.add(panel, BorderLayout.CENTER);
-        rsvCt.add(top_pnl, BorderLayout.NORTH);
-        rsvCt.add(bottom_pnl, BorderLayout.SOUTH);
-        rsvCt.add(rsv_pnl, BorderLayout.EAST);
+        point.setBounds(UserMain.FIRST_OF_INFO, 310, DEFAULT_SIZE, 25);
+        inputPoint_JTF.setBounds(UserMain.FIRST_OF_INFO, 340, 95, 25);
+        usePointBtn.setBounds(825, 340, 60, 25); useAllPointBtn.setBounds(890, 340, 60, 25);
+        showMyPoint.setBounds(UserMain.FIRST_OF_INFO, 370, 110, 25);
+
+        plus_point.setBounds(UserMain.FIRST_OF_INFO, 430, 200, 25);
+
+        rsvBtn.setBounds(UserMain.FIRST_OF_INFO, 470, DEFAULT_SIZE, 50); cancelBtn.setBounds(FIRST_OF_HALF_INFO, 470, DEFAULT_SIZE, 50);
+
+
+        rsvCt.add(MakeParkingLot.floor);
+        rsvCt.add(MakeParkingLot.car);
+        rsvCt.add(title);
+
+        rsvCt.add(name_JLabel);   rsvCt.add(name);
+        rsvCt.add(carNum_JLabel);  rsvCt.add(carNum);
+        rsvCt.add(location_JLabel); rsvCt.add(choose_areaFloor); rsvCt.add(choose_areaNum);
+
+        rsvCt.add(rsv);
+        rsvCt.add(monthComBox);    rsvCt.add(month);      rsvCt.add(dateComBox);     rsvCt.add(date);
+        rsvCt.add(hourComBox);     rsvCt.add(hour);       rsvCt.add(minComBox);      rsvCt.add(minute);
+
+        rsvCt.add(time);   rsvCt.add(timeComBox);
+
+        rsvCt.add(point);
+        rsvCt.add(inputPoint_JTF); rsvCt.add(usePointBtn); rsvCt.add(useAllPointBtn);
+        rsvCt.add(showMyPoint);
+
+        rsvCt.add(price);  rsvCt.add(plus_point);
+
+        rsvCt.add(rsvBtn); rsvCt.add(cancelBtn); //예약, 취소 버튼
+
 
     }//Rsv 생성자 끝
 
