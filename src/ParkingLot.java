@@ -193,7 +193,7 @@ class AreaActionListener implements ActionListener {
     }
 }
 }
-class Main {
+class ParkingLotMain {
     public static void main(String[] args) {
         ParkingLot win = new ParkingLot("주차");
         win.setSize(600, 600);
