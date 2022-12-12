@@ -1,5 +1,3 @@
-import view.CostFrame;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,95 +5,90 @@ import java.awt.event.ActionListener;
 
 
 
-class PopUp extends JFrame implements ActionListener {
-    JButton b1, b2;
-    PopUp() {
+class Pay extends JFrame implements ActionListener {
+    Pay() {
         Container ct = getContentPane();
         ct.setLayout(null);
 
-        b1 = new JButton("정산");
-        b1.setBounds(50,100,70,30);
-        b2 = new JButton("요금표");
-        b2.setBounds(150,100,100,30);
-        ct.add(b1); ct.add(b2);
+        JButton b = new JButton("정산");
+        b.setBounds(50,100,70,30);
+        ct.add(b);
 
-        b1.addActionListener(this);
-        b2.addActionListener(this);
+        b.addActionListener(this);
     }
-
     public void actionPerformed(ActionEvent ae) {
         if(ae.getActionCommand().equals("정산")){
             if(true) { //예약 TODO 추후 조건문 추가하기
-                if (false) { //예약시간이 초과되었으면
-                    BookTimeOut bto = new BookTimeOut("예약시간 초과이용");
-                    bto.setSize(300,400);
-                    bto.setVisible(true);
+                if (false) { //초과금액 결제 클래스
+                    ExcessFeePay excessFee = new ExcessFeePay("초과금액결제");
+                    excessFee.setSize(500,400);
+                    excessFee.setVisible(true);
                 }
-                else {  //예약시간 정상 출차
-                    Booked bd = new Booked("예약 주차 출차");
-                    bd.setSize(300,400);
-                    bd.setVisible(true);
+                else {  //예약 정상 출차 클래스
+                    RsvPopUp rsvPipUp = new RsvPopUp("정상 출차");
+                    rsvPipUp.setSize(500,400);
+                    rsvPipUp.setVisible(true);
                 }
             }
-            else { //그냥 출차
-                Out out = new Out("주차 출차");
-                out.setSize(300,400);
-                out.setVisible(true);
+            else { //일반 출차 결제 클래스
+                NormalPay nomal = new NormalPay("출차 결제");
+                nomal.setSize(500,400);
+                nomal.setVisible(true);
             }
         }
-        else {
-            CostFrame cd = new CostFrame("요금표");
-            cd.setSize(300,300);
-            cd.setVisible(true);
-        }
+
     }
 }
-class Out extends JFrame implements ActionListener{ // 예약 안 하고 그냥 출차. JDialog 클래스 객체 생성
-    Out(String title) {
+
+class NormalPay extends JFrame implements ActionListener{
+    NormalPay(String title) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
 
-        //우선 상수 선언
-        final String f_name = "양지은";
-        final String f_carNum = "38너1849";
-        final String f_inTime = "3시 30분";
-        final String f_outTime = "6시";
-        final String f_amount = "10000원";
-        final String f_point = "5400원";
+        //테스트용 상수 선언
+        String f_name = "양지은";
+        String f_carNum = "38너1849";
+        String f_inTime = "3시 30분";
+        String f_outTime = "6시";
+        String f_amount = "10000원";
+        String f_point = "5400원";
 
-        JLabel l1_name = new JLabel("이        름 : ");
-        JLabel l2_carNum = new JLabel("차량번호 : ");
-        JLabel l3_inTime = new JLabel("입차시간 : ");
-        JLabel l4_outTime = new JLabel("출차시간 : ");
-        JLabel l5_amount = new JLabel("결제금액 : ");
-        JLabel l6_point = new JLabel("적  립  금 : ");
+        JLabel name = new JLabel("이        름 : ");
+        JLabel carNum = new JLabel("차량번호 : ");
+        JLabel inTime = new JLabel("입차시간 : ");
+        JLabel outTime = new JLabel("출차시간 : ");
+        JLabel amount = new JLabel("결제금액 : ");
+        JLabel point = new JLabel("적립금사용: ");
 
-        JLabel name = new JLabel(f_name);
-        JLabel carNum = new JLabel(f_carNum);
-        JLabel inTime = new JLabel(f_inTime);
-        JLabel outTime = new JLabel(f_outTime);
-        JLabel amount = new JLabel(f_amount);
-        JLabel point = new JLabel(f_point);
+        JLabel userName = new JLabel(f_name);
+        JLabel userCarNum = new JLabel(f_carNum);
+        JLabel userInTime = new JLabel(f_inTime);
+        JLabel userOutTime = new JLabel(f_outTime);
+        JLabel userAmount = new JLabel(f_amount);
+        JTextField userPoint = new JTextField();
 
-        JButton b = new JButton("결제");
-        b.addActionListener(this);
-        l1_name.setBounds(50,100,100,20); name.setBounds(120,100,100,20);
-        l2_carNum.setBounds(50,120,100,20); carNum.setBounds(120,120,100,20);
-        l3_inTime.setBounds(50,140,100,20); inTime.setBounds(120,140,100,20);
-        l4_outTime.setBounds(50,160,100,20); outTime.setBounds(120,160,100,20);
-        l5_amount.setBounds(50,180,100,20); amount.setBounds(120,180,100,20);
-        l6_point.setBounds(50,200,100,20); point.setBounds(120,200,100,20);
-        b.setBounds(100,300,100,20);
+        JButton btnPoint = new JButton("전액사용");
+        JButton btnPay = new JButton("결제");
+        btnPoint.addActionListener(this);
+        btnPay.addActionListener(this);
 
-        ct.add(l1_name); ct.add(name);
-        ct.add(l2_carNum); ct.add(carNum);
-        ct.add(l3_inTime); ct.add(inTime);
-        ct.add(l4_outTime); ct.add(outTime);
-        ct.add(l5_amount); ct.add(amount);
-        ct.add(l6_point); ct.add(point);
-        ct.add(b);
+        name.setBounds(50,100,100,20);    userName.setBounds(120,100,100,20);
+        carNum.setBounds(50,120,100,20);  userCarNum.setBounds(120,120,100,20);
+        inTime.setBounds(50,140,100,20);  userInTime.setBounds(120,140,100,20);
+        outTime.setBounds(50,160,100,20); userOutTime.setBounds(120,160,100,20);
+        amount.setBounds(50,180,100,20);  userAmount.setBounds(120,180,100,20);
+        point.setBounds(50,200,100,20);   userPoint.setBounds(120,200,100,20);  btnPoint.setBounds(200,200,70,20);
 
+        btnPay.setBounds(100,300,100,20);
+
+        ct.add(name);    ct.add( userName);
+        ct.add(carNum);  ct.add( userCarNum);
+        ct.add(inTime);  ct.add( userInTime);
+        ct.add(outTime); ct.add( userOutTime);
+        ct.add(amount);  ct.add( userAmount);
+        ct.add(point);   ct.add( userPoint); ct.add(btnPoint);
+        ct.add(btnPay);
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -109,14 +102,14 @@ class Out extends JFrame implements ActionListener{ // 예약 안 하고 그냥 
     //TODO 결제중 팝업 오류 (결제중->3초 후->결제완료 떠야 하는데 결제중 x버튼 눌러야 3초 후 결제완료로 전환됨)
      }
 }
-class Booked extends JFrame implements ActionListener {// 예약 하고 출차. JDialog 클래스 객체 생성
-    Booked(String title) {
+class RsvPopUp extends JFrame implements ActionListener {// 예약 하고 출차. JDialog 클래스 객체 생성
+    RsvPopUp(String title) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
 
-        final String f_name = "양지은";
-        final String f_carNum = "38너1849";
+        String f_name = "양지은";
+        String f_carNum = "38너1849";
 
         JLabel l1_name = new JLabel("이        름 : ");
         JLabel l2_carNum = new JLabel("차량번호 : ");
@@ -140,17 +133,17 @@ class Booked extends JFrame implements ActionListener {// 예약 하고 출차. 
         dispose();
     }
 }
-class BookTimeOut extends JFrame implements ActionListener {// 예약했는데 시간초과. JDialog 클래스 객체 생성
-    BookTimeOut(String title) {
+class ExcessFeePay extends JFrame implements ActionListener {// 예약했는데 시간초과. JDialog 클래스 객체 생성
+    ExcessFeePay(String title) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
 
-        final String f_name = "양지은";
-        final String f_carNum = "38너1849";
-        final String f_timeOut = "3시 30분";
-        final String f_amount = "10000";
-        final String f_timeOutCost = "5400원";
+        String f_name = "양지은";
+        String f_carNum = "38너1849";
+        String f_timeOut = "3시 30분";
+        String f_amount = "10000";
+        String f_timeOutCost = "5400원";
 
         JLabel l1_name = new JLabel("이        름 : ");
         JLabel l2_carNum = new JLabel("차량번호 : ");
@@ -191,9 +184,9 @@ class BookTimeOut extends JFrame implements ActionListener {// 예약했는데 �
     }
 }
 
-class PopUpMain {
+class PayMain {
         public static void main(String[] args) {
-        PopUp win = new PopUp();
+            Pay win = new Pay();
         win.setSize(300, 300);
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         win.setVisible(true);

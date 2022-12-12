@@ -7,13 +7,13 @@ import java.awt.event.*;
 public class Inquire extends JFrame implements ActionListener {
     //TODO 클래스 합치고나서 생성자 어떻게 할건지?
     JButton b;
-    JPanel rsvPanel, gPanel;
+    JPanel rsvPanel, normalPanel;
     Inquire() {
         Container ct = getContentPane();
         ct.setLayout(null);
         boolean is_reserved = true; //주차 예약 유무. 임시로 true 해놓음
         rsvPanel = new JPanel();
-        gPanel = new JPanel();
+        normalPanel = new JPanel();
         JButton b = new JButton("확인");
         b.addActionListener(this);
 
@@ -88,16 +88,16 @@ public class Inquire extends JFrame implements ActionListener {
         for (int i = 12; i < 16; i++) p[5].add(btn[i]); //D열
 
         //주차 조회 패널 만들기
-        gPanel.setLayout(new GridLayout(7, 1));
+        normalPanel.setLayout(new GridLayout(7, 1));
 
         JPanel p2[] = new JPanel[6];
         for (int i = 0; i < p2.length; i++){
-            gPanel.add(p2[i] = new JPanel());
+            normalPanel.add(p2[i] = new JPanel());
             p2[i].setLayout(new FlowLayout(FlowLayout.LEFT));
         }
-        JLabel gtitle = new JLabel("주차 일반 조회");
-        gtitle.setFont(new Font("D2Coding", Font.BOLD, 20));
-        gtitle.setFont(gtitle.getFont().deriveFont(15.0f));
+        JLabel normaltitle = new JLabel("주차 일반 조회");
+        normaltitle.setFont(new Font("D2Coding", Font.BOLD, 20));
+        normaltitle.setFont(normaltitle.getFont().deriveFont(15.0f));
         JLabel rsvtitle = new JLabel("주차 예약 조회");
         rsvtitle.setFont(new Font("D2Coding", Font.BOLD, 20));
         JLabel name = new JLabel("이        름 : ");
@@ -116,15 +116,15 @@ public class Inquire extends JFrame implements ActionListener {
         if (is_reserved == true) {
             p2[0].add(rsvtitle);
             p2[5].add(inTime); p2[5].add(userInTime);
-            ct.add(gPanel);
+            ct.add(normalPanel);
         } else {
-            p2[0].add(gtitle);
+            p2[0].add(normaltitle);
             p2[5].add(OutTime); p2[5].add(userOutTime);
             ct.add(rsvPanel);
         }
 
         carPanel.setBounds(20, 100, 500, 400);
-        gPanel.setBounds(600, 100, 500, 400);
+        normalPanel.setBounds(600, 100, 500, 400);
         rsvPanel.setBounds(600, 100, 500, 400);
         b.setBounds(650, 450, 100, 40);
         ct.add(carPanel);
