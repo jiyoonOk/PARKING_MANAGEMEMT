@@ -15,8 +15,8 @@ public class Rsv extends JFrame {
     String[] date, hour, min, time; //시간선택
     JComboBox monthComBox, dateComBox, hourComBox, minComBox, timeComBox; //월일시분 시간선택
     JTextField inputPoint_JTF; //사용할 포인트 입력
-    public int myPoint_int=0, usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
-    JButton usePointBtn, rsvBtn, cancelBtn; //포인트 사용, 예약, 취소 버튼
+    public int myPoint_int, usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
+    JButton usePointBtn, useAllPointBtn, rsvBtn, cancelBtn; //포인트 사용, 전액사용, 예약, 취소 버튼
 
 
 
@@ -25,6 +25,7 @@ public class Rsv extends JFrame {
 
         LocalDate now = LocalDate.now();
 
+        //TODO #### 시간 선택 좀 어떻게 해봐.. 꼬여서 헷갈리네
         month = String.valueOf(now.getMonth().getValue());
         monthComBox = new JComboBox();
         monthComBox.addItem(month); //월 콤보박스 생성
@@ -32,14 +33,14 @@ public class Rsv extends JFrame {
         monthComBox.addActionListener(new ActionListener() { //월 선택 시
             @Override
             public void actionPerformed(ActionEvent e) {
-                Calendar cal = Calendar.getInstance();
-                int cdate = now.getDayOfMonth();
-                int ldate = now.lengthOfMonth();
-                date = new String[ldate - cdate]; //월의 마지막날로 크기지정
-                for (int i=0; i<ldate - cdate; i++) {
-                    date[i] = String.valueOf(cdate);
+                int currDate = now.getDayOfMonth(); //현재 일
+                int lastDate = now.lengthOfMonth(); //이번달 말일
+                int amount = lastDate -  currDate +1; //선택 가능한 일수
+                date = new String[amount]; //오늘부터 말일까지
+                for (int i=0; i<amount; i++) {
+                    date[i] = String.valueOf(currDate+i);
                 }
-                dateComBox = new JComboBox(date); //날짜 콤보박스 생성
+                dateComBox.addItem(date); //날짜 콤보박스 생성
             }
         }); //월선택 이벤트 끝
 
@@ -52,8 +53,8 @@ public class Rsv extends JFrame {
 
         hour = new String[24];
         for(int i = 0; i<24; i++) { //1~12 저장
-            if (i<10) hour[i] = "0"+(i+1); //00으로 나오게 하기
-            hour[i] = String.valueOf(i+1);
+            if (i<9) hour[i] = "0"+(i+1); //00으로 나오게 하기
+            else hour[i] = String.valueOf(i+1);
         }
         hourComBox = new JComboBox(hour); //시간 콤보박스 생성
 
@@ -67,32 +68,39 @@ public class Rsv extends JFrame {
 
         time = new String[]{"1시간", "2시간", "3시간"};
         timeComBox = new JComboBox(time);
+        JLabel price = new JLabel("선결제금액 : 0원");
         timeComBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("1시간")) {
+                if (timeComBox.getSelectedItem().equals("1시간")) {
                     paidMoney_int = 2700;
-                } else if (e.getActionCommand().equals("2시간")) {
+                } else if (timeComBox.getSelectedItem().equals("2시간")) {
                     paidMoney_int = 5400;
-                } else {
+                } else if (timeComBox.getSelectedItem().equals("3시간")) {
                     paidMoney_int = 8100;
                 }
+                price.setText("선결제금액: "+paidMoney_int+"원");
             }
         });//사용시간선택 이벤트 끝
 
 
 
-
-        inputPoint_JTF = new JTextField(10);      //사용할 포인트 입력
+        myPoint_int=10000;
+        //TODO DB : 포인트 가져와서 초기화하기
+        inputPoint_JTF = new JTextField(8);      //사용할 포인트 입력
         usePointBtn = new JButton("사용");            //사용 버튼
-        //TODO DB : myPoint = DB 에서 가져와서 저장
+        useAllPointBtn = new JButton("전액사용");
         usePointBtn.addActionListener(new ActionListener() { //포인트 사용 버튼 클릭 시
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = Integer.parseInt(inputPoint_JTF.getText());
                 if (i <= myPoint_int){ //보유 포인트 내에서 사용하는지 확인
+                    if (i > paidMoney_int) {
+                        JOptionPane.showMessageDialog(null, "결제 금액을 초과하여 쓸 수 없습니다.");
+                    }
                     usePoint_int = i; // 확인 후 저장
                     paidMoney_int -= usePoint_int; //결제금액에서 포인트금액만큼 빼기
+                    price.setText("선결제금액: "+paidMoney_int+"원");
                 } else { //보유 포인트 범위 벗어남
                     JOptionPane.showMessageDialog(null, "보유 포인트를 확인해주세요");
                 }
@@ -164,7 +172,7 @@ public class Rsv extends JFrame {
 
 
         JPanel p2 = new JPanel();       //rsv_pnl 두번쨰 칸
-        p2.setLayout(new GridLayout(2,4));
+        p2.setLayout(new GridLayout(3,4));
         JLabel month = new JLabel("월");           //월 -(1,2)
         JLabel date = new JLabel("일");            //일 -(1,4)
         JLabel hour = new JLabel("시");            //시 -(2,2)
@@ -183,13 +191,13 @@ public class Rsv extends JFrame {
 
         p3.add(time);   p3.add(timeComBox);
         p3.add(point);  p3.add(new JLabel(""));
-        p3.add(inputPoint_JTF); p3.add(usePointBtn);
+        p3.add(inputPoint_JTF); p3.add(usePointBtn); p3.add(useAllPointBtn);
         p3.add(showMyPoint);
 
 
         JPanel p4 = new JPanel();
         p4.setLayout(new GridLayout(2,1));
-        JLabel price = new JLabel("선결제금액 : " + paidMoney_int +"원"); //-(1) TODO #### 왜 안 나올까?????
+        //price 는 미리 정의
         JLabel plus_point = new JLabel("( [결제금액 * 3%] point 적립 예정)"); //-(2)
 
         p4.add(price);  p4.add(plus_point);
@@ -205,13 +213,13 @@ public class Rsv extends JFrame {
 
 /*
         top_pnl.add(floorCBox);
-        TODO 2# ComboBox 추가하기
+        TODO !# ComboBox 추가하기
  */
 
         Container rsvCt = getContentPane();
+        rsvCt.add(panel, BorderLayout.CENTER);
         rsvCt.add(top_pnl, BorderLayout.NORTH);
         rsvCt.add(bottom_pnl, BorderLayout.SOUTH);
-        rsvCt.add(panel, BorderLayout.CENTER);
         rsvCt.add(rsv_pnl, BorderLayout.EAST);
 
     }//Rsv 생성자 끝

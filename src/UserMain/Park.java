@@ -84,6 +84,7 @@ class ParkMain extends JFrame{
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         m.setSize(1000, 600);
         m.setVisible(true);
+        m.setLocationRelativeTo(null);
     }
 
 }

@@ -29,7 +29,7 @@ public class Check extends JFrame {
         JLabel floor = new JLabel("주차구역: ");       //주차구역
         JLabel ex_time = new JLabel("출차예정시간: ");  //예약 - 출차예정시간
         JLabel cur_time = new JLabel("입차시간: ");    //주차 - 입차시간
-        //TODO : 출차예정시간이랑 {주차 DB}의 출차시간이랑 같은가?
+        //TODO #### 출차예정시간이랑 {주차 DB}의 출차시간이랑 같은가?
         check = new JButton("확인");          //확인버튼
 
         check_pnl.add(name);

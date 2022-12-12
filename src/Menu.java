@@ -1,9 +1,11 @@
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 public class Menu extends JFrame{
-	public Menu () {
+	public Menu (String title) {
+		setTitle(title);
 		JLabel mTitle = new JLabel("MENU");
 		mTitle.setFont(mTitle.getFont().deriveFont(45.0f));
 		
@@ -31,5 +33,6 @@ public class Menu extends JFrame{
 		menuCt.add(mLogout);
 
 	}
+
 
 }

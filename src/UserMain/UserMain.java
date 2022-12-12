@@ -51,24 +51,26 @@ public class UserMain extends JFrame{
         menuButton = new JButton("메뉴");
         menuButton.addActionListener(new ActionListener() {       //메뉴버튼 클릭 시
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Menu menu = new Menu();                           //메뉴창 팝업
+            public void actionPerformed(ActionEvent e) {          //메뉴창 팝업
                 // TODO #### 메뉴창 가져오는거 왜 안돼지?
-                    /*
-                menu.setTitle("메뉴");
+                /*
+                Menu menu = new Menu("메뉴");
                 menu.setSize(400, 600);
+                menu.setLocationRelativeTo(null);
+                menu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 menu.setVisible(true);
-                */
+                 */
 
             }
         });
 
         rsvButton = new JButton("예약");
-        rsvButton.addActionListener(new ActionListener() {        //예약 액션이벤트
+        rsvButton.addActionListener(new ActionListener() {        //예약버튼 클릭 시
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {          //예약화면 팝업
                 Rsv m = new Rsv("주차 프로그램 - 주차예약");
                 m.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                m.setLocationRelativeTo(null);
                 m.setSize(1000, 600);
                 m.setVisible(true);
 
@@ -81,6 +83,7 @@ public class UserMain extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 Park p = new Park("주차 프로그램 - 일반주차");
                 p.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                p.setLocationRelativeTo(null);
                 p.setSize(1000, 600);
                 p.setVisible(true);
             }
@@ -107,7 +110,7 @@ public class UserMain extends JFrame{
 
 /*
         topPanel.add(floorCBox);       //층 선택 콤보박스
-        TODO 2# ComboBox 추가하기
+        TODO !# ComboBox 추가하기
  */
 
         fare_menu_Panel.add(fareTagButton); //요금표
@@ -141,6 +144,7 @@ class Main extends JFrame{
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         m.setSize(1000, 600);
         m.setVisible(true);
+        m.setLocationRelativeTo(null);
     }
 
 }
