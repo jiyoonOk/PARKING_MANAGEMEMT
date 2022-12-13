@@ -16,7 +16,9 @@ public class Inquire extends JFrame implements ActionListener {
     JLabel userArea;
     JLabel userInTime;
     JLabel userRsvOutTime;
-    Inquire() {
+    boolean isReserved;
+
+    Inquire() throws SQLException {
         Container ct = getContentPane();
         ct.setLayout(null);
         boolean is_reserved = false; //주차 예약 유무. 임시로 true 해놓음
@@ -40,10 +42,11 @@ public class Inquire extends JFrame implements ActionListener {
             Statement dbSt = con.createStatement(); //질의어 생성해서 적용
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
-            String strSql, booleanSql;
+            String strSql, checkReservedSql;
 
             strSql = "SELECT user.name, purchase.user_id, user.car_num, purchase.floor_num, purchase.area, purchase.car_in, purchase.car_out FROM purchase, user WHERE purchase.user_id='user2' and user.id='user2';";
             ResultSet result = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
+
 
             while(result.next()) {
                 userName   = new JLabel(result.getString("name"));
@@ -54,6 +57,12 @@ public class Inquire extends JFrame implements ActionListener {
                 userInTime = new JLabel(result.getString("purchase.car_in")); //입차시간
                 userRsvOutTime = new JLabel(result.getString("purchase.car_out")); //예약-출차예정시간
             }
+
+            dbSt.close();
+
+            checkReservedSql = "SELECT is_reserved FROM purchase WHERE user_id='user2';";
+            ResultSet Reservedresult = dbSt.executeQuery(checkReservedSql);
+            isReserved = Reservedresult.getBoolean("is_reserved");
 
             dbSt.close();
             con.close(); //DB연동 끊기
@@ -157,9 +166,9 @@ public class Inquire extends JFrame implements ActionListener {
         p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
 
         //예약 유무에 따른 패널 출력값 설정
-        /*
+
         //TODO 예약 조회 시 [예약취소] 버튼 추가하기. purchase - is_cancled (boolean) 표시
-        if (booleanSql=="1") {
+        if (isReserved == true) {
             p2[0].add(rsvtitle);
             p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
         } else {
@@ -167,14 +176,15 @@ public class Inquire extends JFrame implements ActionListener {
             p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
         }
 
-         */
 
         carPanel.setBounds(20, 100, 500, 400);
         searchPanel.setBounds(600, 100, 500, 400);
-        b.setBounds(650, 450, 100, 40);
+        b.setBounds(650, 500, 100, 40);
         ct.add(carPanel);
         ct.add(searchPanel);
         ct.add(b);
+
+        searchPanel.updateUI();
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -182,7 +192,7 @@ public class Inquire extends JFrame implements ActionListener {
     }
 }
 class InquireMain {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Inquire win = new Inquire();
         win.setSize(900, 600);
         win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
