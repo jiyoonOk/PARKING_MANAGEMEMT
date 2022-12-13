@@ -7,12 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
-import common.MakeParkingLot;
+import common.ParkingLot;
 
 
 public class Rsv extends JFrame {
 
-    public static final int FIRST_OF_HALF_INFO = 840, GAP = 5, DEFAULT_SIZE = 110;
+    public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
 
     String month;
     String[] date, hour, min, time; //시간선택
@@ -120,9 +120,7 @@ public class Rsv extends JFrame {
                 if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
                     //TODO !# 결제창으로 넘어가기
                     //TODO DB : 결제정보 넘기기
-                    // .getSelectedItem() (선택한 연월일시)
-                    // myPoint_int - usePoint_int (잔여포인트)
-                    // paidMoney_int (결제금액)
+                    // (선택한 연월일시), usePoint(사용포인트), timeComBox.getSelectedItem()(선택시간)
                     JOptionPane.showMessageDialog(null, "결제가 완료되었습니다!");
                     dispose();
                 }
@@ -153,8 +151,8 @@ public class Rsv extends JFrame {
         JLabel carNum_JLabel = new JLabel("차량번호: ");   //차량번호 -(2,1)
         JLabel carNum = new JLabel("12오4453");           //차량번호 -(2,2)
         JLabel location_JLabel = new JLabel("주차구역: "); //주차선택 -(3,1)
-        JLabel choose_areaFloor = MakeParkingLot.areaFloor;   //주차위치(층)
-        JLabel choose_areaNum = MakeParkingLot.areaNum;       //주차위치(구역)
+        JLabel choose_areaFloor = ParkingLot.userFloor;   //주차위치(층)
+        JLabel choose_areaNum = ParkingLot.userNum;       //주차위치(구역)
         JLabel rsv = new JLabel("예약일시: ");      //시간선택 -(4,1)
         JLabel month = new JLabel("월");           //월 -(1,2)
         JLabel date = new JLabel("일");            //일 -(1,4)
@@ -193,8 +191,8 @@ public class Rsv extends JFrame {
         rsvBtn.setBounds(UserMain.FIRST_OF_INFO, 470, DEFAULT_SIZE, 50); cancelBtn.setBounds(FIRST_OF_HALF_INFO, 470, DEFAULT_SIZE, 50);
 
 
-        rsvCt.add(MakeParkingLot.floor);
-        rsvCt.add(MakeParkingLot.car);
+        rsvCt.add(ParkingLot.floor);
+        rsvCt.add(ParkingLot.car);
         rsvCt.add(title);
 
         rsvCt.add(name_JLabel);   rsvCt.add(name);

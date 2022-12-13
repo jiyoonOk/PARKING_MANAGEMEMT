@@ -3,25 +3,36 @@ package UserMain;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
-import common.MakeParkingLot;
+import common.ParkingLot;
 import view.CostFrame;
 
 public class UserMain extends JFrame{
     public static final int TOP_OF_FRAME = 30, TOP_OF_PARK = 100; //전체 기준
     public static final int FIRST_OF_FRAME = 50, FIRST_OF_INFO = 725; //주차장 기준
-    public static final int WIDTH_OF_MAIN_BUTTON = 225, HEIGHT_OF_MAIN_BUTTON = 100; //메인 버튼
-    JButton fareTagButton, menuButton, rsvButton, parkButton, checkButton, payButton;
+    public static final int WIDTH_OF_MAIN_BUTTON = 225, HEIGHT_OF_MAIN_BUTTON = 100; //메인 버튼들
+    JButton fareTagButton, rsvButton, parkButton, checkButton, payButton;
+    JMenuItem myPage, notion, question, logout;
 
     public UserMain() {
-        //---------------------------------------------------------------------------패널생성
         Container mainCt = getContentPane();
         mainCt.setLayout(null);
 
+        JMenuBar bar = new JMenuBar();
+        setJMenuBar(bar);
+        JMenu menu = new JMenu("메뉴");
+        myPage = new JMenuItem("마이페이지");
+        notion = new JMenuItem("공지사항");
+        question = new JMenuItem("문의사항");
+        //----------------------------구분선 추가함
+        logout = new JMenuItem("로그아웃");
+        menu.add(myPage);
+        menu.add(notion);
+        menu.add(question);
+        menu.addSeparator(); //구분선
+        menu.add(logout);
 
-        //---------------------------------------------------------------------------
 
 
         fareTagButton = new JButton("요금표");
@@ -35,22 +46,6 @@ public class UserMain extends JFrame{
             }
         });
 
-
-        menuButton = new JButton("메뉴");
-        menuButton.addActionListener(new ActionListener() {       //메뉴버튼 클릭 시
-            @Override
-            public void actionPerformed(ActionEvent e) {          //메뉴창 팝업
-                // TODO #### 메뉴창 가져오는거 왜 안돼지?
-                /*
-                Menu menu = new Menu("메뉴");
-                menu.setSize(400, 600);
-                menu.setLocationRelativeTo(null);
-                menu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                menu.setVisible(true);
-                 */
-
-            }
-        });
 
         rsvButton = new JButton("예약");
         rsvButton.addActionListener(new ActionListener() {        //예약버튼 클릭 시
@@ -95,12 +90,11 @@ public class UserMain extends JFrame{
             }
         });
 
-        MakeParkingLot park = new MakeParkingLot();
+        ParkingLot park = new ParkingLot();
         park.floor.setBounds(FIRST_OF_FRAME, TOP_OF_FRAME, 100, 30);   //주차층수 콤보박스(B1, B2, B3)
         park.car.setBounds(FIRST_OF_FRAME, TOP_OF_PARK, 650, 450);                   //주차장 패널
 
-        fareTagButton.setBounds(FIRST_OF_INFO,TOP_OF_FRAME, 100, 30);            //요금표 버튼
-        menuButton.setBounds(855, TOP_OF_FRAME, 95, 30);                      //메뉴 버튼
+        fareTagButton.setBounds(850,TOP_OF_FRAME, 100, 30);            //요금표 버튼
 
         rsvButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+10, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //예약 버튼
         parkButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+110, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);            //주차 버튼
@@ -111,7 +105,6 @@ public class UserMain extends JFrame{
         mainCt.add(park.floor);   //주차층수 콤보박스
         mainCt.add(park.car);                   //주차장패널
         mainCt.add(fareTagButton);          //요금표
-        mainCt.add(menuButton);             //메뉴버튼
         mainCt.add(rsvButton);              //예약버튼
         mainCt.add(parkButton);             //주차버튼
         mainCt.add(checkButton);            //조회버튼
