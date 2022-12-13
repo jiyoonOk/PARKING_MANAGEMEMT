@@ -92,6 +92,19 @@ public class AdminMain extends JFrame {
         pack();
         setVisible(true);
 
+        userTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int row = userTable.getSelectedRow();
+                nameField.setText(userTable.getModel().getValueAt(row, 1).toString());
+                idField.setText(userTable.getModel().getValueAt(row, 0).toString());
+                carField.setText(userTable.getModel().getValueAt(row, 3).toString());
+                numberField.setText(userTable.getModel().getValueAt(row, 2).toString());
+                //cardField.setText(userTable.getModel().getValueAt(row, ).toString());
+
+            }
+        });
         qnaJTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
