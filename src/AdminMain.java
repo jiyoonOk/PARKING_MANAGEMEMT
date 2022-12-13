@@ -86,6 +86,7 @@ public class AdminMain extends JFrame {
         logoutB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showConfirmDialog(admin, "정말 로그아웃 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                //TODO : 로그인 화면으로 돌아가기
             }
         });
 
@@ -101,6 +102,7 @@ public class AdminMain extends JFrame {
                 idField.setText(userTable.getModel().getValueAt(row, 0).toString());
                 carField.setText(userTable.getModel().getValueAt(row, 3).toString());
                 numberField.setText(userTable.getModel().getValueAt(row, 2).toString());
+                //TODO : card_num DB에서 들고 오기!
                 //cardField.setText(userTable.getModel().getValueAt(row, ).toString());
 
             }
@@ -126,6 +128,7 @@ public class AdminMain extends JFrame {
             }
         });
 
+        //총 매출 뽑아옴
         int sum = 0;
         for (int i = 0; i < salesTable.getRowCount(); i++) {
             String a = salesTable.getModel().getValueAt(i, 1).toString();
@@ -142,7 +145,7 @@ public class AdminMain extends JFrame {
     } //admin 관리창 여는 main 함수
 
 
-    //TODO : JTable들과 JScrollPane 관련 함수들
+    // JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
         // 모든 유저 조회하는 JTable
         Vector<String> columnName = new Vector<String>();
@@ -214,7 +217,7 @@ public class AdminMain extends JFrame {
         noticeScrollPane = new JScrollPane(noticeJTable);
 
         // 매출관리 JTable
-        //TODO : 결제취소는 어떻게 표현할 건지, DB는??
+        //TODO : 결제취소는 어떻게 표현할 건지, DB는?? is_cancel로 하기로 함
         Vector<String> columnName5 = new Vector<String>();
         columnName5.add("이용 날짜"); /*columnName5.add("차량번호");*/
         columnName5.add("금액");
@@ -251,8 +254,8 @@ public class AdminMain extends JFrame {
                 });
             }
 
-
-            //TODO : 이거 무조건 따로 클래스 빼기!!! 계정 변경 -> 저장 , 삭제
+            //TODO : 선택 안 하면 선택하라고 알림창 -> 할 시간 없을 듯^^
+            //TODO : 계정 변경, 저장
             @Override
             public void actionPerformed(ActionEvent e) {
                 String s = e.getActionCommand();
@@ -266,9 +269,8 @@ public class AdminMain extends JFrame {
                     changeUserButton.setText("저장");
 
                 } else if (s.equals("저장")) {
-                    //TODO : 입력 변경된 내용 받아서 데이터 변경
+                    //TODO : 입력 변경된 내용 받아서 DB 입력
 
-                    //TODO : 저장이 완료되었다는 팝업창 뜨게 하기 ,
                     JOptionPane.showMessageDialog(admin, "계정 변경이 완료되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
 
                     nameField.setEditable(false);
@@ -327,7 +329,6 @@ public class AdminMain extends JFrame {
         class QnaAdmin extends JPanel implements ActionListener {
 
             public QnaAdmin() {
-                //TODO : 제목, 아이디, 내용 text DB 연결하기
 
                 DBconnection qnaDB = new DBconnection("SELECT * from parking.question;", rowData3, qnaJTable);
 
@@ -335,27 +336,23 @@ public class AdminMain extends JFrame {
                 qnaDeleteButton.addActionListener(this);
             }
 
-            //TODO : 문의 답변, 삭제 이벤트리스너 따로 클래스 빼기
+            //문의 답변, 삭제
             @Override
             public void actionPerformed(ActionEvent e) {
                 int a = Integer.parseInt(question_id);
                 switch (e.getActionCommand()) {
-                    case "답변 작성":
+                    case "답변 작성":{
                         if (qnaTitleField.getText() == null) {
                             JOptionPane.showMessageDialog(admin, "답변할 문의글부터 선택해주세요!!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         } else {
                             AddText add = new AddText(a);
-
-                        }
-                        break;
-                    case "삭제":
+                        }} break;
+                    case "삭제":{
                         int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                         if (question_delete == YES_OPTION) {
                             //TODO : DB에서 계정 삭제
                             JOptionPane.showMessageDialog(admin, "문의가 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                        ;
-                        break;
+                        };} break;
                 }
             }
         }// QnaAdmin 클래스 종료
@@ -364,7 +361,7 @@ public class AdminMain extends JFrame {
         class NoticeAdmin extends JPanel implements ActionListener {
 
             public NoticeAdmin() {
-                //TODO : 제목, 내용 text DB 연결하기
+                // 제목, 내용 text DB 연결하기
                 DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
 
                 noticeAddButton.addActionListener(this);
@@ -374,19 +371,19 @@ public class AdminMain extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 switch (e.getActionCommand()) {
-                    case "추가":
+                    case "추가": {
                         AddText add = new AddText();
-                        break;
-                    case "수정":
-                        break; //TODO : DB 수정
-                    case "삭제":
+                    }break;
+                    case "수정": {
+                    }break;   //TODO : DB 수정
+                    case "삭제": {
                         int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                         if (notice_delete == YES_OPTION) {
-                            //TODO : DB에서 계정 삭제
+                            //TODO : DB에서 공지사항 삭제
                             JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         }
                         ;
-                        break;
+                    }break;
                 }
             }
         } //noticeAdmin 종료
@@ -534,36 +531,31 @@ public class AdminMain extends JFrame {
                             txt.add(result.getString("phone_num"));
                             txt.add(result.getString("car_num"));
                             txt.add(result.getString("point"));
-                        }
-                        break;
+                        }break;
                         case "userParkingTable": {
                             txt.add(result.getString("car_in"));
                             txt.add(result.getString("area"));
                             txt.add(result.getString("total_fee"));
-                        }
-                        break;
+                        }break;
                         case "salesTable": {
                             txt.add(result.getString("car_in"));
                             //txt.add(resultAllUser.getString("car_num"));
                             txt.add(result.getString("total_fee"));
                             txt.add(result.getString("user_id"));
-                        }
-                        break;
+                        }break;
                         case "qnaJTable": {
                             txt.add(result.getString("question_id"));
                             txt.add(result.getString("question_title"));
                             txt.add(result.getString("question_contents"));
                             txt.add(result.getString("question_date"));
                             txt.add(result.getString("user_id"));
-                            break;
-                        }
-                        case "noticeJtable": {
+                        }break;
+                        case "noticeJTable": {
                             txt.add(result.getString("notice_id"));
                             txt.add(result.getString("notice_title"));
                             txt.add(result.getString("notice_contents"));
                             txt.add(result.getString("notice_date"));
-                            break;
-                        }
+                        }break;
                     }
                     rowData.add(txt);
                     table.updateUI();
