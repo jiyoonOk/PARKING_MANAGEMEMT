@@ -13,7 +13,8 @@ import java.sql.*;
 public class question_write extends JFrame implements ActionListener {
 	JTextArea jta; //문의작성내용
 	JTextField title; //제목
-	int t_question_id=1;
+	private int t_question_id;
+	
 	
 	public question_write() {
 		Container ct = getContentPane();
@@ -125,7 +126,7 @@ public class question_write extends JFrame implements ActionListener {
 		question_write in2=new question_write();
 		in2.setSize(400,500);
 		in2.setTitle("문의사항");
-		in2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		in2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		in2.setVisible(true);
 
 

@@ -18,10 +18,12 @@ public class question extends JFrame implements ActionListener, MouseListener {
 	JTextField  notice_title; // 공지사항 제목
 	JTextArea jta;
 	
+	
 	JButton  returnB, cancelB,questionB; // 오른쪽 화면의 학생정보 - 수정, 삭제, 취소
 
 	question() // 생성자
 	{
+
 		Container ct = getContentPane();
 		ct.setLayout(new BorderLayout());
 		JPanel top = new JPanel(); // 제목나오는 부분
@@ -66,10 +68,10 @@ public class question extends JFrame implements ActionListener, MouseListener {
 
 		
 //////////////////// 오른쪽 공지사항 제목,내용 확인 /////////////////////////
-		rightP.setLayout(new GridLayout(11,1));
+		rightP.setLayout(new GridLayout(6,1));
 		JPanel p1 = new JPanel();
 		p1.setLayout(new FlowLayout(FlowLayout.LEFT));
-		JLabel l1 = new JLabel("답변 제목");
+		JLabel l1 = new JLabel("답변 제목   :");
 		p1.add(l1);
 		
 		
@@ -81,7 +83,7 @@ public class question extends JFrame implements ActionListener, MouseListener {
 		
 		JPanel p3 = new JPanel();
 		p3.setLayout(new FlowLayout(FlowLayout.LEFT));
-		JLabel l3 = new JLabel("답변 내용");
+		JLabel l3 = new JLabel("답변 내용   :");
 		p3.add(l3);
 		
 		
@@ -103,13 +105,13 @@ public class question extends JFrame implements ActionListener, MouseListener {
 
 
 	public void actionPerformed(ActionEvent ae) 
-	{ if (ae.getActionCommand().equals("이전")) {  } // 이전 버튼 클릭시 메뉴창으로 이동
+	{ if (ae.getActionCommand().equals("이전")) { dispose(); } // 화면닫음
 	
 	if (ae.getActionCommand().equals("문의하기")) { // 문의하기 버튼 누를 시 문의사항작성 창으로..
 		question_write in2 = new question_write();
 		in2.setSize(400, 500);
 		in2.setTitle("문의사항");
-		in2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		in2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		in2.setVisible(true);	
 	}
 	
@@ -156,9 +158,22 @@ public class question extends JFrame implements ActionListener, MouseListener {
 
 
 public void mouseClicked(MouseEvent ae) {
-	row = table.getSelectedRow();
-	notice_title.setText( (String)model.getValueAt(row, 0) ); 
-	jta.setText( (String)model.getValueAt(row, 1) ); 
+	try {
+	Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", "root", "root");
+	Statement dbSt = con.createStatement();
+	String strSql;
+	strSql="SELECT * FROM answer"; //where question_id=t_question_id; 
+	ResultSet result=dbSt.executeQuery(strSql); 
+	
+	while(result.next()) {
+	notice_title.setText( result.getString("answer_title") ); 
+	jta.setText(result.getString("answer_contents")  ); }
+	
+	dbSt.close(); 
+	con.close(); // DB연동 끊기
+
+		} catch (SQLException e) { 
+		System.out.println("SQLException : "+e.getMessage()); }
 	 
 }
 
@@ -178,10 +193,10 @@ public void mouseClicked(MouseEvent ae) {
 
 public static void main(String args[]){
 	question win= new question ();
-	win.setTitle("공지사항");
+	win.setTitle("문의사항");
 	win.setSize(750,550);
 	win.setLocation(400,0);
-	win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	win.setVisible(true);
 }
 
