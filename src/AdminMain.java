@@ -93,6 +93,14 @@ public class AdminMain extends JFrame {
         admin = new AdminMain();
         admin.setLocationRelativeTo(null);  //노트북 화면 기준으로 가운데에 창 출력시켜줌!
     } //admin 관리창 여는 main 함수
+    private String getSum(Vector<Vector<String>> rowData) {
+        Vector<String> ex = new Vector<String>();
+        Integer sum = 0;
+        for(int i=0;i<rowData.size();i++) {
+            ex = rowData.get(i);
+            sum+=Integer.parseInt(ex.get(2)); }
+        return ("합계 : "+Integer.toString(sum)+" 원");
+    }
 
     //TODO : JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
@@ -157,22 +165,24 @@ public class AdminMain extends JFrame {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-            }};
+            }
+        };
         salesTable = new JTable(model5);
         salesTable.setName("salesTable");
         salesScrollPane = new JScrollPane(salesTable);
-
+        total = new JTextField(getSum(rowData5));
         /*int sum = 0;
         for(int i =0;i<salesTable.getRowCount();i++){
             sum += Integer.parseInt(salesTable.getValueAt(i, 2).toString());
             //here i is the row wise iteration and 2 is the column number of mycalculation attribute
-        }*/
-        Vector<String> ex = new Vector<String>();
+        }
+        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");*/
+   /*     Vector<String> ex = new Vector<String>();
         Integer sum = 0;
         for(int i=0;i<rowData5.size();i++) {
             ex = rowData5.get(i);
             sum+=Integer.parseInt(ex.get(2)); }
-        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");
+        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");*/
     }
 
     // 회원관리 탭 클래스
