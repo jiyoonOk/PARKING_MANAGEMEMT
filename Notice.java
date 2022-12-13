@@ -54,7 +54,7 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 		top.setLayout(new FlowLayout());
 		table.setRowHeight(70); //크기 조절
 		
-		top.add(new JLabel("<<<<< 공지사항 >>>>> "));
+		top.add(new JLabel("<<<<< 공지사항 >>>>>"));
 		center.setLayout(new FlowLayout());
 		center.add(tableSP);
 		bottom.setLayout(new FlowLayout());
@@ -65,10 +65,10 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 //		notice_title. setEditable(false);
 		
 //////////////////// 오른쪽 공지사항 제목,내용 확인 /////////////////////////
-		rightP.setLayout(new GridLayout(11,1));
+		rightP.setLayout(new GridLayout(6,1));
 		JPanel p1 = new JPanel();
 		p1.setLayout(new FlowLayout(FlowLayout.LEFT));
-		JLabel l1 = new JLabel("공지사항 제목");
+		JLabel l1 = new JLabel("공지사항 제목   :");
 		p1.add(l1);
 		
 		
@@ -80,7 +80,7 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 		
 		JPanel p3 = new JPanel();
 		p3.setLayout(new FlowLayout(FlowLayout.LEFT));
-		JLabel l3 = new JLabel("공지사항 내용");
+		JLabel l3 = new JLabel("공지사항 내용   :");
 		p3.add(l3);
 		
 		
@@ -101,7 +101,7 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 // 조회,이전 버튼 클릭시 실행
 
 	public void actionPerformed(ActionEvent ae) 
-	{ if (ae.getActionCommand().equals("이전")) {  } // 이전 버튼 클릭시 메뉴창으로 이동
+	{ if (ae.getActionCommand().equals("이전")) { dispose(); } // 화면닫음
 
 	try {
 	Class.forName("com.mysql.cj.jdbc.Driver"); // mysql의 jdbc Driver 연결하기
@@ -170,7 +170,7 @@ public static void main(String args[]){
 	win.setTitle("공지사항");
 	win.setSize(750,550);
 	win.setLocation(400,0);
-	win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	win.setVisible(true);
 }
 }
