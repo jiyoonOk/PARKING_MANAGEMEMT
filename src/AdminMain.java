@@ -2,12 +2,16 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.StringReader;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Random;
 import java.util.Vector;
 
 import static javax.swing.JOptionPane.YES_OPTION;
 
 public class AdminMain extends JFrame {
+    String question_id ="";
     static AdminMain admin;
     //main에 필요한 변수
     private JTabbedPane tab;
@@ -87,20 +91,49 @@ public class AdminMain extends JFrame {
 
         pack();
         setVisible(true);
+
+        qnaJTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int row = qnaJTable.getSelectedRow();
+                question_id = qnaJTable.getModel().getValueAt(row, 0).toString();
+                qnaTitleField.setText(qnaJTable.getModel().getValueAt(row, 1).toString());
+                qnaIDField.setText(qnaJTable.getModel().getValueAt(row, 4).toString());
+                qnaContensArea.setText(qnaJTable.getModel().getValueAt(row, 2).toString());
+            }
+        });
+        noticeJTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int row = qnaJTable.getSelectedRow();
+                noticeTitleField.setText(noticeJTable.getModel().getValueAt(row, 1).toString());
+                noticeContentsArea.setText(noticeJTable.getModel().getValueAt(row, 2).toString());
+            }
+        });
+
+        int sum = 0;
+        for(int i =0;i<salesTable.getRowCount();i++){
+            String a = salesTable.getModel().getValueAt(i, 2).toString();
+            sum += Integer.parseInt(a);
+            //here i is the row wise iteration and 2 is the column number of mycalculation attribute
+        }
+        total.setText("합계 : "+Integer.toString(sum)+" 원");
     } //mainTest 생성자 종료
 
     public static void main(String[] args) {
         admin = new AdminMain();
         admin.setLocationRelativeTo(null);  //노트북 화면 기준으로 가운데에 창 출력시켜줌!
     } //admin 관리창 여는 main 함수
-    private String getSum(Vector<Vector<String>> rowData) {
-        Vector<String> ex = new Vector<String>();
-        Integer sum = 0;
-        for(int i=0;i<rowData.size();i++) {
-            ex = rowData.get(i);
-            sum+=Integer.parseInt(ex.get(2)); }
-        return ("합계 : "+Integer.toString(sum)+" 원");
-    }
+    /*private void getSum() {
+        int sum = 0;
+        for(int i =0;i<salesTable.getRowCount();i++){
+            sum += Integer.parseInt(salesTable.getModel().getValueAt(i, 2).toString());
+            //here i is the row wise iteration and 2 is the column number of mycalculation attribute
+        }
+        total.setText("합계 : "+Integer.toString(sum)+" 원");
+    }*/
 
     //TODO : JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
@@ -170,7 +203,7 @@ public class AdminMain extends JFrame {
         salesTable = new JTable(model5);
         salesTable.setName("salesTable");
         salesScrollPane = new JScrollPane(salesTable);
-        total = new JTextField(getSum(rowData5));
+        //total = new JTextField(getSum(rowData5));
 /*        int sum = 0;
         for(int i =0;i<salesTable.getRowCount();i++){
             sum += Integer.parseInt(salesTable.getValueAt(i, 2).toString());
@@ -301,8 +334,9 @@ public class AdminMain extends JFrame {
         //TODO : 문의 답변, 삭제 이벤트리스너 따로 클래스 빼기
         @Override
         public void actionPerformed(ActionEvent e) {
+            int a = Integer.parseInt(question_id);
             switch (e.getActionCommand()) {
-                case "답변 작성": ; break;
+                case "답변 작성": if(qnaTitleField.getText() == null) {JOptionPane.showMessageDialog(admin, "답변할 문의글부터 선택해주세요!!", "알림창", JOptionPane.INFORMATION_MESSAGE);} else {AddText add = new AddText(a);} break;
                 case "삭제" : int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                     if (question_delete == YES_OPTION) {
                         //TODO : DB에서 계정 삭제
@@ -317,17 +351,18 @@ public class AdminMain extends JFrame {
 
         public NoticeAdmin() {
             //TODO : 제목, 내용 text DB 연결하기
+            DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
+
             noticeAddButton.addActionListener(this);
             noticeChangeButton.addActionListener(this);
             noticeDeleteButton.addActionListener(this);
 
-            DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()) {
-                case "추가" :  break; //TODO : 추가창 만들기
+                case "추가" :  AddText add = new AddText(); break; //TODO : 추가창 만들기
                 case "수정" : break; //TODO : DB 수정
                 case "삭제" : int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                     if (notice_delete == YES_OPTION) {
@@ -338,6 +373,7 @@ public class AdminMain extends JFrame {
         }
     } //noticeAdmin 종료
 }//mainTest 클래스 종료
+
 
     class PwChange extends JDialog implements ActionListener{
         private JPasswordField currentPw, newPw, rePw;
@@ -451,7 +487,7 @@ public class AdminMain extends JFrame {
         String sql = "";
         Vector<Vector<String>> rowData;
         JTable table;
-
+        //모든 JTable 뽑아냄
         public DBconnection(String sql, Vector<Vector<String>> rowData, JTable table) {
             sql = sql;
             this.rowData = rowData;
@@ -513,6 +549,63 @@ public class AdminMain extends JFrame {
                     rowData.add(txt);
                     table.updateUI();
                 }
+                stmt.close();
+                AdminMain.con.close();
+            } catch (SQLException e) {
+                System.err.println("연결 오류" + e.getMessage());
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                System.err.println("드라이버 로드에 실패했습니다.");
+            }
+        }
+
+        //공지사항 추가
+        public DBconnection(String title, String content) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+
+                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
+                System.out.println("연결 완료!");
+
+                Statement stmt = AdminMain.con.createStatement();
+
+                Random ran = new Random(4);
+                int num = ran.nextInt(9999);
+                SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+                String format_time1 = format1.format (System.currentTimeMillis());
+
+                sql = "INSERT INTO parking.notice (notice_id, notice_title, notice_contents, notice_date) VALUES ('"+num+"', '"+title+"', '"+content+"', '"+format_time1+"');";
+
+                stmt.executeUpdate(sql);
+                stmt.close();
+                AdminMain.con.close();
+            } catch (SQLException e) {
+                System.err.println("연결 오류" + e.getMessage());
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                System.err.println("드라이버 로드에 실패했습니다.");
+            }
+        }
+        //문의사항 답변 추가
+        public DBconnection(int id, String title, String content) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+
+                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
+                System.out.println("연결 완료!");
+
+                Statement stmt = AdminMain.con.createStatement();
+
+                Random ran = new Random(4);
+                int num = ran.nextInt(9999);
+                SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+                String format_time1 = format1.format (System.currentTimeMillis());
+
+                sql = "INSERT INTO parking.answer (answer_id, answer_title, answer_contents, answer_date, question_id) VALUES ('"+num+"', '"+title+"', '"+content+"', '"+format_time1+"', '"+id+"');";
+
+                stmt.executeUpdate(sql);
                 stmt.close();
                 AdminMain.con.close();
             } catch (SQLException e) {
