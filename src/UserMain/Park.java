@@ -24,6 +24,8 @@ public class Park extends JFrame {
         LocalTime now        = LocalTime.now();
         JLabel time          = new JLabel(now.getHour()+"시"+now.getMinute()+"분");
         JLabel location      = new JLabel("주차구역: ");       //주차구역
+        JLabel choose_areaFloor = ParkingLot.userFloor;   //주차위치(층)
+        JLabel choose_areaNum = ParkingLot.userNum;       //주차위치(구역)
 
         parkingButton.addActionListener(new ActionListener() {
             @Override
@@ -53,6 +55,9 @@ public class Park extends JFrame {
         carNum.setBounds(Rsv.FIRST_OF_HALF_INFO, UserMain.TOP_OF_PARK+100, Rsv.DEFAULT_SIZE, 25);
         currTime.setBounds(UserMain.FIRST_OF_INFO, UserMain.TOP_OF_PARK+200, Rsv.DEFAULT_SIZE, 25);
         time.setBounds(Rsv.FIRST_OF_HALF_INFO, UserMain.TOP_OF_PARK+200, Rsv.DEFAULT_SIZE, 25);
+        location.setBounds(UserMain.FIRST_OF_INFO, UserMain.TOP_OF_PARK+300, Rsv.DEFAULT_SIZE, 25);
+        choose_areaFloor.setBounds(Rsv.FIRST_OF_HALF_INFO, UserMain.TOP_OF_PARK+300, 25, 25);
+        choose_areaNum.setBounds(870, UserMain.TOP_OF_PARK+300, 25, 25);
 
 
         parkCt.add(ParkingLot.floor);
@@ -60,6 +65,7 @@ public class Park extends JFrame {
         parkCt.add(nameLabel);     parkCt.add(name);
         parkCt.add(carNumLabel);   parkCt.add(carNum);
         parkCt.add(currTime); parkCt.add(time);
+        parkCt.add(location);      parkCt.add(choose_areaFloor);    parkCt.add(choose_areaNum);
 
 
         parkCt.add(parkingButton);   parkCt.add(cancelButton); //완료, 취소 버튼
