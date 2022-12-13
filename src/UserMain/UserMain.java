@@ -1,4 +1,3 @@
-
 package UserMain;
 
 import javax.swing.*;
@@ -11,7 +10,7 @@ import view.CostFrame;
 public class UserMain extends JFrame{
     public static final int TOP_OF_FRAME = 30, TOP_OF_PARK = 90; //전체 기준
     public static final int FIRST_OF_FRAME = 50, FIRST_OF_INFO = 725; //주차장 기준
-    public static final int WIDTH_OF_MAIN_BUTTON = 225, HEIGHT_OF_MAIN_BUTTON = 100; //메인 버튼들
+    public static final int WIDTH_OF_MAIN_BUTTON = 185, HEIGHT_OF_MAIN_BUTTON = 80; //메인 버튼들
     JButton fareTagButton, rsvButton, parkButton, checkButton, payButton;
     JMenu menu;
     JMenuItem myPage, notion, question, logout;
@@ -93,21 +92,21 @@ public class UserMain extends JFrame{
         });
 
         ParkingLot park = new ParkingLot();
-        park.floor.setBounds(FIRST_OF_FRAME, TOP_OF_FRAME, 100, 30);   //주차층수 콤보박스(B1, B2, B3)
-        park.car.setBounds(FIRST_OF_FRAME, TOP_OF_PARK, 650, 450);                   //주차장 패널
+        ParkingLot.floor.setBounds(FIRST_OF_FRAME, TOP_OF_FRAME, 100, 30);   //주차층수 콤보박스(B1, B2, B3)
+        ParkingLot.car.setBounds(FIRST_OF_FRAME, TOP_OF_PARK, 650, 450);                   //주차장 패널
 
         bar.setBounds(0,0,1000, 30);
         fareTagButton.setBounds(850,TOP_OF_FRAME, 100, 30);            //요금표 버튼
 
-        rsvButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+10, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //예약 버튼
-        parkButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+120, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);            //주차 버튼
-        checkButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+230, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);           //조회 버튼
-        payButton.setBounds(FIRST_OF_INFO, TOP_OF_PARK+340, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //정산 버튼
+        rsvButton.setBounds(FIRST_OF_INFO+20, TOP_OF_PARK+20, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //예약 버튼
+        parkButton.setBounds(FIRST_OF_INFO+20, TOP_OF_PARK+130, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);            //주차 버튼
+        checkButton.setBounds(FIRST_OF_INFO+20, TOP_OF_PARK+240, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);           //조회 버튼
+        payButton.setBounds(FIRST_OF_INFO+20, TOP_OF_PARK+350, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //정산 버튼
 
 
         mainCt.add(bar);
-        mainCt.add(park.floor);   //주차층수 콤보박스
-        mainCt.add(park.car);                   //주차장패널
+        mainCt.add(ParkingLot.floor);   //주차층수 콤보박스
+        mainCt.add(ParkingLot.car);                   //주차장패널
         mainCt.add(fareTagButton);          //요금표
         mainCt.add(rsvButton);              //예약버튼
         mainCt.add(parkButton);             //주차버튼
