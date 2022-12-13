@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Vector;
 
 import common.ParkingLot;
@@ -65,7 +64,6 @@ public class Rsv extends JFrame {
         }
         hourComBox = new JComboBox(hour); //시간 콤보박스 생성
 
-        inputPoint_JTF = new JTextField();
         min = new Vector<>();
         for(int i = 0; i<6; i++) { //1~12 저장
             if (i == 0) min.add("00"); //00으로 나오게 하기
@@ -75,12 +73,13 @@ public class Rsv extends JFrame {
 
         time = new String[]{"1시간", "2시간", "3시간"};
         timeComBox = new JComboBox(time);
-        JLabel priceBefore = new JLabel("선결제금액 : 0원");
+        JLabel priceBefore = new JLabel("이용금액 : 0원");
+        JLabel prieceAfter = new JLabel("최종금액 : 0원");
         timeComBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 getCost();
-                priceBefore.setText("선결제금액: "+paidMoney_int+"원");
+                priceBefore.setText("이용금액: "+paidMoney_int+"원");
             }
         });//사용시간선택 이벤트 끝
 
@@ -88,38 +87,46 @@ public class Rsv extends JFrame {
 
         myPoint_int=10000;
         //TODO DB : 포인트 가져와서 초기화하기
-        inputPoint_JTF = new JTextField(8);      //사용할 포인트 입력
-        usePointBtn = new JButton("사용");            //사용 버튼
-        useAllPointBtn = new JButton("ALL");
+
+        inputPoint_JTF     = new JTextField(8);          //사용할 포인트 입력
+        inputPoint_JTF.setHorizontalAlignment(JTextField.RIGHT); //우측정렬
+        usePointBtn        = new JButton("사용");            //사용 버튼
+        useAllPointBtn     = new JButton("ALL");            //전액사용 버튼
         JLabel showMyPoint = new JLabel("보유 포인트: " + myPoint_int);   //보유(사용가능) 포인트 출력 -(4,1)
         showMyPoint.setForeground(Color.RED);
-        usePointBtn.addActionListener(new ActionListener() { //포인트 사용 버튼 클릭 시
+        usePointBtn.addActionListener(new ActionListener() { //포인트 사용버튼 클릭 시
             @Override
             public void actionPerformed(ActionEvent e) {
                 int i = 0;
-                if (inputPoint_JTF.getText() != null) i = Integer.parseInt(inputPoint_JTF.getText());
+                if (!(inputPoint_JTF.getText().equals(""))) i = Integer.parseInt(inputPoint_JTF.getText());
                 getCost();
                 if (i <= myPoint_int){ //보유 포인트 내에서 사용하는지 확인
                     if (i > paidMoney_int) {
-                        JOptionPane.showMessageDialog(null, "결제 금액을 초과하여 쓸 수 없습니다.");
+                        JOptionPane.showMessageDialog(null, "결제 금액 이상으로 사용할 수 없습니다.");
                     } else {
                         usePoint_int = i; // 확인 후 저장
-                        showMyPoint.setText("보유 포인트: " + myPoint_int);
                         paidMoney_int -= usePoint_int; //결제금액에서 포인트금액만큼 빼기
-                        priceBefore.setText("선결제금액: " + paidMoney_int + "원");
+                        showMyPoint.setText("보유 포인트: " + (myPoint_int - usePoint_int));
+                        prieceAfter.setText("최종금액: " + paidMoney_int + "원");
                     }
                 } else { //보유 포인트 범위 벗어남
                     JOptionPane.showMessageDialog(null, "보유 포인트를 확인해주세요");
                 }
             }
-        });//포인트사용버튼 이벤트 끝
+        });//포인트 사용버튼 이벤트 끝
 
-        useAllPointBtn.addActionListener(new ActionListener() {
+        useAllPointBtn.addActionListener(new ActionListener() { //포인트 전액사용 버튼 클릭 시
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                if (myPoint_int > paidMoney_int) {
+                    showMyPoint.setText("보유 포인트: " + (myPoint_int - paidMoney_int - usePoint_int));
+                    prieceAfter.setText("최종금액: 0원");
+                } else {
+                    showMyPoint.setText("보유 포인트: 0");
+                    prieceAfter.setText("최종금액: " + (paidMoney_int-myPoint_int) + "원");
+                }
             }
-        });
+        });//포인트 전액사용버튼 이벤트 끝
 
         rsvBtn = new JButton("예약하기");
         rsvBtn.addActionListener(new ActionListener() {
@@ -132,9 +139,6 @@ public class Rsv extends JFrame {
                     // (선택한 연월일시), usePoint(사용포인트), timeComBox.getSelectedItem()(선택시간)
                     JOptionPane.showMessageDialog(null, "결제가 완료되었습니다!");
                     dispose();
-                }
-                else { //결제 no 한 경우
-
                 }
             }
         });//예약버튼 이벤트 끝
@@ -153,6 +157,8 @@ public class Rsv extends JFrame {
         Container rsvCt = getContentPane();
         rsvCt.setLayout(null);
 
+
+        JLabel specialInfo      = new JLabel("특별구역 10% 할인");   //안내문구
         //TODO DB : 이름, 차량번호 가져오기
         JLabel title            = new JLabel("주차예약");
         JLabel name_JLabel      = new JLabel("이    름: ");         //이름:  -(1,1)
@@ -172,6 +178,7 @@ public class Rsv extends JFrame {
         JLabel plus_point       = new JLabel("( [결제금액 * 3%] point 적립 예정)"); //-(2)
 
 
+        specialInfo.setBounds(590, 60, 130, 30);
 
         title.setBounds(800, 50, 75, 30);
 
@@ -194,12 +201,13 @@ public class Rsv extends JFrame {
         showMyPoint.setBounds(UserMain.FIRST_OF_INFO, 370, 110, 25);
 
         priceBefore.setBounds(UserMain.FIRST_OF_INFO, 400, 200, 25);
+        prieceAfter.setBounds(UserMain.FIRST_OF_INFO, 425, 200, 25);
+        plus_point.setBounds(UserMain.FIRST_OF_INFO, 450, 200, 25);
 
-        plus_point.setBounds(UserMain.FIRST_OF_INFO, 430, 200, 25);
-
-        rsvBtn.setBounds(UserMain.FIRST_OF_INFO, 470, DEFAULT_SIZE, 50); cancelBtn.setBounds(FIRST_OF_HALF_INFO, 470, DEFAULT_SIZE, 50);
+        rsvBtn.setBounds(UserMain.FIRST_OF_INFO, 480, DEFAULT_SIZE, 50); cancelBtn.setBounds(FIRST_OF_HALF_INFO, 480, DEFAULT_SIZE, 50);
 
 
+        rsvCt.add(specialInfo);
         rsvCt.add(ParkingLot.floor);
         rsvCt.add(ParkingLot.car);
         rsvCt.add(title);
@@ -218,7 +226,7 @@ public class Rsv extends JFrame {
         rsvCt.add(inputPoint_JTF); rsvCt.add(usePointBtn); rsvCt.add(useAllPointBtn);
         rsvCt.add(showMyPoint);
 
-        rsvCt.add(priceBefore);  rsvCt.add(plus_point);
+        rsvCt.add(priceBefore);  rsvCt.add(prieceAfter);   rsvCt.add(plus_point);
 
         rsvCt.add(rsvBtn); rsvCt.add(cancelBtn); //예약, 취소 버튼
 
