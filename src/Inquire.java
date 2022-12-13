@@ -40,9 +40,9 @@ public class Inquire extends JFrame implements ActionListener {
             Statement dbSt = con.createStatement(); //질의어 생성해서 적용
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
-            String strSql;
+            String strSql, booleanSql;
 
-            strSql = "SELECT user.name, purchase.user_id, user.car_num, purchase.floor_num, purchase.area, purchase.car_in, purchase.car_out FROM purchase, user;";
+            strSql = "SELECT user.name, purchase.user_id, user.car_num, purchase.floor_num, purchase.area, purchase.car_in, purchase.car_out FROM purchase, user WHERE purchase.user_id='user2' and user.id='user2';";
             ResultSet result = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
 
             while(result.next()) {
@@ -154,15 +154,20 @@ public class Inquire extends JFrame implements ActionListener {
         p2[3].add(carNum); p2[3].add(userCarNum);
         p2[4].add(area);   p2[4].add(userFloor);   p2[4].add(userArea);
         p2[5].add(inTime); p2[5].add(userInTime);
+        p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
 
         //예약 유무에 따른 패널 출력값 설정
+        /*
         //TODO 예약 조회 시 [예약취소] 버튼 추가하기. purchase - is_cancled (boolean) 표시
-        if (is_reserved == true) {
+        if (booleanSql=="1") {
             p2[0].add(rsvtitle);
             p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
         } else {
             p2[0].add(normalTitle);
+            p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
         }
+
+         */
 
         carPanel.setBounds(20, 100, 500, 400);
         searchPanel.setBounds(600, 100, 500, 400);
