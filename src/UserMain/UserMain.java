@@ -21,17 +21,19 @@ public class UserMain extends JFrame{
 
         JMenuBar bar = new JMenuBar();
         setJMenuBar(bar);
-        menu         = new JMenu("메뉴");             //메뉴바에 표시되는 메뉴이름
-        myPage       = new JMenuItem("마이페이지");  //아이템들
-        notion       = new JMenuItem("공지사항");
-        question     = new JMenuItem("문의사항");
+        menu       = new JMenu("메뉴");             //메뉴바에 표시되는 메뉴이름
+        myPage     = new JMenuItem("마이페이지");  //아이템들
+        notion     = new JMenuItem("공지사항");
+        question   = new JMenuItem("문의사항");
         //-----------------------------------------------구분선 추가함
-        logout       = new JMenuItem("로그아웃");
+        logout     = new JMenuItem("로그아웃");
         menu.add(myPage);    //연결
         menu.add(notion);
         menu.add(question);
         menu.addSeparator(); //구분선
         menu.add(logout);
+
+        bar.add(menu);
 
 
 
@@ -92,10 +94,9 @@ public class UserMain extends JFrame{
         });
 
         ParkingLot park = new ParkingLot();
-        ParkingLot.floor.setBounds(FIRST_OF_FRAME, TOP_OF_FRAME, 100, 30);   //주차층수 콤보박스(B1, B2, B3)
+        park.floor.setBounds(FIRST_OF_FRAME, TOP_OF_FRAME, 100, 30);   //주차층수 콤보박스(B1, B2, B3)
         ParkingLot.car.setBounds(FIRST_OF_FRAME, TOP_OF_PARK, 650, 450);                   //주차장 패널
 
-        bar.setBounds(0,0,1000, 30);
         fareTagButton.setBounds(850,TOP_OF_FRAME, 100, 30);            //요금표 버튼
 
         rsvButton.setBounds(FIRST_OF_INFO+20, TOP_OF_PARK+20, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //예약 버튼
@@ -103,10 +104,8 @@ public class UserMain extends JFrame{
         checkButton.setBounds(FIRST_OF_INFO+20, TOP_OF_PARK+240, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);           //조회 버튼
         payButton.setBounds(FIRST_OF_INFO+20, TOP_OF_PARK+350, WIDTH_OF_MAIN_BUTTON, HEIGHT_OF_MAIN_BUTTON);             //정산 버튼
 
-
-        mainCt.add(bar);
-        mainCt.add(ParkingLot.floor);   //주차층수 콤보박스
-        mainCt.add(ParkingLot.car);                   //주차장패널
+        mainCt.add(park.floor);       //주차층수 콤보박스
+        mainCt.add(ParkingLot.car);         //주차장패널
         mainCt.add(fareTagButton);          //요금표
         mainCt.add(rsvButton);              //예약버튼
         mainCt.add(parkButton);             //주차버튼
@@ -124,7 +123,7 @@ class Main extends JFrame{
         UserMain m = new UserMain();
         m.setTitle("주차 프로그램 - UserMain");
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        m.setSize(1000, 600);
+        m.setSize(1000, 700);
         m.setVisible(true);
         m.setLocationRelativeTo(null);
     }
