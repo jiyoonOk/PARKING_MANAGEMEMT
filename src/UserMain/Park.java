@@ -6,39 +6,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalTime;
 
+import common.ParkingLot;
+
 public class Park extends JFrame {
 
-    Container ct;
-
     JButton parkingButton = new JButton("완료");       //주차완료버튼
-    JButton cancelButton = new JButton("취소");   //취소버튼
+    JButton cancelButton  = new JButton("취소");   //취소버튼
 
     public Park(String t) {
         super(t);
 
-
-
-        JPanel panel = new JPanel();            //CENTER - 임시 주차장
-        panel.setLayout(new BorderLayout());
-        panel.setBackground(Color.LIGHT_GRAY);
-
-        JPanel top_pnl = new JPanel();          //NORTH - 층선택 ComBox 들어감
-        top_pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JPanel bottom_pnl = new JPanel();       //SOUTH - 확인취소 버튼
-        bottom_pnl.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        JPanel park_pnl = new JPanel();          //EAST - 나머지 것들
-        park_pnl.setLayout(new GridLayout(6,2));
-
-
-        JLabel name = new JLabel("이름: ");              //이름
-        JLabel carNum = new JLabel("차량번호: ");         //차량번호
-        JLabel currTime = new JLabel("현재시간 : ");      //현재시간
-        LocalTime now = LocalTime.now();
-        JLabel time = new JLabel(now.getHour()+"시"+now.getMinute()+"분");
-        JLabel location = new JLabel("주차구역: ");       //주차구역
-        JLabel park_location = new JLabel(" 층"+" 구역");
+        JLabel nameLabel     = new JLabel("이름: ");           //이름
+        JLabel name          = new JLabel("이다은");
+        JLabel carNumLabel   = new JLabel("차량번호: ");       //차량번호
+        JLabel carNum        = new JLabel("12라3442");
+        JLabel currTime      = new JLabel("현재시간 : ");      //현재시간
+        LocalTime now        = LocalTime.now();
+        JLabel time          = new JLabel(now.getHour()+"시"+now.getMinute()+"분");
+        JLabel location      = new JLabel("주차구역: ");       //주차구역
 
         parkingButton.addActionListener(new ActionListener() {
             @Override
@@ -59,32 +44,27 @@ public class Park extends JFrame {
         });
 
 
-        park_pnl.add(name);     park_pnl.add(new JLabel(""));
-        park_pnl.add(carNum);   park_pnl.add(new JLabel(""));
-        park_pnl.add(currTime); park_pnl.add(time);
-        park_pnl.add(location); park_pnl.add(park_location);
+        Container parkCt = getContentPane();
+        parkCt.setLayout(null);
 
-        bottom_pnl.add(parkingButton);   bottom_pnl.add(cancelButton); //완료, 취소 버튼
+        nameLabel.setBounds(UserMain.FIRST_OF_INFO, UserMain.TOP_OF_PARK+10, Rsv.DEFAULT_SIZE, 25);
+        name.setBounds(Rsv.FIRST_OF_HALF_INFO, UserMain.TOP_OF_PARK+10, Rsv.DEFAULT_SIZE, 25);
+        carNumLabel.setBounds(UserMain.FIRST_OF_INFO, UserMain.TOP_OF_PARK+100, Rsv.DEFAULT_SIZE, 25);
+        carNum.setBounds(Rsv.FIRST_OF_HALF_INFO, UserMain.TOP_OF_PARK+100, Rsv.DEFAULT_SIZE, 25);
+        currTime.setBounds(UserMain.FIRST_OF_INFO, UserMain.TOP_OF_PARK+200, Rsv.DEFAULT_SIZE, 25);
+        time.setBounds(Rsv.FIRST_OF_HALF_INFO, UserMain.TOP_OF_PARK+200, Rsv.DEFAULT_SIZE, 25);
 
 
-        ct = getContentPane();
-        ct.add(panel, BorderLayout.CENTER);
-        ct.add(top_pnl, BorderLayout.NORTH);
-        ct.add(bottom_pnl, BorderLayout.SOUTH);
-        ct.add(park_pnl, BorderLayout.EAST);
+        parkCt.add(ParkingLot.floor);
+        parkCt.add(ParkingLot.car);
+        parkCt.add(nameLabel);     parkCt.add(name);
+        parkCt.add(carNumLabel);   parkCt.add(carNum);
+        parkCt.add(currTime); parkCt.add(time);
+
+
+        parkCt.add(parkingButton);   parkCt.add(cancelButton); //완료, 취소 버튼
 
 
     }//Park 생성자 끝
 
 }//Park 클래스 끝
-
-class ParkMain extends JFrame{
-    public static void main(String[] args) {
-        Park m = new Park("주차 프로그램 - 일반주차");
-        m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        m.setSize(1000, 600);
-        m.setVisible(true);
-        m.setLocationRelativeTo(null);
-    }
-
-}

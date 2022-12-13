@@ -11,6 +11,7 @@ public class ParkingLot extends JFrame {
     public static JLabel userFloor, userNum;
     public static JComboBox floor; //층수 콤보박스
     public static JPanel car;
+    public static String[] sfloor = {"B1", "B2", "B3"}; //층수
     public ParkingLot() {
 
         JButton[][] btn = new JButton[3][16]; //구역 버튼
@@ -42,7 +43,6 @@ public class ParkingLot extends JFrame {
         p[5].setLayout(new GridLayout(1, 2)); //D열
 
         //층수 JCombobox
-        String[] sfloor = {"B1", "B2", "B3"}; //층수
         floor = new JComboBox(sfloor);
 
         //주차구역 버튼 꾸미기
