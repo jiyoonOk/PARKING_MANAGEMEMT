@@ -15,6 +15,7 @@ public class AddText extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setLocationRelativeTo(AdminMain.admin);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -84,7 +85,7 @@ public class AddText extends JDialog {
 
         pack();
         setVisible(true);
-        System.exit(0);
+        //System.exit(0);
     }
 
     private void onOK(String title, String content) {

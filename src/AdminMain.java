@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.StringReader;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Random;
@@ -11,7 +10,7 @@ import java.util.Vector;
 import static javax.swing.JOptionPane.YES_OPTION;
 
 public class AdminMain extends JFrame {
-    String question_id ="";
+    String question_id = "";
     static AdminMain admin;
     //main에 필요한 변수
     private JTabbedPane tab;
@@ -35,7 +34,7 @@ public class AdminMain extends JFrame {
     JTable salesTable;
     private UserAdmin user;
     private JScrollPane salesScrollPane;
-    private JTextField total;
+    private JLabel total;
 
     //QnATab 에 필요한 변수
     private JTextField qnaTitleField, qnaIDField;
@@ -75,6 +74,7 @@ public class AdminMain extends JFrame {
 
         ct.add(jp);
 
+        //
         pwChangeB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 PwChange change = new PwChange(admin, "비밀번호 변경", true);
@@ -94,7 +94,7 @@ public class AdminMain extends JFrame {
 
         userTable.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
                 int row = userTable.getSelectedRow();
                 nameField.setText(userTable.getModel().getValueAt(row, 1).toString());
@@ -108,7 +108,7 @@ public class AdminMain extends JFrame {
         qnaJTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+                super.mousePressed(e);
                 int row = qnaJTable.getSelectedRow();
                 question_id = qnaJTable.getModel().getValueAt(row, 0).toString();
                 qnaTitleField.setText(qnaJTable.getModel().getValueAt(row, 1).toString());
@@ -119,7 +119,7 @@ public class AdminMain extends JFrame {
         noticeJTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+                super.mousePressed(e);
                 int row = qnaJTable.getSelectedRow();
                 noticeTitleField.setText(noticeJTable.getModel().getValueAt(row, 1).toString());
                 noticeContentsArea.setText(noticeJTable.getModel().getValueAt(row, 2).toString());
@@ -127,77 +127,88 @@ public class AdminMain extends JFrame {
         });
 
         int sum = 0;
-        for(int i =0;i<salesTable.getRowCount();i++){
-            String a = salesTable.getModel().getValueAt(i, 2).toString();
-            sum += Integer.parseInt(a);
+        for (int i = 0; i < salesTable.getRowCount(); i++) {
+            String a = salesTable.getModel().getValueAt(i, 1).toString();
+            sum = sum + Integer.parseInt(a);
             //here i is the row wise iteration and 2 is the column number of mycalculation attribute
         }
-        total.setText("합계 : "+Integer.toString(sum)+" 원");
+        total.setText("총 매출 : " + sum + " 원");
+
     } //mainTest 생성자 종료
 
     public static void main(String[] args) {
         admin = new AdminMain();
         admin.setLocationRelativeTo(null);  //노트북 화면 기준으로 가운데에 창 출력시켜줌!
     } //admin 관리창 여는 main 함수
-    /*private void getSum() {
-        int sum = 0;
-        for(int i =0;i<salesTable.getRowCount();i++){
-            sum += Integer.parseInt(salesTable.getModel().getValueAt(i, 2).toString());
-            //here i is the row wise iteration and 2 is the column number of mycalculation attribute
-        }
-        total.setText("합계 : "+Integer.toString(sum)+" 원");
-    }*/
+
 
     //TODO : JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
         // 모든 유저 조회하는 JTable
         Vector<String> columnName = new Vector<String>();
-        columnName.add("ID"); columnName.add("이름"); columnName.add("전화번호"); columnName.add("차량번호"); columnName.add("포인트");
+        columnName.add("ID");
+        columnName.add("이름");
+        columnName.add("전화번호");
+        columnName.add("차량번호");
+        columnName.add("포인트");
         rowData = new Vector<Vector<String>>();
-        DefaultTableModel model = new DefaultTableModel(rowData, columnName){
+        DefaultTableModel model = new DefaultTableModel(rowData, columnName) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-            }};
+            }
+        };
         userTable = new JTable(model);
         userTable.setName("userTable");
         userScrollPane = new JScrollPane(userTable);
 
         // 회원 주차 이력 JTable
         Vector<String> columnName2 = new Vector<String>();
-        columnName2.add("날짜"); columnName2.add("주차 구역"); columnName2.add("이용 금액");
+        columnName2.add("날짜");
+        columnName2.add("주차 구역");
+        columnName2.add("이용 금액");
         rowData2 = new Vector<Vector<String>>();
-        DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2){
+        DefaultTableModel model2 = new DefaultTableModel(rowData2, columnName2) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-            }};
+            }
+        };
         userParkingTable = new JTable(model2);
         userParkingTable.setName("userParkingTable");
         userParkingScrollPane = new JScrollPane(userParkingTable);
 
         // 문의사항 JTable
         Vector<String> columnName3 = new Vector<String>();
-        columnName3.add("문의번호"); columnName3.add("제목"); columnName3.add("내용"); columnName3.add("날짜"); columnName3.add("ID");
+        columnName3.add("문의번호");
+        columnName3.add("제목");
+        columnName3.add("내용");
+        columnName3.add("날짜");
+        columnName3.add("ID");
         rowData3 = new Vector<Vector<String>>();
-        DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3){
+        DefaultTableModel model3 = new DefaultTableModel(rowData3, columnName3) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-            }};
+            }
+        };
         qnaJTable = new JTable(model3);
         qnaJTable.setName("qnaJTable");
         qnaScrollPane = new JScrollPane(qnaJTable);
 
         // 공지사항 JTable
         Vector<String> columnName4 = new Vector<String>();
-        columnName4.add("공지번호"); columnName4.add("제목"); columnName4.add("내용"); columnName4.add("날짜");
+        columnName4.add("공지번호");
+        columnName4.add("제목");
+        columnName4.add("내용");
+        columnName4.add("날짜");
         rowData4 = new Vector<Vector<String>>();
-        DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4){
+        DefaultTableModel model4 = new DefaultTableModel(rowData4, columnName4) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-            }};
+            }
+        };
         noticeJTable = new JTable(model4);
         noticeJTable.setName("noticeJTable");
         noticeScrollPane = new JScrollPane(noticeJTable);
@@ -205,9 +216,11 @@ public class AdminMain extends JFrame {
         // 매출관리 JTable
         //TODO : 결제취소는 어떻게 표현할 건지, DB는??
         Vector<String> columnName5 = new Vector<String>();
-        columnName5.add("이용 날짜"); /*columnName5.add("차량번호");*/ columnName5.add("금액"); columnName5.add("아이디");
+        columnName5.add("이용 날짜"); /*columnName5.add("차량번호");*/
+        columnName5.add("금액");
+        columnName5.add("아이디");
         rowData5 = new Vector<Vector<String>>();
-        DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5){
+        DefaultTableModel model5 = new DefaultTableModel(rowData5, columnName5) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -216,176 +229,169 @@ public class AdminMain extends JFrame {
         salesTable = new JTable(model5);
         salesTable.setName("salesTable");
         salesScrollPane = new JScrollPane(salesTable);
-        //total = new JTextField(getSum(rowData5));
-/*        int sum = 0;
-        for(int i =0;i<salesTable.getRowCount();i++){
-            sum += Integer.parseInt(salesTable.getValueAt(i, 2).toString());
-            //here i is the row wise iteration and 2 is the column number of mycalculation attribute
-        }
-        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");
-        Vector<String> ex = new Vector<String>();
-        Integer sum = 0;
-        for(int i=0;i<rowData5.size();i++) {
-            ex = rowData5.get(i);
-            sum+=Integer.parseInt(ex.get(2)); }
-        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");*/
     }
 
-    // 회원관리 탭 클래스
-    class UserAdmin extends JPanel implements ActionListener {
-        public UserAdmin() {
+        // 회원관리 탭 클래스
+        class UserAdmin extends JPanel implements ActionListener {
+            public UserAdmin() {
 
-            DBconnection allUserDB = new DBconnection("SELECT * from parking.user;", rowData, userTable);
-            DBconnection userParkingDB = new DBconnection("SELECT * from parking.purchase;", rowData2, userParkingTable);
+                DBconnection allUserDB = new DBconnection("SELECT * from parking.user;", rowData, userTable);
+                DBconnection userParkingDB = new DBconnection("SELECT * from parking.purchase;", rowData2, userParkingTable);
 
-            TextHint hint = new TextHint(userSearch, "ID를 입력하세요.");
-            changeUserButton.addActionListener(this);
-            deleteUserButton.addActionListener(this);
+                TextHint hint = new TextHint(userSearch, "ID를 입력하세요.");
+                changeUserButton.addActionListener(this);
+                deleteUserButton.addActionListener(this);
 
-            //TODO : ID 검색뿐만 아니라, 이름, 차량번호로도 검색하는 방법 추가할 수 있음.
-            userSearch.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    //TODO : 테이블에서 ID 검색 결과 출력
-                    System.out.println("ID : " + e.getActionCommand() + " 를 검색하겠습니다.");
-                }
-            });
-        }
+                //TODO : ID 검색뿐만 아니라, 이름, 차량번호로도 검색하는 방법 추가할 수 있음.
+                userSearch.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        //TODO : 테이블에서 ID 검색 결과 출력
+                        System.out.println("ID : " + e.getActionCommand() + " 를 검색하겠습니다.");
+                    }
+                });
+            }
 
 
-        //TODO : 이거 무조건 따로 클래스 빼기!!! 계정 변경 -> 저장 , 삭제
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String s = e.getActionCommand();
-            if (s.equals("계정 변경")) {
-                nameField.setEditable(true);
-                idField.setEditable(true);
-                carField.setEditable(true);
-                numberField.setEditable(true);
-                cardField.setEditable(true);
+            //TODO : 이거 무조건 따로 클래스 빼기!!! 계정 변경 -> 저장 , 삭제
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String s = e.getActionCommand();
+                if (s.equals("계정 변경")) {
+                    nameField.setEditable(true);
+                    idField.setEditable(true);
+                    carField.setEditable(true);
+                    numberField.setEditable(true);
+                    cardField.setEditable(true);
 
-                changeUserButton.setText("저장");
+                    changeUserButton.setText("저장");
 
-            } else if (s.equals("저장")) {
-                //TODO : 입력 변경된 내용 받아서 데이터 변경
+                } else if (s.equals("저장")) {
+                    //TODO : 입력 변경된 내용 받아서 데이터 변경
 
-                //TODO : 저장이 완료되었다는 팝업창 뜨게 하기 ,
-                JOptionPane.showMessageDialog(admin, "계정 변경이 완료되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                    //TODO : 저장이 완료되었다는 팝업창 뜨게 하기 ,
+                    JOptionPane.showMessageDialog(admin, "계정 변경이 완료되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
 
-                nameField.setEditable(false);
-                idField.setEditable(false);
-                carField.setEditable(false);
-                numberField.setEditable(false);
-                cardField.setEditable(false);
+                    nameField.setEditable(false);
+                    idField.setEditable(false);
+                    carField.setEditable(false);
+                    numberField.setEditable(false);
+                    cardField.setEditable(false);
 
-                changeUserButton.setText("계정 변경");
-            } else if (s.equals("계정 삭제")) {
-                int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
-                if (user_delete == YES_OPTION) {
-                    //TODO : DB에서 계정 삭제
-                    JOptionPane.showMessageDialog(admin, "계정이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                    changeUserButton.setText("계정 변경");
+                } else if (s.equals("계정 삭제")) {
+                    int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                    if (user_delete == YES_OPTION) {
+                        //TODO : DB에서 계정 삭제
+                        JOptionPane.showMessageDialog(admin, "계정이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             }
-        }
-    }//user admin 끝
+        }//user admin 끝
 
-    // 매출관리 탭 클래스
-    class SalesAdmin extends JPanel implements ActionListener {
+        // 매출관리 탭 클래스
+        class SalesAdmin extends JPanel implements ActionListener {
 
-        public SalesAdmin() {
+            public SalesAdmin() {
 
-            ButtonGroup g = new ButtonGroup();
-            yearRB.addActionListener(this);
-            halfRB.addActionListener(this);
-            monthRB.addActionListener(this);
-            weekRB.addActionListener(this);
-            g.add(yearRB);
-            g.add(halfRB);
-            g.add(monthRB);
-            g.add(weekRB);
-            g.add(dayRB);
+                ButtonGroup g = new ButtonGroup();
+                yearRB.addActionListener(this);
+                halfRB.addActionListener(this);
+                monthRB.addActionListener(this);
+                weekRB.addActionListener(this);
+                g.add(yearRB);
+                g.add(halfRB);
+                g.add(monthRB);
+                g.add(weekRB);
+                g.add(dayRB);
 
-            DBconnection salesDB = new DBconnection("SELECT * from parking.purchase;", rowData5, salesTable);
+                DBconnection salesDB = new DBconnection("SELECT * from parking.purchase;", rowData5, salesTable);
 
-            purchaseCombo.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println(e.getActionCommand() + " 버튼 누름");
-                    //TODO : 쿼리문으로 결제완료 / 결제취소 구분
-                }
-            });
+                purchaseCombo.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println(e.getActionCommand() + " 버튼 누름");
+                        //TODO : 쿼리문으로 결제완료 / 결제취소 구분
+                    }
+                });
                 //getSum();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            System.out.println(e.getActionCommand() + " 버튼 누름");
-            //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
-        }
-
-        /*public void getSum() {
-
-            int sum = 0;
-            for(int i =0;i<salesTable.getRowCount();i++){
-                sum = sum +Integer.parseInt(salesTable.getValueAt(i, 2).toString());
-                //here i is the row wise iteration and 2 is the column number of mycalculation attribute
             }
-            total.setText(Integer.toString(sum));
-        }*/
-    }//salesAdmin 클래스 종료
 
-    // 문의사항 탭 클래스
-    class QnaAdmin extends JPanel implements ActionListener {
-
-        public QnaAdmin() {
-            //TODO : 제목, 아이디, 내용 text DB 연결하기
-
-            DBconnection qnaDB = new DBconnection("SELECT * from parking.question;", rowData3, qnaJTable);
-
-            qnaAddButton.addActionListener(this);
-            qnaDeleteButton.addActionListener(this);
-        }
-
-        //TODO : 문의 답변, 삭제 이벤트리스너 따로 클래스 빼기
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int a = Integer.parseInt(question_id);
-            switch (e.getActionCommand()) {
-                case "답변 작성": if(qnaTitleField.getText() == null) {JOptionPane.showMessageDialog(admin, "답변할 문의글부터 선택해주세요!!", "알림창", JOptionPane.INFORMATION_MESSAGE);} else {AddText add = new AddText(a);} break;
-                case "삭제" : int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
-                    if (question_delete == YES_OPTION) {
-                        //TODO : DB에서 계정 삭제
-                        JOptionPane.showMessageDialog(admin, "문의가 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                    }; break;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(e.getActionCommand() + " 버튼 누름");
+                //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
             }
-        }
-    }// QnaAdmin 클래스 종료
 
-    // 공지사항 탭 클래스
-    class NoticeAdmin extends JPanel implements ActionListener {
+        }//salesAdmin 클래스 종료
 
-        public NoticeAdmin() {
-            //TODO : 제목, 내용 text DB 연결하기
-            DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
+        // 문의사항 탭 클래스
+        class QnaAdmin extends JPanel implements ActionListener {
 
-            noticeAddButton.addActionListener(this);
-            noticeChangeButton.addActionListener(this);
-            noticeDeleteButton.addActionListener(this);
+            public QnaAdmin() {
+                //TODO : 제목, 아이디, 내용 text DB 연결하기
 
-        }
+                DBconnection qnaDB = new DBconnection("SELECT * from parking.question;", rowData3, qnaJTable);
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            switch (e.getActionCommand()) {
-                case "추가" :  AddText add = new AddText(); break; //TODO : 추가창 만들기
-                case "수정" : break; //TODO : DB 수정
-                case "삭제" : int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
-                    if (notice_delete == YES_OPTION) {
-                        //TODO : DB에서 계정 삭제
-                        JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                    }; break;
+                qnaAddButton.addActionListener(this);
+                qnaDeleteButton.addActionListener(this);
             }
-        }
-    } //noticeAdmin 종료
-}//mainTest 클래스 종료
+
+            //TODO : 문의 답변, 삭제 이벤트리스너 따로 클래스 빼기
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int a = Integer.parseInt(question_id);
+                switch (e.getActionCommand()) {
+                    case "답변 작성":
+                        if (qnaTitleField.getText() == null) {
+                            JOptionPane.showMessageDialog(admin, "답변할 문의글부터 선택해주세요!!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            AddText add = new AddText(a);
+
+                        }
+                        break;
+                    case "삭제":
+                        int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                        if (question_delete == YES_OPTION) {
+                            //TODO : DB에서 계정 삭제
+                            JOptionPane.showMessageDialog(admin, "문의가 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        ;
+                        break;
+                }
+            }
+        }// QnaAdmin 클래스 종료
+
+        // 공지사항 탭 클래스
+        class NoticeAdmin extends JPanel implements ActionListener {
+
+            public NoticeAdmin() {
+                //TODO : 제목, 내용 text DB 연결하기
+                DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
+
+                noticeAddButton.addActionListener(this);
+                noticeChangeButton.addActionListener(this);
+                noticeDeleteButton.addActionListener(this);
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                switch (e.getActionCommand()) {
+                    case "추가":
+                        AddText add = new AddText();
+                        break;
+                    case "수정":
+                        break; //TODO : DB 수정
+                    case "삭제":
+                        int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                        if (notice_delete == YES_OPTION) {
+                            //TODO : DB에서 계정 삭제
+                            JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        ;
+                        break;
+                }
+            }
+        } //noticeAdmin 종료
+
+}//AdminMain 클래스 종료
 
 
     class PwChange extends JDialog implements ActionListener{
