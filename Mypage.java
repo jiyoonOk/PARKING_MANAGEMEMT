@@ -1,3 +1,4 @@
+package Test;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -20,8 +21,9 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 	JButton mov; //이전으로 버튼
 	JButton del; //계정탈퇴 버튼
 	JTextField name2,id2,passwd2,carn2,call2,card2;
-	 JCheckBox cb1,cb2,cb3;
+	 JCheckBox jSmallcar,JFemail,JDisable;
 	 String t_specialneeds;
+	 boolean is_idCheck=true; //중복확인 버튼 클릭 유무
 	
 	
 	public  Mypage(){
@@ -76,14 +78,14 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 		 special=new JLabel("특이사항:");
 		 special.setBounds(20,240,70,30);
 		 
-		cb1=new JCheckBox("여성");
-		cb1.setBounds(20,270,60,20);
+		jSmallcar=new JCheckBox("경차");
+		jSmallcar.setBounds(20,270,60,20);
 		
-		cb2=new JCheckBox("장애인");
-		cb2.setBounds(80,270,70,20);
+		JFemail=new JCheckBox("여성");
+		JFemail.setBounds(80,270,70,20);
 		
-		cb3=new JCheckBox("경차");
-		cb3.setBounds(150,270,70,20);
+		JDisable=new JCheckBox("장애인");
+		JDisable.setBounds(150,270,70,20);
 		
 		 
 		 update = new JButton("수정하기");
@@ -111,8 +113,8 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 			ct.add(update);
 			ct.add(mov);
 			ct.add(del);
-			ct.add(cb1); ct.add(special);
-			ct.add(cb2); ct.add(cb3);
+			ct.add(jSmallcar); ct.add(special);
+			ct.add(JFemail); ct.add(JDisable);
 			update.addActionListener(this); 
 			del.addActionListener(this);
 			
@@ -132,7 +134,7 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 		 * System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함"); }
 		 * catch(ClassNotFoundException e) { System.err.println("드라이버 로드에 실패했습니다."); }
 		 * try { Connection con=DriverManager.getConnection(
-		 * "jdbc:mysql://localhost:3306/test?serverTimezone=UTC", "root", "java2020");
+		 * "jdbc:mysql://localhost:3306/?serverTimezone=UTC", "root", "root");
 		 * System.out.println("DB 연결 완료."); Statement dbSt = con.createStatement();
 		 * System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다."); String strsql;
 		 */
@@ -143,6 +145,11 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 			
 //	strsql="UPDATE user SET name='"+t_name+"',id='"+t_id+"',passwd='"+t_passwd+"',carn='"+t_carn+"'call='"+t_call+"',card='"+t_card+"',specialneeds='"+t_specialneeds+"';";  //!한줄로 작성!
 //	dbSt.executeUpdate(strsql); //sql질의어 실행
+//			strSql = "INSERT INTO user_special_needs(user_id, woman, small_car, handicap)VALUES('"+ id + " ',' "+ isFemail + "','"+ isSmallcar + "','"+isDisable + " ');";
+										
+
+
+//					dbSt.executeUpdate(strSql);
 
 		JOptionPane.showMessageDialog
 			(this, "정보가 수정되었습니다.","수정완료",JOptionPane.INFORMATION_MESSAGE);
