@@ -1,140 +1,188 @@
+package Test;
 
-import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.table.*;
+import java.util.*;
 import java.sql.*;
 
-public class question extends JFrame implements ActionListener {
-	Color color = new Color(255, 255, 255);
-	JButton btn1, btn2, btn3, btn4, btn5;
-
-	public question() {
-		Container ct = getContentPane(); // 문의사항이 들오면 최근에 들어온 순서대로 위에 차례대로 뜸
+public class question extends JFrame implements ActionListener, MouseListener {
+	Vector<String> columnName; // 표의 각 컬럼 제목
+	Vector<Vector<String>> rowData;
+	JTable table = null;
+	DefaultTableModel model = null;
+	JScrollPane tableSP;
+	int row; // 테이블에서 선택된 행 번호
+	JButton quiryB; // 조회 버튼
+	JTextField  notice_title; // 공지사항 제목
+	JTextArea jta;
 	
+	JButton  returnB, cancelB,questionB; // 오른쪽 화면의 학생정보 - 수정, 삭제, 취소
 
-		JLabel no = new JLabel("문의사항");
-		no.setBounds(150, 25, 70, 30);
-		no.setSize(150, 20);
-		Font font = new Font("맑은 고딕", Font.BOLD, 20); // 폰트, 굵기 지정
+	question() // 생성자
+	{
+		Container ct = getContentPane();
+		ct.setLayout(new BorderLayout());
+		JPanel top = new JPanel(); // 제목나오는 부분
+		JPanel center = new JPanel(); // 표 출력되는 부분
+		JPanel bottom = new JPanel(); // 조회 버튼 부분
+		JPanel rightP = new JPanel(); // 오른쪽 화면의 학생정보 부분
+		ct.add(top, BorderLayout.NORTH);
+		ct.add(center, BorderLayout.CENTER);
+		ct.add(bottom, BorderLayout.SOUTH);
+		ct.add(rightP, BorderLayout.EAST);
+		
+////////////// 표 만들기 ////////////////////////
+		columnName = new Vector<String>(); // 표의 컬럼 제목 만들기
+		columnName.add("문의사항");
 
-		btn1 = new JButton("[문의]");
-		btn1.setBounds(-10, 70, 70, 30);
-		btn1.setSize(400, 50);
+		
+		rowData = new Vector<Vector<String>>(); // 2차원 벡터로 표 내용 부분 만들기
+		model = new DefaultTableModel(rowData, columnName);
+		table = new JTable(model);
+		tableSP = new JScrollPane(table);
+		table.addMouseListener(this);
+		quiryB = new JButton("조회");
+		questionB = new JButton("문의하기");
+		returnB = new JButton("이전");
+		
+	
+		
+		returnB.addActionListener(this);
+		questionB.addActionListener(this);
+		quiryB.addActionListener(this);
+		top.setLayout(new FlowLayout());
+		table.setRowHeight(70); //크기 조절
+		
+		top.add(new JLabel("<<<<<문의사항>>>>> "));
+		center.setLayout(new FlowLayout());
+		center.add(tableSP);
+		bottom.setLayout(new FlowLayout());
+		bottom.add(quiryB);
+		bottom.add(questionB);
+		bottom.add(returnB);
+		
 
-		LineBorder line = new LineBorder(Color.black, 1, true);
+		
+//////////////////// 오른쪽 공지사항 제목,내용 확인 /////////////////////////
+		rightP.setLayout(new GridLayout(11,1));
+		JPanel p1 = new JPanel();
+		p1.setLayout(new FlowLayout(FlowLayout.LEFT));
+		JLabel l1 = new JLabel("답변 제목");
+		p1.add(l1);
+		
+		
+		JPanel p2 = new JPanel();
+		p2.setLayout(new FlowLayout(FlowLayout.LEFT));
+		notice_title = new JTextField(20);
+		p2.add(notice_title);
+		
+		
+		JPanel p3 = new JPanel();
+		p3.setLayout(new FlowLayout(FlowLayout.LEFT));
+		JLabel l3 = new JLabel("답변 내용");
+		p3.add(l3);
+		
+		
+		JPanel p4 = new JPanel();
+		p4.setLayout(new FlowLayout(FlowLayout.LEFT));
+		jta=new JTextArea("",50,20);
+		p4.add(jta);
+		p4.setPreferredSize(new Dimension(200,200));
+	
+		
+	
+		rightP.add(p1);
+		rightP.add(p2);
+		rightP.add(p3);
+		rightP.add(p4);
+	} // 생성자
+	
+// 조회,이전 버튼 클릭시 실행
 
-		btn2 = new JButton("[문의]");// 문의추가시 문의제목 들어옴
-		btn2.setBounds(-10, 119, 70, 30);
-		btn2.setSize(400, 50);
 
-		btn3 = new JButton("[문의]");
-		btn3.setBounds(-10, 168, 70, 30);
-		btn3.setSize(400, 50);
-
-		btn4 = new JButton("[문의]");
-		btn4.setBounds(-10, 217, 70, 30);
-		btn4.setSize(400, 50);
-
-		btn5 = new JButton("[문의]");
-		btn5.setBounds(-10, 266, 70, 30);
-		btn5.setSize(400, 50);
-
-		JButton back = new JButton("이전");
-		back.setBounds(60, 360, 80, 30);
-		back.setSize(90, 30);
-
-		JButton que = new JButton("문의하기"); 
-		que.setBounds(235, 360, 80, 30);
-		que.setSize(90, 30);
-
-		ct.setLayout(null);
-		ct.add(no);
-		no.setFont(font);
-		ct.add(btn1);
-		ct.add(btn2);
-		ct.add(btn3);
-		ct.add(btn4);
-		ct.add(btn5);
-		ct.add(back);
-		ct.add(que);
-
-		btn1.setBorder(line);btn1.setBackground(color);
-		btn2.setBorder(line);btn2.setBackground(color);
-		btn3.setBorder(line);btn3.setBackground(color);
-		btn4.setBorder(line);btn4.setBackground(color);
-		btn5.setBorder(line);btn5.setBackground(color);
-
-		que.addActionListener(this);
-		btn1.addActionListener(this);
-		btn2.addActionListener(this);
-		btn3.addActionListener(this);
-		btn4.addActionListener(this);
-		btn5.addActionListener(this);
-
+	public void actionPerformed(ActionEvent ae) 
+	{ if (ae.getActionCommand().equals("이전")) {  } // 이전 버튼 클릭시 메뉴창으로 이동
+	
+	if (ae.getActionCommand().equals("문의하기")) { // 문의하기 버튼 누를 시 문의사항작성 창으로..
+		question_write in2 = new question_write();
+		in2.setSize(400, 500);
+		in2.setTitle("문의사항");
+		in2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		in2.setVisible(true);	
 	}
 	
+
+	try { 
+	Class.forName("com.mysql.cj.jdbc.Driver"); // mysql의 jdbc Driver 연결하기
+	System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 	
-
-	public void actionPerformed(ActionEvent ae) {
-		/*try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");
-			} catch(ClassNotFoundException e) {
-			System.err.println("드라이버 로드에 실패했습니다.");
-			}
-			try {
-			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb.question?serverTimezone=UTC", "root", "question");
-			System.out.println("DB 연결 완료."); 
-			Statement dbSt = con.createStatement();
-			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-			String strsql;*/
-			
-		String s = ae.getActionCommand();
+	Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", "root", "root");
+	System.out.println("DB 연결 완료."); 
+	Statement dbSt = con.createStatement();
+	String strSql;
 	
-		if (ae.getSource()==btn1||ae.getSource()==btn2||ae.getSource()==btn3||ae.getSource()==btn4||ae.getSource()==btn5) {
-			
-			answer ans = new answer();
-			ans.setSize(800, 500);
-			ans.setLocation(400,0);
-			ans.setTitle("문의사항 확인");
-			ans.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			ans.setVisible(true);
-			
-		}
-
-		else if (s == "문의하기") { // 문의하기 버튼 누를 시 문의사항작성 창으로..
-			dispose();
-			question_write in2 = new question_write();
-			in2.setSize(400, 500);
-			in2.setTitle("문의사항");
-			in2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			in2.setVisible(true);	
-		}
-
-		else {//이전 버튼 눌렀을 때
-//			dbSt.close(); 
-//			con.close(); // DB연동 끊기
-			
-			}
 	
+	
+	if (ae.getActionCommand().equals("조회")) { 
+	strSql="SELECT * FROM question;";//DB로부터 읽어온 레코드를 객체화한 것
+	ResultSet result=dbSt.executeQuery(strSql); 
+	clearTable(); table.updateUI(); // 테이블에 출력하기 전에 테이블 클리어하기
+	
+	while(result.next()){ // DB에서 학생정보 읽어와 표에 출력하기
+	Vector <String> txt = new Vector <String>(); 
+	txt.add(result.getString("question_title")); 
+	txt.add(result.getString("question_contents")); 
+	rowData.add(txt); 
+	} // while 
+	} // 조회 버튼 클릭시
 
-//	}catch (SQLException e) {
-//	System.out.println("SQLException : "+e.getMessage()); }
+	table.updateUI(); 
+	dbSt.close(); 
+	con.close(); // DB연동 끊기
+	
+	} catch(ClassNotFoundException e) { 
+	System.err.println("드라이버 로드에 실패했습니다."); 
+	} catch (SQLException e) { 
+	System.out.println("SQLException : "+e.getMessage()); }
+
+} // actionPerformed 메소드
+
+	void clearTable() { // 테이블 클리어
+		for (int i = 0; i < rowData.size();)
+			rowData.remove(i);
+	}
+
+
+public void mouseClicked(MouseEvent ae) {
+	row = table.getSelectedRow();
+	notice_title.setText( (String)model.getValueAt(row, 0) ); 
+	jta.setText( (String)model.getValueAt(row, 1) ); 
+	 
 }
-		
 
 
-		
-		
-
-	public static void main(String[] args) {
-		question in = new question();
-		in.setSize(400, 500);
-		in.setTitle("문의사항");
-		in.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		in.setVisible(true);
-
+	public void mousePressed(MouseEvent ae) {
 	}
+
+	public void mouseReleased(MouseEvent ae) {
+	}
+
+	public void mouseEntered(MouseEvent ae) {
+	}
+
+	public void mouseExited(MouseEvent ae) {
+	}	// MouseListener가 상속해주는 추상메소드들을 모두 메소드 오버라이딩 해야 함
+
+
+public static void main(String args[]){
+	question win= new question ();
+	win.setTitle("공지사항");
+	win.setSize(750,550);
+	win.setLocation(400,0);
+	win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	win.setVisible(true);
+}
 
 }
