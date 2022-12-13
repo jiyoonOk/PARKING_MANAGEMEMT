@@ -171,13 +171,13 @@ public class AdminMain extends JFrame {
         salesTable.setName("salesTable");
         salesScrollPane = new JScrollPane(salesTable);
         total = new JTextField(getSum(rowData5));
-        /*int sum = 0;
+/*        int sum = 0;
         for(int i =0;i<salesTable.getRowCount();i++){
             sum += Integer.parseInt(salesTable.getValueAt(i, 2).toString());
             //here i is the row wise iteration and 2 is the column number of mycalculation attribute
         }
-        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");*/
-   /*     Vector<String> ex = new Vector<String>();
+        total = new JTextField("합계 : "+Integer.toString(sum)+" 원");
+        Vector<String> ex = new Vector<String>();
         Integer sum = 0;
         for(int i=0;i<rowData5.size();i++) {
             ex = rowData5.get(i);
