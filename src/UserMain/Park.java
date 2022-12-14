@@ -10,8 +10,8 @@ import common.ParkingLot;
 
 public class Park extends JFrame {
 
-    JButton parkingButton = new JButton("완료");       //주차완료버튼
-    JButton cancelButton  = new JButton("취소");   //취소버튼
+    JButton parkingBtn = new JButton("완료");       //주차완료버튼
+    JButton cancelBtn = new JButton("취소");   //취소버튼
 
     public Park(String t) {
         super(t);
@@ -27,7 +27,7 @@ public class Park extends JFrame {
         JLabel choose_areaFloor = ParkingLot.userFloor;   //주차위치(층)
         JLabel choose_areaNum = ParkingLot.userNum;       //주차위치(구역)
 
-        parkingButton.addActionListener(new ActionListener() {
+        parkingBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "주차 되었습니다!");
@@ -38,9 +38,10 @@ public class Park extends JFrame {
             db에 입력하는 유형이 다르면 익명리스너로 생성.
            .                  같으면 공통된 액션리스너 클래스 생성.
          */
-        cancelButton.addActionListener(new ActionListener() {
+        cancelBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "취소 되었습니다!");
                 dispose();
             }
         });
@@ -59,6 +60,8 @@ public class Park extends JFrame {
         choose_areaFloor.setBounds(Rsv.FIRST_OF_HALF_INFO, UserMain.TOP_OF_PARK+300, 25, 25);
         choose_areaNum.setBounds(870, UserMain.TOP_OF_PARK+300, 25, 25);
 
+        parkingBtn.setBounds(UserMain.FIRST_OF_INFO, 480, Rsv.DEFAULT_SIZE, 50);
+        cancelBtn.setBounds(Rsv.FIRST_OF_HALF_INFO, 480, Rsv.DEFAULT_SIZE, 50);
 
         parkCt.add(ParkingLot.floor);
         parkCt.add(ParkingLot.car);
@@ -68,7 +71,7 @@ public class Park extends JFrame {
         parkCt.add(location);      parkCt.add(choose_areaFloor);    parkCt.add(choose_areaNum);
 
 
-        parkCt.add(parkingButton);   parkCt.add(cancelButton); //완료, 취소 버튼
+        parkCt.add(parkingBtn);   parkCt.add(cancelBtn); //완료, 취소 버튼
 
 
     }//Park 생성자 끝

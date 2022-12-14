@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Vector;
 import java.sql.*;
 
@@ -17,40 +18,51 @@ public class Rsv extends JFrame {
     static String user = "root", passwd = "0000"; //DB 사용자,비번
     static Connection con = null;
     static String userName = "";
-    static int userPoint = 0;
+    static int userPoint = 10000; //DB 사용자 보유 포인트
+    double plusPoint = 0;
 
-    String userId = "daeunlee", userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
+    static String userId = "daeunlee"/*테스트용 상수*/, userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
+
+    //===============================================================================================
+
     public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
 
     String[] month, time;           //월, 선택시간
     Vector<String> hour, min; //시, 분
     JComboBox monthComBox, dateComBox, hourComBox, minComBox, timeComBox; //월일시분 시간선택
     JTextField inputPoint_JTF; //사용할 포인트 입력
-    public int usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
+    public static int usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
     JButton usePointBtn, useAllPointBtn, rsvBtn, cancelBtn; //포인트 사용, 전액사용, 예약, 취소 버튼
 
-
-
+    public JLabel pointMention = new JLabel();
+    //===============================================================================================
 
     public Rsv(String t) {
         super(t);
 
+        //===============================================================================================
+
         LocalDate now = LocalDate.now();
+        LocalTime now2 = LocalTime.now();
 
         month = new String[2];
         month[0] = String.valueOf(now.getMonth().getValue());                      //이번달
         if (month[0].equals("12")) month[1] = "1";
         else month[1] = String.valueOf(now.plusMonths(1).getMonth());  //다음달
 
-        monthComBox = new JComboBox(month);                         //월 콤보박스 생성
-        dateComBox = new JComboBox();                              //일 콤보박스 생성
+        monthComBox = new JComboBox(month); //월 콤보박스 생성
+        dateComBox  = new JComboBox();      //일 콤보박스 생성
+        hourComBox  = new JComboBox();      //시 콤보박스 생성
+        minComBox   = new JComboBox();      //분 콤보박스 생성
+        int lastDate = now.lengthOfMonth(); //이번달 말일
+        int currDate = now.getDayOfMonth(); //현재 일
+        int currHour = now2.getHour();      //현재 시간
+        int currMinute = now2.getMinute();  //현재 분
         monthComBox.addActionListener(new ActionListener() { //월 선택 시
             @Override
             public void actionPerformed(ActionEvent e) {
                 dateComBox.removeAllItems();
                 if (monthComBox.getSelectedItem().equals(month[0])) {
-                    int lastDate = now.lengthOfMonth(); //이번달 말일
-                    int currDate = now.getDayOfMonth(); //현재 일
                     int amount = lastDate - currDate + 1; //선택 가능한 일수
                     for (int i = 0; i < amount; i++) {
                         dateComBox.addItem(String.valueOf(currDate + i));
@@ -64,19 +76,42 @@ public class Rsv extends JFrame {
             }
         }); //월선택 이벤트 끝
 
-        hour = new Vector<>();
-        for (int i = 0; i < 24; i++) { //1~12 저장
-            if (i < 9) hour.add("0" + (i + 1)); //00으로 나오게 하기
-            else hour.add(String.valueOf(i + 1));
-        }
-        hourComBox = new JComboBox(hour); //시간 콤보박스 생성
+        dateComBox.addActionListener(new ActionListener() { //일 선택 시
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                hourComBox.removeAllItems();
+                if (monthComBox.getSelectedItem().equals(month[0]) && dateComBox.getSelectedItem().equals(currDate+1)) {
+                    for (int i = currHour; i < 24; i++) { //남은시간만 표시
+                        if (i < 9) hourComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
+                        else hourComBox.addItem(String.valueOf(i + 1));
+                    }
+                } else {
+                    for (int i = 0; i < 24; i++) { //01~24시
+                        if (i < 9) hourComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
+                        else hourComBox.addItem(String.valueOf(i + 1));
+                    }
+                }
+            }
+        });
 
-        min = new Vector<>();
-        for (int i = 0; i < 6; i++) { //1~12 저장
-            if (i == 0) min.add("00"); //00으로 나오게 하기
-            else min.add(String.valueOf((i + 1) * 10));
-        }
-        minComBox = new JComboBox(min); //분 콤보박스 생성
+        hourComBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                minComBox.removeAllItems();
+                if (dateComBox.getSelectedItem().equals(currDate+1) && hourComBox.getSelectedItem().equals(currHour+1)) {
+                    for (int i = currMinute; i < 24; i++) { //남은 분만 표시
+                        if (i < 9) minComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
+                        else minComBox.addItem(String.valueOf(i + 1));
+                    }
+                } else {
+                    for (int i = 0; i < 24; i++) { //01~24시
+                        if (i < 9) minComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
+                        else minComBox.addItem(String.valueOf(i + 1));
+                    }
+                }
+            }
+        });
+
 
         time = new String[]{"1시간", "2시간", "3시간"};
         timeComBox = new JComboBox(time);
@@ -90,11 +125,7 @@ public class Rsv extends JFrame {
             }
         });//사용시간선택 이벤트 끝
 
-
-
-
-
-
+        //===============================================================================================
 
 
         try {
@@ -103,7 +134,6 @@ public class Rsv extends JFrame {
         } catch (ClassNotFoundException e) {
             System.err.println("드라이버 로드에 실패했습니다.");
         }
-
         try {
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", user, passwd);
             System.out.println("DB 연결 완료");
@@ -174,6 +204,9 @@ public class Rsv extends JFrame {
             }
         });//포인트 전액사용버튼 이벤트 끝
 
+        //===============================================================================================
+
+
         rsvBtn = new JButton("예약하기");
         rsvBtn.addActionListener(new ActionListener() {
             @Override
@@ -198,6 +231,8 @@ public class Rsv extends JFrame {
             }
         });//취소버튼 이벤트 끝
 
+        //===============================================================================================
+
 
         Container rsvCt = getContentPane();
         rsvCt.setLayout(null);
@@ -213,14 +248,13 @@ public class Rsv extends JFrame {
         JLabel location_JLabel  = new JLabel("주차구역: ");         //주차선택 -(3,1)
         JLabel choose_areaFloor = ParkingLot.userFloor;                //주차위치(층)
         JLabel choose_areaNum   = ParkingLot.userNum;                  //주차위치(구역)
-        JLabel rsv              = new JLabel("예약일시: ");         //시간선택 -(4,1)
-        JLabel month            = new JLabel("월");                //월 -(1,2)
-        JLabel date             = new JLabel("일");                //일 -(1,4)
-        JLabel hour             = new JLabel("시");                //시 -(2,2)
-        JLabel minute           = new JLabel("분");                //분 -(2,4)
-        JLabel time             = new JLabel("이용시간: ");         //이용시간 선택 -(1,1)
-        JLabel point            = new JLabel("포인트 사용: ");      //포인트 -(2,1)
-        JLabel plus_point       = new JLabel("( [결제금액 * 3%] point 적립 예정)"); //-(2)
+        JLabel rsv              = new JLabel("예약일시: ");         //시간선택
+        JLabel month            = new JLabel("월");                //월
+        JLabel date             = new JLabel("일");                //일
+        JLabel hour             = new JLabel("시");                //시
+        JLabel minute           = new JLabel("분");                //분
+        JLabel time             = new JLabel("이용시간: ");         //이용시간 선택
+        JLabel point            = new JLabel("포인트 사용: ");      //포인트
 
 
         specialInfo.setBounds(590, 60, 130, 30);
@@ -256,7 +290,7 @@ public class Rsv extends JFrame {
 
         priceBefore.setBounds(UserMain.FIRST_OF_INFO, 400, 200, 25);
         prieceAfter.setBounds(UserMain.FIRST_OF_INFO, 425, 200, 25);
-        plus_point.setBounds(UserMain.FIRST_OF_INFO, 450, 200, 25);
+        pointMention.setBounds(UserMain.FIRST_OF_INFO, 450, 200, 25);
 
         rsvBtn.setBounds(UserMain.FIRST_OF_INFO, 480, DEFAULT_SIZE, 50);
         cancelBtn.setBounds(FIRST_OF_HALF_INFO, 480, DEFAULT_SIZE, 50);
@@ -296,7 +330,7 @@ public class Rsv extends JFrame {
 
         rsvCt.add(priceBefore);
         rsvCt.add(prieceAfter);
-        rsvCt.add(plus_point);
+        rsvCt.add(pointMention);
 
         rsvCt.add(rsvBtn);
         rsvCt.add(cancelBtn); //예약, 취소 버튼
@@ -304,7 +338,8 @@ public class Rsv extends JFrame {
 
     }//Rsv 생성자 끝
 
-    public void getCost() { //선택시간에 따른 금액 저장
+
+    public void getCost() { //선택시간에 따른 금액 저장 / 10% 할인 적용
         if (timeComBox.getSelectedItem().equals("1시간")) {
             paidMoney_int = 2700;
         } else if (timeComBox.getSelectedItem().equals("2시간")) {
@@ -312,16 +347,8 @@ public class Rsv extends JFrame {
         } else if (timeComBox.getSelectedItem().equals("3시간")) {
             paidMoney_int = 8100;
         }
+        plusPoint = (paidMoney_int - usePoint_int) * 0.05;
+        pointMention.setText("( "+(int)plusPoint+" point 적립 예정)");
     }//getCost() 메소드 끝
 
 }//Rsv 클래스 끝
-
-class RsvMain extends JFrame{
-    public static void main(String[] args) {
-        Rsv m = new Rsv("주차 프로그램 - 주차예약");
-        m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        m.setSize(1000, 700);
-        m.setVisible(true);
-    }
-
-}

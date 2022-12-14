@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import common.ParkingLot;
 import view.CostFrame;
+import view.Notice;
 
 public class UserMain extends JFrame{
     public static final int TOP_OF_FRAME = 30, TOP_OF_PARK = 90; //전체 기준
@@ -16,9 +17,11 @@ public class UserMain extends JFrame{
     JMenu menu;
     JMenuItem myPage, notion, question, logout;
 
-    public UserMain() {
+    public UserMain(String loginId) {
         Container mainCt = getContentPane();
         mainCt.setLayout(null);
+
+        //===============================================================================================
 
         JMenuBar bar = new JMenuBar();
         setJMenuBar(bar);
@@ -28,6 +31,35 @@ public class UserMain extends JFrame{
         question   = new JMenuItem("문의사항");
         //-----------------------------------------------구분선 추가함
         logout     = new JMenuItem("로그아웃");
+
+
+        myPage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //마이페이지 클래스 불러오기
+            }
+        });
+        notion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Notice nt=new Notice();
+                nt.setSize(400,500);
+                nt.setLocation(400, 0);
+                nt.setTitle("공지사항");
+                nt.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                nt.setVisible(true);
+            }
+        });
+        question.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //문의사항 클래스 불러오기
+            }
+        });
+
+
+
+
         menu.add(myPage);    //연결
         menu.add(notion);
         menu.add(question);
@@ -37,6 +69,7 @@ public class UserMain extends JFrame{
         bar.add(menu);
 
 
+        //===============================================================================================
 
         fareTagButton = new JButton("요금표");
         fareTagButton.addActionListener(new ActionListener() {    //요금표 클릭 시
@@ -127,7 +160,7 @@ public class UserMain extends JFrame{
 
 class Main extends JFrame{
     public static void main(String[] args) {
-        UserMain m = new UserMain();
+        UserMain m = new UserMain("daeunlee");
         m.setTitle("주차 프로그램 - UserMain");
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         m.setSize(1000, 700);
