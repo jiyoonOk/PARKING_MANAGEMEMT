@@ -15,6 +15,7 @@ public class AdminMain extends JFrame {
     static String rowClickedPrimaryKey;
     //String question_id = "";
     static AdminMain admin;
+
     //main에 필요한 변수
     private JTabbedPane tab;
     private JPanel jp, btnjp;

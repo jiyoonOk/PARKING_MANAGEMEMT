@@ -85,7 +85,7 @@ class DBconnection {
             stmt.close();
             AdminMain.con.close();
         } catch (SQLException e) {
-            System.err.println("연결 오류" + e.getMessage());
+            System.err.println("JTable 연결 오류" + e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             System.err.println("드라이버 로드에 실패했습니다.");
@@ -106,13 +106,13 @@ class DBconnection {
             SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String format_time1 = format1.format(System.currentTimeMillis());
 
-            sql = "INSERT INTO parking.notice (notice_id, notice_title, notice_contents, notice_date) VALUES ('" + idNum(AdminMain.admin.noticeJTable) + "', '" + title + "', '" + content + "', '" + format_time1 + "');";
+            sql = "INSERT INTO parking.notice (notice_id, notice_title, notice_contents, notice_date) VALUES ('" + idNum("notice") + "', '" + title + "', '" + content + "', '" + format_time1 + "');";
 
             stmt.executeUpdate(sql);
             stmt.close();
             AdminMain.con.close();
         } catch (SQLException e) {
-            System.err.println("연결 오류" + e.getMessage());
+            System.err.println("notive DBconnection 연결 오류" + e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             System.err.println("드라이버 로드에 실패했습니다.");
@@ -133,7 +133,7 @@ class DBconnection {
             SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String format_time1 = format1.format(System.currentTimeMillis());
 
-            sql = "INSERT INTO parking.answer (answer_id, answer_title, answer_contents, answer_date, question_id) VALUES ('" + idNum(AdminMain.admin.qnaJTable) + "', '" + title + "', '" + content + "', '" + format_time1 + "', '" + id + "');";
+            sql = "INSERT INTO parking.answer (answer_id, answer_title, answer_contents, answer_date, question_id) VALUES ('" + idNum("answer") + "', '" + title + "', '" + content + "', '" + format_time1 + "', '" + id + "');";
 
             stmt.executeUpdate(sql);
             stmt.close();
@@ -167,7 +167,7 @@ class DBconnection {
             stmt.close();
             AdminMain.con.close();
         } catch (SQLException e) {
-            System.err.println("연결 오류" + e.getMessage());
+            System.err.println("getData 연결 오류" + e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             System.err.println("드라이버 로드에 실패했습니다.");
@@ -198,10 +198,10 @@ class DBconnection {
         }
     }
 
-    public int idNum(JTable table) {
+    public int idNum(String DBtableName) {
 
-        int count = table.getModel().getRowCount();
+        int count = Integer.parseInt(getData("select MAX(" + DBtableName + "_id) from parking."+ DBtableName +";"));
 
-        return count+1001;
+        return count+1;
     }
 }
