@@ -10,7 +10,7 @@ import java.util.Vector;
 import static javax.swing.JOptionPane.YES_OPTION;
 
 public class AdminMain extends JFrame {
-    DBconnection usingDB = new DBconnection(); //DBConnection 안에 함수 쓰기 위한 용
+    static DBconnection usingDB = new DBconnection(); //DBConnection 안에 함수 쓰기 위한 용
     static int row;
     static String rowClickedPrimaryKey;
     //String question_id = "";
@@ -264,15 +264,17 @@ public class AdminMain extends JFrame {
                 allUserDB.JTableUpdate();
                 userParkingDB.JTableUpdate();
 
-                TextHint hint = new TextHint(userSearch, "ID를 입력하세요.");
+                TextHint hint = new TextHint(userSearch, "검색어를 입력하세요.");
                 changeUserButton.addActionListener(this);
                 deleteUserButton.addActionListener(this);
 
-                //TODO : ID 검색뿐만 아니라, 이름, 차량번호로도 검색하는 방법 추가할 수 있음.
+
                 userSearch.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        //TODO : 테이블에서 ID 검색 결과 출력
-                        System.out.println("ID : " + e.getActionCommand() + " 를 검색하겠습니다.");
+                        //재사용성 지렸음~!~!
+                        String sql = "select * from parking.user where id like '%"+userSearch.getText()+"%' OR name like '%"+userSearch.getText()+"%' OR car_num like '%"+userSearch.getText()+"%' OR phone_num like '%"+userSearch.getText()+"%';";
+                        DBconnection searchUser = new DBconnection(sql, rowData, userTable);
+                        searchUser.JTableUpdate();
                     }
                 });
             }

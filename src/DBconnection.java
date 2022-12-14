@@ -93,7 +93,7 @@ class DBconnection {
     }
 
     //공지사항 추가
-    public DBconnection(String title, String content) {
+    public void AddNotice(String title, String content) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -120,7 +120,7 @@ class DBconnection {
     }
 
     //문의사항 답변 추가
-    public DBconnection(int id, String title, String content) {
+    public void AddAnswer(int id, String title, String content) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");

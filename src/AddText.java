@@ -90,9 +90,9 @@ public class AddText extends JDialog {
     }
 
     private void onOK(String title, String content) {
-        int notice_delete = JOptionPane.showConfirmDialog(this, "저장 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
-        if (notice_delete == YES_OPTION) {
-            DBconnection db = new DBconnection(title, content);
+        int notice_add = JOptionPane.showConfirmDialog(this, "저장 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+        if (notice_add == YES_OPTION) {
+            AdminMain.usingDB.AddNotice(title, content);
             JOptionPane.showMessageDialog(this, "저장이 되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
             AdminMain.admin.noticeJTable.validate();
             AdminMain.admin.validate();
@@ -104,7 +104,7 @@ public class AddText extends JDialog {
     private void onOK(int id, String title, String content) {
             int add_check = JOptionPane.showConfirmDialog(this, "저장 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
             if (add_check == YES_OPTION) {
-                DBconnection db = new DBconnection(id, title, content);
+                AdminMain.usingDB.AddAnswer(id, title, content);
                 JOptionPane.showMessageDialog(this, "저장이 되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                 AdminMain.admin.noticeJTable.validate();
                 AdminMain.admin.validate();
