@@ -28,10 +28,10 @@ public class Inquire extends JFrame implements ActionListener {
         JButton b = new JButton("확인");
         b.addActionListener(this);
 
+
         String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
         String user = "root";
         String password = "wldmsdl38!";
-
         try { //mysql의 jdbc Driver 연결
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");
@@ -46,7 +46,7 @@ public class Inquire extends JFrame implements ActionListener {
 
             String strSql, checkReservedSql;
 
-            strSql = "SELECT user.name, purchase.user_id, user.car_num, purchase.floor_num, purchase.area, purchase.car_in, purchase.car_out FROM purchase, user WHERE purchase.user_id='user2' and user.id='user2';";
+            strSql = "SELECT user.name, purchase.user_id, user.car_num, purchase.floor_num, purchase.area, purchase.car_in, purchase.car_out, purchase.is_reserved FROM purchase, user WHERE purchase.user_id='jieunyang' and user.id='jieunyang';";
             ResultSet result = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
 
 
@@ -58,16 +58,12 @@ public class Inquire extends JFrame implements ActionListener {
                 userArea   = new JLabel(result.getString("purchase.area"));
                 userInTime = new JLabel(result.getString("purchase.car_in")); //입차시간
                 userRsvOutTime = new JLabel(result.getString("purchase.car_out")); //예약-출차예정시간
+                isReserved = result.getBoolean("is_reserved");
             }
 
             dbSt.close();
+            con.close();
 
-            checkReservedSql = "SELECT is_reserved FROM purchase WHERE user_id='user2';";
-            ResultSet Reservedresult = dbSt.executeQuery(checkReservedSql);
-            isReserved = Reservedresult.getBoolean("is_reserved");
-
-            dbSt.close();
-            con.close(); //DB연동 끊기
         } catch (SQLException e) {
             System.out.println("SQLException : " + e.getMessage());
         }
@@ -165,17 +161,14 @@ public class Inquire extends JFrame implements ActionListener {
         p2[3].add(carNum); p2[3].add(userCarNum);
         p2[4].add(area);   p2[4].add(userFloor);   p2[4].add(userArea);
         p2[5].add(inTime); p2[5].add(userInTime);
-        p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
+
 
         //예약 유무에 따른 패널 출력값 설정
-
-        //TODO 예약 조회 시 [예약취소] 버튼 추가하기. purchase - is_cancled (boolean) 표시
-        if (isReserved == true) {
+        if (isReserved) {
             p2[0].add(rsvtitle);
             p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
         } else {
             p2[0].add(normalTitle);
-            p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
         }
 
 
