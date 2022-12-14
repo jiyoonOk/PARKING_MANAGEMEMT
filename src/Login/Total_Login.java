@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.sql.*;
 import UserMain.*;
+import Admin.*;
+import javax.swing.table.DefaultTableModel;
 
 class Login extends JFrame implements ActionListener {
 
@@ -369,6 +371,8 @@ class MngLogin extends JFrame implements ActionListener {
 				if (result.next()) {
 					JOptionPane.showMessageDialog(this, "매니저 계정으로 로그인 되었습니다.", "매니처로그인창",
 							JOptionPane.INFORMATION_MESSAGE);
+					AdminMain admin = new AdminMain();
+			        admin.setLocationRelativeTo(null);
 				} else {
 					JOptionPane.showMessageDialog(this, "매니저 비밀번호가 틀렸습니다.", "매니저로그인창", JOptionPane.INFORMATION_MESSAGE);
 				}
