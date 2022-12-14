@@ -21,29 +21,20 @@ public class UserInfoChange extends JFrame {
 		try {
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC",
 					"root", "root");
-			System.out.println("DB 연결 완료");
+			System.out.println("DB 연결 완료했습니다.");
+			Statement dbSt = con.createStatement();
 			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 			String strSql;
 			id = search_id.getText();
 			//검색한 id의 해당 정보를 db에 검색하는 코드
-			strSql = "SELECT id, name, email, phone_num, car_num, card_num FROM user WHERE id='" + id + "';";
-			Statement dbSt = con.createStatement();
+			strSql = "SELECT*FROM parking.user WHERE id='" + id + "';";
+			
 			ResultSet result = dbSt.executeQuery(strSql);
 			//검색한 해당 정보 받아오는 반복문
-			while (result.next()) {
-				id = result.getString(1); //필요하지 않을수도
-				name = result.getString(2); //필요하지 않을수도
-				email = result.getString(3);
-				phone_num = result.getString(4);
-				car_num = result.getString(5);
-				card_num = result.getString(6);
-
+			if (result.next()) {
+				//아이디 찾음 그에 맞는 이벤트 창 출력
 			}
 			//String변수 받아온 값 TextField에 띄우기
-			nameField.setText(name);
-			carField.setText(car_num);
-			numberField.setText(phone_num);
-			cardField.setText(card_num);
 			con.close();
 		} catch (SQLException e) {
 			System.out.println("SQLException : " + e.getMessage());
