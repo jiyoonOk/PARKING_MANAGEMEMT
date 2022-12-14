@@ -13,7 +13,7 @@ public class AdminMain extends JFrame {
     static DBconnection usingDB = new DBconnection(); //DBConnection 안에 함수 쓰기 위한 용
     static int row;
     static String rowClickedPrimaryKey;
-    //String question_id = "";
+    String sql;
     static AdminMain admin;
 
     //main에 필요한 변수
@@ -110,7 +110,6 @@ public class AdminMain extends JFrame {
                 carField.setText(userTable.getModel().getValueAt(row, 3).toString());
                 numberField.setText(userTable.getModel().getValueAt(row, 2).toString());
 
-                usingDB = new DBconnection();
                 String card_num = usingDB.getData("SELECT card_num FROM parking.user where id = '" + rowClickedPrimaryKey + "';");
                 cardField.setText(card_num);
 
@@ -268,11 +267,10 @@ public class AdminMain extends JFrame {
                 changeUserButton.addActionListener(this);
                 deleteUserButton.addActionListener(this);
 
-
                 userSearch.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         //재사용성 지렸음~!~!
-                        String sql = "select * from parking.user where id like '%"+userSearch.getText()+"%' OR name like '%"+userSearch.getText()+"%' OR car_num like '%"+userSearch.getText()+"%' OR phone_num like '%"+userSearch.getText()+"%';";
+                        sql = "select * from parking.user where id like '%"+userSearch.getText()+"%' OR name like '%"+userSearch.getText()+"%' OR car_num like '%"+userSearch.getText()+"%' OR phone_num like '%"+userSearch.getText()+"%';";
                         DBconnection searchUser = new DBconnection(sql, rowData, userTable);
                         searchUser.JTableUpdate();
                     }
@@ -284,8 +282,8 @@ public class AdminMain extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String s = e.getActionCommand();
                 if (s.equals("계정 변경")) {
-                    nameField.setEditable(true);
-                    idField.setEditable(true);
+                    //nameField.setEditable(true);
+                    //idField.setEditable(true);
                     carField.setEditable(true);
                     numberField.setEditable(true);
                     cardField.setEditable(true);
@@ -295,23 +293,32 @@ public class AdminMain extends JFrame {
                 } else if (s.equals("저장")) {
                     //TODO : 입력 변경된 내용 받아서 DB 입력
 
+                    sql = "update parking.user set phone_num = '" + numberField.getText() + "', car_num='"+ carField.getText() + "', card_num='" + cardField.getText() + "' WHERE (id = '" + idField.getText() + "');";
+
+                    usingDB.DBInstruct(sql);
+
                     JOptionPane.showMessageDialog(admin, "계정 변경이 완료되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
 
-                    nameField.setEditable(false);
-                    idField.setEditable(false);
+                    //nameField.setEditable(false);
+                    //idField.setEditable(false);
                     carField.setEditable(false);
                     numberField.setEditable(false);
                     cardField.setEditable(false);
 
                     changeUserButton.setText("계정 변경");
+
+                    usingDB.JTableUpdate();
                 } else if (s.equals("계정 삭제")) {
                     int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                     if (user_delete == YES_OPTION) {
 
-                        usingDB.DelectAttribute("user");
+                        String sql = "DELETE FROM `parking`.`user` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
+
+                        usingDB.DBInstruct(sql);
 
                         JOptionPane.showMessageDialog(admin, "계정이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                     }
+                    usingDB.JTableUpdate();
                 }
             }
         }//user admin 끝
@@ -382,11 +389,14 @@ public class AdminMain extends JFrame {
                         int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                         if (question_delete == YES_OPTION) {
 
-                            usingDB.DelectAttribute("question");
+                            String sql = "DELETE FROM `parking`.`question` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
+
+                            usingDB.DBInstruct(sql);
 
                             JOptionPane.showMessageDialog(admin, "문의가 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         };} break;
                 }
+                usingDB.JTableUpdate();
             }
         }// QnaAdmin 클래스 종료
 
@@ -405,17 +415,31 @@ public class AdminMain extends JFrame {
             }
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 switch (e.getActionCommand()) {
                     case "추가": {
                         AddText add = new AddText();
                     }break;
                     case "수정": {
-                    }break;   //TODO : DB 수정
+                        noticeTitleField.setEditable(true);
+                        noticeContentsArea.setEditable(true);
+
+                        noticeChangeButton.setText("저장");
+                    }break;
+                    case "저장" : {
+
+                        sql = "update parking.notice set notice_title = '" + noticeTitleField.getText() + "', notice_contents='"+ noticeContentsArea.getText() + "' WHERE (id = '" + rowClickedPrimaryKey + "');";
+
+                        usingDB.DBInstruct(sql);
+                        noticeDB.JTableUpdate();
+                    }break;
                     case "삭제": {
                         int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                         if (notice_delete == YES_OPTION) {
 
-                            usingDB.DelectAttribute("notice");
+                            String sql = "DELETE FROM `parking`.`notice` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
+
+                            usingDB.DBInstruct(sql);
 
                             JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         }

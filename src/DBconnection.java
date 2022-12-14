@@ -14,15 +14,19 @@ class DBconnection {
     JTable table;
 
     //기본 생성자
-    public DBconnection(){};
+    public DBconnection() {
+    }
+
+    ;
 
     //모든 JTable 뽑아냄
     public DBconnection(String sql, Vector<Vector<String>> rowData, JTable table) {
         this.sql = sql;
         this.rowData = rowData;
-        this.table = table; }
+        this.table = table;
+    }
 
-    public void JTableUpdate (){
+    public void JTableUpdate() {
         String t = table.getName();
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setNumRows(0);
@@ -92,8 +96,8 @@ class DBconnection {
         }
     }
 
-    //공지사항 추가
-    public void AddNotice(String title, String content) {
+    //DB에 명령문 넣기만 할 때 : 추가, 수정, 삭제
+    public void DBInstruct(String sql) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -102,38 +106,6 @@ class DBconnection {
             System.out.println("연결 완료!");
 
             Statement stmt = AdminMain.con.createStatement();
-
-            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String format_time1 = format1.format(System.currentTimeMillis());
-
-            sql = "INSERT INTO parking.notice (notice_id, notice_title, notice_contents, notice_date) VALUES ('" + idNum("notice") + "', '" + title + "', '" + content + "', '" + format_time1 + "');";
-
-            stmt.executeUpdate(sql);
-            stmt.close();
-            AdminMain.con.close();
-        } catch (SQLException e) {
-            System.err.println("notive DBconnection 연결 오류" + e.getMessage());
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("드라이버 로드에 실패했습니다.");
-        }
-    }
-
-    //문의사항 답변 추가
-    public void AddAnswer(int id, String title, String content) {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
-            AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
-            System.out.println("연결 완료!");
-
-            Statement stmt = AdminMain.con.createStatement();
-
-            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String format_time1 = format1.format(System.currentTimeMillis());
-
-            sql = "INSERT INTO parking.answer (answer_id, answer_title, answer_contents, answer_date, question_id) VALUES ('" + idNum("answer") + "', '" + title + "', '" + content + "', '" + format_time1 + "', '" + id + "');";
 
             stmt.executeUpdate(sql);
             stmt.close();
@@ -175,33 +147,4 @@ class DBconnection {
         return data;
     }
 
-    //attribute 삭제!
-    public void DelectAttribute(String DBTableName){
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
-            AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
-            System.out.println("연결 완료!");
-
-            Statement stmt = AdminMain.con.createStatement();
-            String sql = "DELETE FROM `parking`.`"+DBTableName+"` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
-
-            stmt.executeUpdate(sql);
-            stmt.close();
-            AdminMain.con.close();
-        } catch (SQLException e) {
-            System.err.println("연결 오류" + e.getMessage());
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("드라이버 로드에 실패했습니다.");
-        }
-    }
-
-    public int idNum(String DBtableName) {
-
-        int count = Integer.parseInt(getData("select MAX(" + DBtableName + "_id) from parking."+ DBtableName +";"));
-
-        return count+1;
-    }
 }

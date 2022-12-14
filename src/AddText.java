@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.event.*;
+import java.text.SimpleDateFormat;
 
 import static javax.swing.JOptionPane.YES_OPTION;
 
@@ -92,7 +93,13 @@ public class AddText extends JDialog {
     private void onOK(String title, String content) {
         int notice_add = JOptionPane.showConfirmDialog(this, "저장 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
         if (notice_add == YES_OPTION) {
-            AdminMain.usingDB.AddNotice(title, content);
+
+            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String format_time1 = format1.format(System.currentTimeMillis());
+
+            String sql = "INSERT INTO parking.notice (notice_id, notice_title, notice_contents, notice_date) VALUES ('" + idNum("notice") + "', '" + title + "', '" + content + "', '" + format_time1 + "');";
+            AdminMain.usingDB.DBInstruct(sql);
+
             JOptionPane.showMessageDialog(this, "저장이 되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
             AdminMain.admin.noticeJTable.validate();
             AdminMain.admin.validate();
@@ -104,7 +111,13 @@ public class AddText extends JDialog {
     private void onOK(int id, String title, String content) {
             int add_check = JOptionPane.showConfirmDialog(this, "저장 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
             if (add_check == YES_OPTION) {
-                AdminMain.usingDB.AddAnswer(id, title, content);
+
+                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String format_time1 = format1.format(System.currentTimeMillis());
+
+                String sql = "INSERT INTO parking.answer (answer_id, answer_title, answer_contents, answer_date, question_id) VALUES ('" + idNum("answer") + "', '" + title + "', '" + content + "', '" + format_time1 + "', '" + id + "');";
+                AdminMain.usingDB.DBInstruct(sql);
+
                 JOptionPane.showMessageDialog(this, "저장이 되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                 AdminMain.admin.noticeJTable.validate();
                 AdminMain.admin.validate();
@@ -113,4 +126,11 @@ public class AddText extends JDialog {
             dispose();
             }
         }
+
+    public int idNum(String DBtableName) {
+
+        int count = Integer.parseInt(AdminMain.usingDB.getData("select MAX(" + DBtableName + "_id) from parking."+ DBtableName +";"));
+
+        return count+1;
+    }
 }
