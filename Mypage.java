@@ -96,9 +96,9 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 		 
 	
 			
-		 special=new JLabel("특이사항:");
-		 special.setBounds(20,270,70,30);
-		 
+		 special=new JLabel("특이사항 :                 (*해당되는 사항을 다시 선택해주세요*)");
+		 special.setBounds(20,270,400,30);
+		   
 		smallcar=new JCheckBox("경차");
 		smallcar.setBounds(20,300,60,20);
 		

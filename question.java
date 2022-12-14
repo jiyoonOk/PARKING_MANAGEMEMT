@@ -162,6 +162,8 @@ public void mouseClicked(MouseEvent ae) {
 	Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", "root", "root");
 	Statement dbSt = con.createStatement();
 	String strSql;
+	
+	
 	strSql="SELECT * FROM answer"; //where question_id=t_question_id; 
 	ResultSet result=dbSt.executeQuery(strSql); 
 	
