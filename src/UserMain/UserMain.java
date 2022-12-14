@@ -3,6 +3,7 @@ package UserMain;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 import common.ParkingLot;
 import view.CostFrame;
@@ -76,7 +77,13 @@ public class UserMain extends JFrame{
         checkButton.addActionListener(new ActionListener() {      //조회 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                Inquire i = new Inquire();
+                Inquire i = null;
+                try {
+                    i = new Inquire(); //TODO #### 뭐가 문젠데..
+                } catch (SQLException ex) {
+                    System.err.println("SQLException : " + ex.getMessage());
+
+                }
                 i.setTitle("주차 프로그램 - 조회");
                 i.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 i.setSize(1000,600);

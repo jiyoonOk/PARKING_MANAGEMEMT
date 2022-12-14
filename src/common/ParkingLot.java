@@ -1,3 +1,5 @@
+package common;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,16 +8,15 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 public class ParkingLot extends JFrame {
-    ParkingLot(String title) {
-        setTitle(title);
-        Container ct = getContentPane();
-        ct.setLayout(null);
+    public static JLabel userFloor, userNum;
+    public static JComboBox floor; //층수 콤보박스
+    public static JPanel car;
+    public ParkingLot() {
 
         JButton[][] btn = new JButton[3][16]; //구역 버튼
-        JComboBox floor; //층수 콤보박스
-        JLabel area = new JLabel("주차구역 : ");
-        JLabel userFloor = new JLabel(); //사용자선택값 층수(초기값-B1층)
-        JLabel userNum = new JLabel(); //사용자선택값 구역
+
+        userFloor = new JLabel(); //사용자선택값 층수(초기값-B1층)
+        userNum   = new JLabel(); //사용자선택값 구역
         ImageIcon[] carIcons = {
                 new ImageIcon("images/Car.jpg"), //일반, checked
                 new ImageIcon("images/woman.jpg"), //여성
@@ -27,9 +28,9 @@ public class ParkingLot extends JFrame {
         };
 
         //주차 현황 panel
-        JPanel car = new JPanel();
+        car = new JPanel();
         car.setLayout(new GridLayout(6, 1));
-        JPanel p[] = new JPanel[6];
+        JPanel[] p = new JPanel[6];
         for (int i = 0; i < p.length; i++)
             car.add(p[i] = new JPanel());
 
@@ -72,18 +73,6 @@ public class ParkingLot extends JFrame {
         for (int i = 8; i < 12; i++) p[3].add(btn[0][i]); //C열
         for (int i = 12; i < 16; i++) p[5].add(btn[0][i]); //D열
 
-        //setBounds 위치 지정
-        floor.setBounds(20, 50, 100, 30); //층수 콤보박스
-        car.setBounds(20, 100, 500, 400); //주차장 패널
-        area.setBounds(350, 50, 100, 20); //주차구역 라벨
-        userFloor.setBounds(420, 50, 100, 20); //층수 (사용자선택)
-        userNum.setBounds(450, 50, 100, 20); //구역 (사용자선택0
-
-        ct.add(floor);      //콤보박스 주차층수(B1, B2, B3)
-        ct.add(car);        //주차장 패널
-        ct.add(area);       //주차구역 JLabel
-        ct.add(userFloor);  //사용자가 선택한 주차층수 JLabel
-        ct.add(userNum);    //사용자가 선택한 주차구역 JLabel
 
         //주차층수 리스너 객체 생성 및 선언
         FloorItemListener floorIL = new FloorItemListener(userNum, floor, p, btn, carIcons);
@@ -193,16 +182,6 @@ class AreaActionListener implements ActionListener {
     }
 }
 }
-class ParkingLotMain {
-    public static void main(String[] args) {
-        ParkingLot win = new ParkingLot("주차");
-        win.setSize(600, 600);
-        win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        win.setVisible(true);
-        win.setLocationRelativeTo(null);
-    }
-}
-
 
 
 

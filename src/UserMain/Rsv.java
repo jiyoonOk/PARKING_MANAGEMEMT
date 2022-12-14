@@ -13,12 +13,13 @@ import common.ParkingLot;
 
 
 public class Rsv extends JFrame {
-    static Connection con = null;
     static String classname = "C://lib";
     static String user = "root", passwd = "0000"; //DB 사용자,비번
+    static Connection con = null;
+    static String userName = "";
     static int userPoint = 0;
 
-    String userId = "daeunlee", userCarNu = "12가3455"; //로그인한 사용자 정보 TODO 로그인에서 받아오기
+    String userId = "daeunlee", userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
     public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
 
     String[] month, time;           //월, 선택시간
@@ -110,9 +111,17 @@ public class Rsv extends JFrame {
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
             //user 테이블에서 로그인한 id에 맞는 userPoint 가져오기
-            String strSql = "SELECT user.point FROM user WHERE user.id=" + userId + "";
+            String strSql = "SELECT user.point FROM user WHERE user.id=" + userId + ";";
             userPoint = dbSt.executeUpdate(strSql);
-            System.out.println("데이터 추출 완료");
+            System.out.println("포인트 추출 완료");
+
+            strSql = "SELECT user.name FROM user WHERE user.id=" + userId +";";
+            userName = String.valueOf(dbSt.executeUpdate(strSql));
+            System.out.println("이름 추출 완료");
+
+            strSql = "SELECT user.car_num FROM user WHERE user.id=" + userId +";";
+            userCarNu = String.valueOf(dbSt.executeUpdate(strSql));
+            System.out.println("차번호 추출 완료");
 
             dbSt.close();
             con.close();    //DB 연동 끊기
@@ -124,8 +133,6 @@ public class Rsv extends JFrame {
             System.err.println("SQLException : " + e.getMessage());
         }
 
-
-        //TODO DB : 포인트 가져와서 초기화하기
 
         inputPoint_JTF     = new JTextField(8);          //사용할 포인트 입력
         inputPoint_JTF.setHorizontalAlignment(JTextField.RIGHT); //우측정렬
@@ -174,9 +181,8 @@ public class Rsv extends JFrame {
                 int result = JOptionPane.showConfirmDialog(null, "예약 하시겠습니까?\n(확인 시 결제로 넘어감)", "주차예약", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
                     //TODO !# 결제창으로 넘어가기
-                    //TODO DB : 결제정보 넘기기
-                    // (선택한 연월일시), usePoint(사용포인트), timeComBox.getSelectedItem()(선택시간)
-                    JOptionPane.showMessageDialog(null, "결제가 완료되었습니다!");
+                    //TODO !# : 결제정보 넘기기
+                    // (선택한 연월일시), userPoint(보유포인트), timeComBox.getSelectedItem()(선택시간)
                     dispose();
                 }
             }
@@ -186,6 +192,7 @@ public class Rsv extends JFrame {
         cancelBtn.addActionListener(new ActionListener() { //취소 버튼 클릭 시
             @Override
             public void actionPerformed(ActionEvent e) { //창 닫기
+                userPoint += usePoint_int; //TODO !# 이거 필요한가?
                 JOptionPane.showMessageDialog(null, "취소 되었습니다!");
                 dispose();
             }
@@ -313,7 +320,7 @@ class RsvMain extends JFrame{
     public static void main(String[] args) {
         Rsv m = new Rsv("주차 프로그램 - 주차예약");
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        m.setSize(1000, 600);
+        m.setSize(1000, 700);
         m.setVisible(true);
     }
 
