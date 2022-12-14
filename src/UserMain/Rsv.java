@@ -15,20 +15,18 @@ import common.ParkingLot;
 
 public class Rsv extends JFrame {
     static String classname = "com.mysql.cj.jdbc.Driver";
-    static String user = "root", passwd = "0000"; //DB 사용자,비번
-    static Connection con = null;
+    static String user = "root", passwd = "wldbs1004"; //DB 사용자,비번
     static String userName = "";
-    static int userPoint = 10000; //DB 사용자 보유 포인트
+    static int userPoint=0; //DB 사용자 보유 포인트
     double plusPoint = 0;
 
-    String userId = "daeunlee"/*테스트용 상수*/, userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
+    String userId = "", userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
 
     //===============================================================================================
 
     public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
 
     String[] month, time;           //월, 선택시간
-    Vector<String> hour, min; //시, 분
     JComboBox monthComBox, dateComBox, hourComBox, minComBox, timeComBox; //월일시분 시간선택
     JTextField inputPoint_JTF; //사용할 포인트 입력
     public static int usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
@@ -99,14 +97,13 @@ public class Rsv extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 minComBox.removeAllItems();
                 if (dateComBox.getSelectedItem().equals(currDate+1) && hourComBox.getSelectedItem().equals(currHour+1)) {
-                    for (int i = currMinute; i < 24; i++) { //남은 분만 표시
-                        if (i < 9) minComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
-                        else minComBox.addItem(String.valueOf(i + 1));
+                    for (int i = currMinute/10; i < 6; i++) { //남은 분만 표시
+                        minComBox.addItem(String.valueOf(i *10));
                     }
                 } else {
-                    for (int i = 0; i < 24; i++) { //01~24시
-                        if (i < 9) minComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
-                        else minComBox.addItem(String.valueOf(i + 1));
+                    for (int i = 0; i < 6; i++) {
+                        if (i == 0) minComBox.addItem("00"); //두자릿수로 나오게 하기
+                        else minComBox.addItem(String.valueOf(i *10));
                     }
                 }
             }
@@ -135,7 +132,7 @@ public class Rsv extends JFrame {
             System.err.println("드라이버 로드에 실패했습니다.");
         }
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", user, passwd);
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", user, passwd);
             System.out.println("DB 연결 완료");
             Statement dbSt = con.createStatement();
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -219,30 +216,7 @@ public class Rsv extends JFrame {
                 int result = JOptionPane.showConfirmDialog(null, "예약 하시겠습니까?\n(확인 시 결제로 넘어감)", "주차예약", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
                     //TODO !# 결제창으로 넘어가기
-                    try {
-                        Class.forName(classname);  //mysql jdbc Driver 연결
-                        System.err.println("JDBC 드라이버를 정상적으로 로드함");
-                    } catch (ClassNotFoundException ce) {
-                        System.err.println("드라이버 로드에 실패했습니다.");
-                    }
-                    try {
-                        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", user, passwd);
-                        System.out.println("DB 연결 완료");
-                        Statement dbSt = con.createStatement();
-                        System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
-                        String strSql;
-                        // TODO #### 예약정보 어떻게 넘겨
-                        strSql = "";
-                        dbSt.executeUpdate(strSql);
-                        System.out.println("결제 정보 업데이트 완료");
-
-
-                        dbSt.close();
-                        con.close();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
                     //TODO !# : 결제정보 넘기기
                     // (선택한 연월일시), userPoint(보유포인트), timeComBox.getSelectedItem()(선택시간)
                     dispose();

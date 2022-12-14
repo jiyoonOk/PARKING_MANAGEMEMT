@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import common.ParkingLot;
 import view.CostFrame;
+import view.Mypage;
 import view.Notice;
 
 public class UserMain extends JFrame{
@@ -36,7 +37,7 @@ public class UserMain extends JFrame{
         myPage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                /*
+
                 Mypage mg=new Mypage();
                 mg.setSize(400,430);
                 mg.setLocation(400, 0);
@@ -44,7 +45,6 @@ public class UserMain extends JFrame{
                 mg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 mg.setVisible(true);
 
-                 */
             }
         });
         notion.addActionListener(new ActionListener() {
@@ -118,17 +118,16 @@ public class UserMain extends JFrame{
         checkButton.addActionListener(new ActionListener() {      //조회 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                Inquire i = null;
+                Inquire win = null;
                 try {
-                    i = new Inquire(); //TODO #### 뭐가 문젠데..
+                    win = new Inquire();
                 } catch (SQLException ex) {
-                    System.err.println("SQLException : " + ex.getMessage());
-
+                    throw new RuntimeException(ex);
                 }
-                i.setTitle("주차 프로그램 - 조회");
-                i.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                i.setSize(1000,600);
-                i.setVisible(true);
+                win.setSize(900, 600);
+                win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                win.setVisible(true);
+                win.setLocationRelativeTo(null);
             }
         });
 
@@ -168,7 +167,7 @@ public class UserMain extends JFrame{
 
 class Main extends JFrame{
     public static void main(String[] args) {
-        UserMain m = new UserMain("daeunlee");
+        UserMain m = new UserMain("daeunlee"); // TODO 로그인 창으로 이부분 옮겨서 입력된 아이디 넣기
         m.setTitle("주차 프로그램 - UserMain");
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         m.setSize(1000, 700);

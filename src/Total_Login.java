@@ -4,6 +4,8 @@ import java.awt.event.*;
 import java.sql.*;
 
 class Login extends JFrame implements ActionListener{
+
+	String user = "root", passwd = "0000";
 	JTextField lgId;
 	JPasswordField lgPw;
 	Login() {
@@ -55,7 +57,7 @@ class Login extends JFrame implements ActionListener{
 			}
 			try {
 				Connection con = DriverManager.getConnection
-				("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", "root", "root");
+				("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", user, passwd);
 				System.out.println("DB 연결 완료했습니다.");
 				Statement dbSt = con.createStatement();
 				System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -244,8 +246,10 @@ class Join extends JFrame implements ActionListener {
 }//Join 메소드 끝
 
 class MngLogin extends JFrame implements ActionListener{
+
+	String user = "root", passwd = "0000";
 	JPasswordField mngPw;
-	
+
 	MngLogin (){
 		JLabel mngTitle = new JLabel("관리자 로그인");
 		mngTitle.setFont(mngTitle.getFont().deriveFont(15.0f));
@@ -280,7 +284,7 @@ class MngLogin extends JFrame implements ActionListener{
 			}
 			try {
 				Connection con = DriverManager.getConnection
-						("jdbc:mysql://localhost:3306/parkingmanager?serverTimezone=UTC", "root", "root");
+						("jdbc:mysql://localhost:3306/parkingmanager?serverTimezone=UTC", user, passwd);
 				System.out.println("DB 연결이 완료되었습니다.");
 				Statement dbSt = con.createStatement();
 				System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");

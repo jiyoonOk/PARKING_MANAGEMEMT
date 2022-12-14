@@ -4,9 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalTime;
 
 import common.ParkingLot;
+
+import static UserMain.Rsv.*;
 
 public class Park extends JFrame {
 
@@ -26,18 +32,25 @@ public class Park extends JFrame {
         JLabel location      = new JLabel("주차구역: ");       //주차구역
         JLabel choose_areaFloor = ParkingLot.userFloor;   //주차위치(층)
         JLabel choose_areaNum = ParkingLot.userNum;       //주차위치(구역)
-
+        
+        
         parkingBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Inquire win = null;
+                try {
+                    win = new Inquire();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                win.setSize(900, 600);
+                win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                win.setVisible(true);
+                win.setLocationRelativeTo(null);
                 JOptionPane.showMessageDialog(null, "주차 되었습니다!");
                 dispose();
             }
         });
-        /*TODO : 예약과 비교했을 떄,
-            db에 입력하는 유형이 다르면 익명리스너로 생성.
-           .                  같으면 공통된 액션리스너 클래스 생성.
-         */
         cancelBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

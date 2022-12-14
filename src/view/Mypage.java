@@ -1,14 +1,20 @@
-package Test;
+package view;
 
-import java.awt.*;
-import java.awt.event.*;
+
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.*;
 
 
 public class Mypage extends JFrame implements ActionListener,ItemListener {
 
-	
+	String user = "root", passswd = "0000";
+
+
 	JLabel title; //마이페이지
 	JLabel name; //이름
 	JLabel id; //아이디
@@ -33,7 +39,7 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 		 try { Class.forName("com.mysql.cj.jdbc.Driver");
 		  System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함"); }
 		  catch(ClassNotFoundException e) { System.err.println("드라이버 로드에 실패했습니다."); }
-		  try { Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", "root", "root");
+		  try { Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", user, passswd);
 		  System.out.println("DB 연결 완료."); 
 		  Statement dbSt = con.createStatement();
 		  System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -167,7 +173,7 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 		  try { Class.forName("com.mysql.cj.jdbc.Driver");
 		  System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함"); }
 		  catch(ClassNotFoundException e) { System.err.println("드라이버 로드에 실패했습니다."); }
-		  try { Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", "root", "root");
+		  try { Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", user, passswd);
 		  System.out.println("DB 연결 완료."); Statement dbSt = con.createStatement();
 		  System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 		  String strSql;
@@ -198,12 +204,7 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 				dbSt.executeUpdate(strSql); 				
 				JOptionPane.showMessageDialog
 				(this, "계정이 삭제되었습니다.","계정탈퇴",JOptionPane.INFORMATION_MESSAGE);
-				
-				Login login = new Login();
-				login.setTitle("LOGIN");
-				login.setSize(400, 600);
-				login.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				login.setVisible(true);
+
 				dispose();
 			}//DB정보 삭제 후 로그인화면으로 전환!!!!!!!	
 			
@@ -243,23 +244,5 @@ public class Mypage extends JFrame implements ActionListener,ItemListener {
 				
 			}
 	}
-		
-    
-  
-
-	public static void main(String[] args) {
-		Mypage mg=new Mypage();
-		mg.setSize(400,430);
-		mg.setLocation(400, 0);
-		mg.setTitle("마이페이지");
-		mg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		mg.setVisible(true);
-
-	}
-
-
-
-
-
 
 }
