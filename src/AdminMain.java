@@ -93,18 +93,21 @@ public class AdminMain extends JFrame {
         pack();
         setVisible(true);
 
+        //각 JTable 클릭하면 옆에 자세한 사항들 나오는 리스너들
         userTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
                 int row = userTable.getSelectedRow();
+                String clickedId = userTable.getModel().getValueAt(row, 0).toString();
                 nameField.setText(userTable.getModel().getValueAt(row, 1).toString());
-                idField.setText(userTable.getModel().getValueAt(row, 0).toString());
+                idField.setText(clickedId);
                 carField.setText(userTable.getModel().getValueAt(row, 3).toString());
                 numberField.setText(userTable.getModel().getValueAt(row, 2).toString());
-                //TODO : card_num DB에서 들고 오기!
-                //cardField.setText(userTable.getModel().getValueAt(row, ).toString());
 
+                DBconnection card = new DBconnection();
+                String card_num = card.getData("SELECT card_num FROM parking.user where id = '" + clickedId + "';");
+                cardField.setText(card_num);
             }
         });
         qnaJTable.addMouseListener(new MouseAdapter() {
@@ -122,7 +125,7 @@ public class AdminMain extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mousePressed(e);
-                int row = qnaJTable.getSelectedRow();
+                int row = noticeJTable.getSelectedRow();
                 noticeTitleField.setText(noticeJTable.getModel().getValueAt(row, 1).toString());
                 noticeContentsArea.setText(noticeJTable.getModel().getValueAt(row, 2).toString());
             }
@@ -236,10 +239,13 @@ public class AdminMain extends JFrame {
 
         // 회원관리 탭 클래스
         class UserAdmin extends JPanel implements ActionListener {
+            DBconnection allUserDB, userParkingDB;
             public UserAdmin() {
 
-                DBconnection allUserDB = new DBconnection("SELECT * from parking.user;", rowData, userTable);
-                DBconnection userParkingDB = new DBconnection("SELECT * from parking.purchase;", rowData2, userParkingTable);
+                allUserDB = new DBconnection("SELECT * from parking.user;", rowData, userTable);
+                userParkingDB = new DBconnection("SELECT * from parking.purchase;", rowData2, userParkingTable);
+                allUserDB.JTableUpdate();
+                userParkingDB.JTableUpdate();
 
                 TextHint hint = new TextHint(userSearch, "ID를 입력하세요.");
                 changeUserButton.addActionListener(this);
@@ -292,6 +298,7 @@ public class AdminMain extends JFrame {
 
         // 매출관리 탭 클래스
         class SalesAdmin extends JPanel implements ActionListener {
+            DBconnection salesDB;
 
             public SalesAdmin() {
 
@@ -306,7 +313,8 @@ public class AdminMain extends JFrame {
                 g.add(weekRB);
                 g.add(dayRB);
 
-                DBconnection salesDB = new DBconnection("SELECT * from parking.purchase;", rowData5, salesTable);
+                salesDB = new DBconnection("SELECT * from parking.purchase order by car_out;", rowData5, salesTable);
+                salesDB.JTableUpdate();
 
                 purchaseCombo.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -314,23 +322,26 @@ public class AdminMain extends JFrame {
                         //TODO : 쿼리문으로 결제완료 / 결제취소 구분
                     }
                 });
-                //getSum();
             }
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println(e.getActionCommand() + " 버튼 누름");
                 //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
+
+
             }
 
         }//salesAdmin 클래스 종료
 
         // 문의사항 탭 클래스
         class QnaAdmin extends JPanel implements ActionListener {
+            DBconnection qnaDB;
 
             public QnaAdmin() {
 
-                DBconnection qnaDB = new DBconnection("SELECT * from parking.question;", rowData3, qnaJTable);
+                qnaDB = new DBconnection("SELECT * from parking.question order by question_date;", rowData3, qnaJTable);
+                qnaDB.JTableUpdate();
 
                 qnaAddButton.addActionListener(this);
                 qnaDeleteButton.addActionListener(this);
@@ -359,10 +370,12 @@ public class AdminMain extends JFrame {
 
         // 공지사항 탭 클래스
         class NoticeAdmin extends JPanel implements ActionListener {
+            DBconnection noticeDB;
 
             public NoticeAdmin() {
                 // 제목, 내용 text DB 연결하기
-                DBconnection noticeDB = new DBconnection("SELECT * from parking.notice;", rowData4, noticeJTable);
+                noticeDB = new DBconnection("SELECT * from parking.notice order by notice_date;", rowData4, noticeJTable);
+                noticeDB.JTableUpdate();
 
                 noticeAddButton.addActionListener(this);
                 noticeChangeButton.addActionListener(this);
@@ -385,246 +398,9 @@ public class AdminMain extends JFrame {
                         ;
                     }break;
                 }
+                noticeDB.JTableUpdate();
             }
         } //noticeAdmin 종료
-
 }//AdminMain 클래스 종료
 
-
-    class PwChange extends JDialog implements ActionListener{
-        private JPasswordField currentPw, newPw, rePw;
-        private JButton pass, check, ok, cancel;
-        private JPanel p;
-
-        public PwChange(JFrame parent, String title, boolean modal) {
-            super(parent, title, modal);
-
-            p = new JPanel();
-            p.setLayout(new GridLayout(4, 3));
-
-            currentPw = new JPasswordField(10);
-            pass = new JButton("확인");
-            pass.addActionListener(this);
-
-            p.add(new JLabel("현재 비밀번호 : "));
-            p.add(currentPw);
-            p.add(pass);
-
-            newPw = new JPasswordField(10);
-            newPw.setEditable(false);
-            p.add(new JLabel("신규 비밀번호 : "));
-            p.add(newPw);
-            p.add(new JLabel(""));
-
-            rePw = new JPasswordField(10);
-            rePw.setEditable(false);
-            check = new JButton("재입력 확인");
-            check.setEnabled(false);
-            check.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (newPw.getText().equals(rePw.getText())) {
-                        JOptionPane.showMessageDialog(p, "비밀번호를 동일하게 입력하였습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                        ok.setEnabled(true);
-                    } else {
-                        JOptionPane.showMessageDialog(p, "비밀번호가 동일하지 않습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                        rePw.setText("");
-                    }
-                }
-            });
-
-            p.add(new JLabel("비밀번호 재입력 : "));
-            p.add(rePw);
-            p.add(check);
-
-            ok = new JButton("변경");
-            ok.setEnabled(false);
-            ok.addActionListener(this);
-            cancel = new JButton("취소");
-            cancel.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    dispose();
-                }
-            });
-
-            p.add(new JLabel(""));
-            p.add(ok);
-            p.add(cancel);
-
-            add(p);
-            pack();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            String sql = "", s = ae.getActionCommand();
-            ResultSet result;
-
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
-                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
-                System.out.println("연결 완료!");
-
-                Statement stmt = AdminMain.con.createStatement();
-
-                switch (s){
-                    case "확인" : sql = "select manager_pw from parking.manager where manager_pw='"+ currentPw.getText() +"';";
-                        result = stmt.executeQuery(sql);
-                        if (result.next()) {
-                            JOptionPane.showMessageDialog(p, "비밀번호가 동일합니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                            newPw.setEditable(true);
-                            rePw.setEditable(true);
-                            check.setEnabled(true);
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(p, "비밀번호가 동일하지 않습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                            currentPw.setText("");
-                        }
-                        break;
-                    case "변경" : sql = "update parking.manager set manager_pw = '"+ newPw.getText() +"' where (manager_pw = '"+ currentPw.getText() +"');";
-                        stmt.executeQuery(sql);
-                        JOptionPane.showMessageDialog(p, "비밀번호가 변경되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                        break;
-                }
-                stmt.close();
-                AdminMain.con.close();
-            } catch (SQLException e) {
-                System.err.println("연결 오류" + e.getMessage());
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                System.err.println("드라이버 로드에 실패했습니다.");
-            }
-        }
-    }//Pwchange class 종료
-
-    class DBconnection {
-        //DB를 위한 변수
-        String sql = "";
-        Vector<Vector<String>> rowData;
-        JTable table;
-        //모든 JTable 뽑아냄
-        public DBconnection(String sql, Vector<Vector<String>> rowData, JTable table) {
-            sql = sql;
-            this.rowData = rowData;
-            this.table = table;
-            String t = table.getName();
-            // JDBC 드라이버 로드
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
-                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
-                System.out.println("연결 완료!");
-
-                Statement stmt = AdminMain.con.createStatement();
-
-                ResultSet result = stmt.executeQuery(sql);    //DB로부터 읽어온 데이터
-
-                while (result.next()) {  //DB에서 읽어와 표에 출력하기
-                    Vector<String> txt = new Vector<String>();
-                    // 한 레코드를 읽으면 1차원 벡터로 만들어 표에 한 행씩 추가
-                    switch (t) {
-                        case "userTable": {
-                            txt.add(result.getString("id"));
-                            txt.add(result.getString("name"));
-                            txt.add(result.getString("phone_num"));
-                            txt.add(result.getString("car_num"));
-                            txt.add(result.getString("point"));
-                        }break;
-                        case "userParkingTable": {
-                            txt.add(result.getString("car_in"));
-                            txt.add(result.getString("area"));
-                            txt.add(result.getString("total_fee"));
-                        }break;
-                        case "salesTable": {
-                            txt.add(result.getString("car_in"));
-                            //txt.add(resultAllUser.getString("car_num"));
-                            txt.add(result.getString("total_fee"));
-                            txt.add(result.getString("user_id"));
-                        }break;
-                        case "qnaJTable": {
-                            txt.add(result.getString("question_id"));
-                            txt.add(result.getString("question_title"));
-                            txt.add(result.getString("question_contents"));
-                            txt.add(result.getString("question_date"));
-                            txt.add(result.getString("user_id"));
-                        }break;
-                        case "noticeJTable": {
-                            txt.add(result.getString("notice_id"));
-                            txt.add(result.getString("notice_title"));
-                            txt.add(result.getString("notice_contents"));
-                            txt.add(result.getString("notice_date"));
-                        }break;
-                    }
-                    rowData.add(txt);
-                    table.updateUI();
-                }
-                stmt.close();
-                AdminMain.con.close();
-            } catch (SQLException e) {
-                System.err.println("연결 오류" + e.getMessage());
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                System.err.println("드라이버 로드에 실패했습니다.");
-            }
-        }
-
-        //공지사항 추가
-        public DBconnection(String title, String content) {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
-                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
-                System.out.println("연결 완료!");
-
-                Statement stmt = AdminMain.con.createStatement();
-
-                Random ran = new Random(4);
-                int num = ran.nextInt(9999);
-                SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
-                String format_time1 = format1.format (System.currentTimeMillis());
-
-                sql = "INSERT INTO parking.notice (notice_id, notice_title, notice_contents, notice_date) VALUES ('"+num+"', '"+title+"', '"+content+"', '"+format_time1+"');";
-
-                stmt.executeUpdate(sql);
-                stmt.close();
-                AdminMain.con.close();
-            } catch (SQLException e) {
-                System.err.println("연결 오류" + e.getMessage());
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                System.err.println("드라이버 로드에 실패했습니다.");
-            }
-        }
-        //문의사항 답변 추가
-        public DBconnection(int id, String title, String content) {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
-                AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
-                System.out.println("연결 완료!");
-
-                Statement stmt = AdminMain.con.createStatement();
-
-                Random ran = new Random(4);
-                int num = ran.nextInt(9999);
-                SimpleDateFormat format1 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
-                String format_time1 = format1.format (System.currentTimeMillis());
-
-                sql = "INSERT INTO parking.answer (answer_id, answer_title, answer_contents, answer_date, question_id) VALUES ('"+num+"', '"+title+"', '"+content+"', '"+format_time1+"', '"+id+"');";
-
-                stmt.executeUpdate(sql);
-                stmt.close();
-                AdminMain.con.close();
-            } catch (SQLException e) {
-                System.err.println("연결 오류" + e.getMessage());
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                System.err.println("드라이버 로드에 실패했습니다.");
-            }
-        }
-    }
 
