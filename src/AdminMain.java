@@ -29,7 +29,7 @@ public class AdminMain extends JFrame {
     private JButton deleteUserButton, changeUserButton;
     JTable userTable, userParkingTable;
     private JScrollPane userScrollPane, userParkingScrollPane;
-    Vector<Vector<String>> rowData, rowData2, rowData3, rowData4, rowData5;
+    Vector<Vector<String>> rowData, rowData2, rowData3, rowData4, rowData5, rowData6;
 
     //salesAdmin에 필요한 변수
     private JComboBox purchaseCombo;
@@ -44,8 +44,8 @@ public class AdminMain extends JFrame {
     private JTextField qnaTitleField, qnaIDField;
     private JTextArea qnaContensArea;
     private JButton qnaAddButton, qnaDeleteButton;
-    JTable qnaJTable;
-    private JScrollPane qnaScrollPane;
+    JTable qnaJTable, answerJTable;
+    private JScrollPane qnaScrollPane, answerScrollPane;
 
     //noticeTab에 필요한 변수
     private JTextField noticeTitleField;
@@ -61,7 +61,7 @@ public class AdminMain extends JFrame {
 
     public AdminMain() {
         super("주차관리예약시스템");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         Container ct = getContentPane();
 
@@ -89,8 +89,10 @@ public class AdminMain extends JFrame {
 
         logoutB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showConfirmDialog(admin, "정말 로그아웃 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
-                //TODO : 로그인 화면으로 돌아가기
+                int a = JOptionPane.showConfirmDialog(admin, "정말 로그아웃 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                if (a == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
             }
         });
 
@@ -128,6 +130,23 @@ public class AdminMain extends JFrame {
                 qnaIDField.setText(qnaJTable.getModel().getValueAt(row, 4).toString());
                 qnaContensArea.setText(qnaJTable.getModel().getValueAt(row, 2).toString());
 
+                qnaAddButton.setText("답변 작성");
+                qnaAddButton.setEnabled(true);
+                //qnaDeleteButton.setEnabled(true);
+            }
+        });
+        answerJTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mousePressed(e);
+                row = answerJTable.getSelectedRow();
+                rowClickedPrimaryKey = answerJTable.getModel().getValueAt(row, 0).toString();
+
+                qnaTitleField.setText(answerJTable.getModel().getValueAt(row, 2).toString());
+                qnaIDField.setText("");
+                qnaContensArea.setText(answerJTable.getModel().getValueAt(row, 3).toString());
+
+                qnaAddButton.setText("수정");
                 qnaAddButton.setEnabled(true);
                 qnaDeleteButton.setEnabled(true);
             }
@@ -156,13 +175,12 @@ public class AdminMain extends JFrame {
         }
         total.setText("총 매출 : " + sum + " 원");
 
-    } //mainTest 생성자 종료
+    } //AdminMAin 생성자 종료
 
     public static void main(String[] args) {
         admin = new AdminMain();
         admin.setLocationRelativeTo(null);  //노트북 화면 기준으로 가운데에 창 출력시켜줌!
     } //admin 관리창 여는 main 함수
-
 
     // JTable들과 JScrollPane 관련 함수들
     private void createUIComponents() {
@@ -218,6 +236,24 @@ public class AdminMain extends JFrame {
         qnaJTable.setName("qnaJTable");
         qnaScrollPane = new JScrollPane(qnaJTable);
 
+        // 문의답변 JTable
+        Vector<String> columnName6 = new Vector<String>();
+        columnName6.add("답변번호");
+        columnName6.add("문의제목");
+        columnName6.add("답변 제목");
+        columnName6.add("답변 내용");
+        columnName6.add("날짜");
+        rowData6 = new Vector<Vector<String>>();
+        DefaultTableModel model6 = new DefaultTableModel(rowData6, columnName6) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        answerJTable = new JTable(model6);
+        answerJTable.setName("answerJTable");
+        answerScrollPane = new JScrollPane(answerJTable);
+
         // 공지사항 JTable
         Vector<String> columnName4 = new Vector<String>();
         columnName4.add("공지번호");
@@ -251,6 +287,7 @@ public class AdminMain extends JFrame {
         salesTable = new JTable(model5);
         salesTable.setName("salesTable");
         salesScrollPane = new JScrollPane(salesTable);
+
     }
 
         // 회원관리 탭 클래스
@@ -291,7 +328,6 @@ public class AdminMain extends JFrame {
                     changeUserButton.setText("저장");
 
                 } else if (s.equals("저장")) {
-                    //TODO : 입력 변경된 내용 받아서 DB 입력
 
                     sql = "update parking.user set phone_num = '" + numberField.getText() + "', car_num='"+ carField.getText() + "', card_num='" + cardField.getText() + "' WHERE (id = '" + idField.getText() + "');";
 
@@ -307,18 +343,18 @@ public class AdminMain extends JFrame {
 
                     changeUserButton.setText("계정 변경");
 
-                    usingDB.JTableUpdate();
+                    allUserDB.JTableUpdate();
                 } else if (s.equals("계정 삭제")) {
                     int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                     if (user_delete == YES_OPTION) {
 
-                        String sql = "DELETE FROM `parking`.`user` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
+                        String sql = "DELETE FROM `parking`.`user` WHERE (`notice_id` = '"+ rowClickedPrimaryKey +"');";
 
                         usingDB.DBInstruct(sql);
 
                         JOptionPane.showMessageDialog(admin, "계정이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                     }
-                    usingDB.JTableUpdate();
+                    allUserDB.JTableUpdate();
                 }
             }
         }//user admin 끝
@@ -363,12 +399,14 @@ public class AdminMain extends JFrame {
 
         // 문의사항 탭 클래스
         class QnaAdmin extends JPanel implements ActionListener {
-            DBconnection qnaDB;
+            DBconnection qnaDB, answerDB;
 
             public QnaAdmin() {
 
                 qnaDB = new DBconnection("SELECT * from parking.question order by question_date;", rowData3, qnaJTable);
+                answerDB = new DBconnection("select answer.answer_id, question.question_title, answer.answer_title, answer.answer_contents, answer.answer_date from parking.answer, parking.question;", rowData6, answerJTable);
                 qnaDB.JTableUpdate();
+                answerDB.JTableUpdate();
 
                 qnaAddButton.addActionListener(this);
                 qnaDeleteButton.addActionListener(this);
@@ -378,25 +416,50 @@ public class AdminMain extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int a = Integer.parseInt(rowClickedPrimaryKey);
-                switch (e.getActionCommand()) {
-                    case "답변 작성":{
-                        if (qnaTitleField.getText() == null) {
-                            JOptionPane.showMessageDialog(admin, "답변할 문의글부터 선택해주세요!!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                        } else {
-                            AddText add = new AddText(a);
-                        }} break;
-                    case "삭제":{
-                        int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
-                        if (question_delete == YES_OPTION) {
+                String s = e.getActionCommand();
+                if (s.equals("답변 작성")) {
 
-                            String sql = "DELETE FROM `parking`.`question` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
+                    AddText add = new AddText(a);
 
-                            usingDB.DBInstruct(sql);
+                } else if (s.equals("수정")) {
 
-                            JOptionPane.showMessageDialog(admin, "문의가 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                        };} break;
+                    qnaTitleField.setEditable(true);
+                    qnaContensArea.setEditable(true);
+
+                    qnaAddButton.setText("저장");
+
+                } else if (s.equals("저장")){
+
+                    sql = "update parking.answer set answer_title = '" + qnaTitleField.getText() + "', answer_contents='"+ qnaContensArea.getText() + "' WHERE (answer_id = '" + rowClickedPrimaryKey + "');";
+
+                    usingDB.DBInstruct(sql);
+
+                    //JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "계정 변경이 완료되었습니다!");
+                    JOptionPane.showMessageDialog(admin, "답변 변경이 완료되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+
+                    //answerDB.JTableUpdate();
+
+                    qnaTitleField.setEditable(false);
+                    qnaContensArea.setEditable(false);
+
+                    qnaAddButton.setText("수정");
+
+                } else if (s.equals("삭제")) {
+
+                    int question_delete = JOptionPane.showConfirmDialog(admin, "정말 답변을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                    if (question_delete == YES_OPTION) {
+
+                        String sql = "DELETE FROM `parking`.`answer` WHERE (`answer_id` = '" + rowClickedPrimaryKey + "');";
+
+                        usingDB.DBInstruct(sql);
+
+                        JOptionPane.showMessageDialog(admin, "답변이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                        //answerDB.JTableUpdate();
+                    }
                 }
-                usingDB.JTableUpdate();
+
+                qnaDB.JTableUpdate();
+                answerDB.JTableUpdate();
             }
         }// QnaAdmin 클래스 종료
 

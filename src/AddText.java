@@ -12,7 +12,6 @@ public class AddText extends JDialog {
     private JTextArea content;
     private int id;
 
-    //TODO : ok창 닫히면 얘도 닫혀야 하는데,,, -> 할 시간 없음^^
     public AddText() {
         setContentPane(contentPane);
         setModal(true);
@@ -54,6 +53,8 @@ public class AddText extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setLocationRelativeTo(null);
+
         this.id = id;
 
         buttonOK.addActionListener(new ActionListener() {
@@ -101,8 +102,7 @@ public class AddText extends JDialog {
             AdminMain.usingDB.DBInstruct(sql);
 
             JOptionPane.showMessageDialog(this, "저장이 되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-            AdminMain.admin.noticeJTable.validate();
-            AdminMain.admin.validate();
+
         }
         else {
             dispose();
@@ -119,8 +119,7 @@ public class AddText extends JDialog {
                 AdminMain.usingDB.DBInstruct(sql);
 
                 JOptionPane.showMessageDialog(this, "저장이 되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                AdminMain.admin.noticeJTable.validate();
-                AdminMain.admin.validate();
+
             }
             else {
             dispose();

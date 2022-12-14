@@ -75,6 +75,14 @@ class DBconnection {
                         txt.add(result.getString("user_id"));
                     }
                     break;
+                    case "answerJTable": {
+                        txt.add(result.getString("answer_id"));
+                        txt.add(result.getString("question_title"));
+                        txt.add(result.getString("answer_title"));
+                        txt.add(result.getString("answer_contents"));
+                        txt.add(result.getString("answer_date"));
+                    }
+                    break;
                     case "noticeJTable": {
                         txt.add(result.getString("notice_id"));
                         txt.add(result.getString("notice_title"));
