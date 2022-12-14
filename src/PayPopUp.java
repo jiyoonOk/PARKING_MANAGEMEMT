@@ -5,16 +5,18 @@ import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-
+//결제 정산 클래스
 class Pay extends JFrame implements ActionListener {
 
     //DB와 연동한 사용자 정보값 받아온 변수들
     String userPurchaseId, userId, userName, userCarNum, userFloorNum, userArea;
     Timestamp userCarIn, userCarOut, userHours;
-    Date DateUserCarIn, DateUserCarOut, DateUserHours;
-    String stringUserCarIn, stringUserCarOut, stringUserHours;
+    LocalDateTime  dateUserCarIn, dateUserCarOut;
+    LocalTime dateUserHours;
+    //String stringUserCarIn, stringUserCarOut, stringUserHours;
     int userTotalFee, userPoint;
     boolean userIsReserved;
 
@@ -28,11 +30,9 @@ class Pay extends JFrame implements ActionListener {
 
         b.addActionListener(this);
     }
-
     //TODO : 다은이랑 연결할 때 -> [출차] 버튼의 addActionListener 여기서부터 연결하기!!
     public void actionPerformed(ActionEvent ae) {
         //TODO : dev 전에는 여기서 jdbc 연결하면 되는데 나중에 dev하면 이거 지우고 !!!클래스 매개변수로 값 받아와야 함 !!!
-
         String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
         String user = "root";
         String password = "wldmsdl38!";
@@ -51,9 +51,8 @@ class Pay extends JFrame implements ActionListener {
             String strSql;
 
             //purchase 값 가져오기
-            strSql = "SELECT user.Name, user.car_num, user.point, purchase.purchase_id, purchase.user_id, purchase.car_in, purchase.car_out, purchase.hours, purchase.is_reserved, purchase.total_fee, purchase.floor_num, purchase.area From purchase, user WHERE purchase.user_id='juwonsong' and user.id='juwonsong';";
-
-            ResultSet result = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
+            strSql = "SELECT user.Name, user.car_num, user.point, purchase.purchase_id, purchase.user_id, purchase.car_in, purchase.car_out, purchase.hours, purchase.is_reserved, purchase.total_fee, purchase.floor_num, purchase.area From purchase, user WHERE purchase.user_id='daeunlee' and user.id='daeunlee';";
+            ResultSet result = dbSt.executeQuery(strSql);
 
             while(result.next()) {
                 userName = result.getString("name");
@@ -75,50 +74,33 @@ class Pay extends JFrame implements ActionListener {
             System.out.println("SQLException1 : " + e.getMessage());
         }
 
-        //날짜 변환
-        /*
-        MySql과 java 간 시간 차이 +09:00 발생(이유:UTC 한국시간이 9시간 더 빠름) -> 해결못해~~
-         */
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") ;
-        Date DateUserCarIn = new Date();
-        Date DateUserCarOut  = new Date();
-        LocalDateTime localDateTimeIn = LocalDateTime.ofInstant(DateUserCarIn.toInstant(), ZoneId.systemDefault());
-        LocalDateTime localDateTimeOut = LocalDateTime.ofInstant(DateUserCarOut.toInstant(), ZoneId.systemDefault());
-
-
-        //Date date = new Date(userCarIn.getTime());
-        //Date date2= new Date(userCarOut.getTime());
-        //stringUserCarIn = (sdf.format(date));
-        //stringUserCarOut = (sdf.format(date2));
-
+        ////TimeStamp -> LocalDateTime
+        //날짜 변환 : MySql과 java 간 시간 차이 +09:00 발생 (UTC 한국시간이 9시간 더 빠름)
+        dateUserCarIn = userCarIn.toLocalDateTime();
+        dateUserCarOut = userCarOut.toLocalDateTime();
+        dateUserHours = userHours.toLocalDateTime().toLocalTime();
 
         if(ae.getActionCommand().equals("정산")){
             if(userIsReserved) { //예약 Inquire.java에서 쓴 예약 boolean값 받아쓰기
                 LocalDateTime currentDate = LocalDateTime.now();
-                try {
-                    String result =  NormalPay.calculateTime(currentDate, localDateTimeOut);
-                    if (Integer.parseInt(result)<0) { //초과금액 결제 //(car_out - 현재시간)>0 일 경우
-                        try {
-                            ExcessFeePay excessFee = new ExcessFeePay(userId, userName, userCarNum, localDateTimeOut, userHours.toLocalDateTime(), userTotalFee, userPoint); //나중에 생성자 보내라
-                            excessFee.setSize(500,400);
-                            excessFee.setVisible(true);
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
+                if (!(currentDate.isAfter(dateUserCarOut))) { //초과금액 결제, 현재시간이 출차시간보다 이후면(초과)
+                    try {
+                        ExcessFeePay excessFee = new ExcessFeePay(userId, userName, userCarNum, dateUserCarOut, dateUserHours, userTotalFee, userPoint); //나중에 생성자 보내라
+                        excessFee.setSize(500,400);
+                        excessFee.setVisible(true);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
                     }
-                    else {  //예약 정상 출차 클래스
-                        RsvPopUp rsvPipUp = new RsvPopUp(userName, userCarNum); //이름, 차량번호 생성자 보내기
-                        rsvPipUp.setSize(500,400);
-                        rsvPipUp.setVisible(true);
-                    }
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
                 }
-
+                else {  //예약 정상 출차 클래스
+                    RsvPopUp rsvPipUp = new RsvPopUp(userName, userCarNum); //이름, 차량번호 생성자 보내기
+                    rsvPipUp.setSize(500, 400);
+                    rsvPipUp.setVisible(true);
+                }
             }
             else { //일반출차. 예약 boolean값 0일 경우
                 try {
-                    NormalPay nolmalPay =  new NormalPay(userId, userName, userCarNum, localDateTimeIn, localDateTimeOut, userHours.toLocalDateTime(), userTotalFee, userPoint);
+                    NormalPay nolmalPay =  new NormalPay(userId, userName, userCarNum, dateUserCarIn, dateUserCarOut, dateUserHours, userTotalFee, userPoint);
                     nolmalPay.setSize(500,400);
                     nolmalPay.setVisible(true);
                 } catch (ParseException e) {
@@ -131,22 +113,24 @@ class Pay extends JFrame implements ActionListener {
     }
 }
 
-class NormalPay extends JFrame implements ActionListener{
-
+class NormalPay extends JFrame implements ActionListener {
     static String userId;
     String userName;
     String userCarNum;
     String userFloorNum;
     String userArea;
-    LocalDateTime userCarIn, userCarOut, userHours;
-    String stringUserCarIn, stringUserOut, stringUserHours;
+    LocalDateTime userCarIn, userCarOut;
+    LocalTime userHours;
+    //String stringUserCarIn, stringUserOut, stringUserHours;
+    SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     int userTotalFee, userPoint;
     boolean userIsReserved;
 
     JTextField jtfPoint;
-    String diffMin;
+    long diffMin;
     int userAddPoint, userTotalPoint; //예상적립금, 총적립금
-    NormalPay(String uId, String uName, String uCarNum, LocalDateTime uCarIn, LocalDateTime uCarOut, LocalDateTime uHours, int uTotalFee, int uPoint) throws ParseException {
+
+    NormalPay(String uId, String uName, String uCarNum, LocalDateTime uCarIn, LocalDateTime uCarOut, LocalTime uHours, int uTotalFee, int uPoint) throws ParseException {
         userId = uId;
         userName = uName;
         userCarNum = uCarNum;
@@ -165,9 +149,9 @@ class NormalPay extends JFrame implements ActionListener{
         JLabel carNum = new JLabel("차량번호 : ");
         JLabel LabelUserCarNum = new JLabel(userCarNum);
         JLabel inTime = new JLabel("입차시간 : ");
-        JLabel LabelUserInTime = new JLabel(stringUserCarIn);
+        JLabel LabelUserInTime = new JLabel(sdfDateTime.format(userCarIn));
         JLabel outTime = new JLabel("출차시간 : ");
-        JLabel LabelUserOutTime = new JLabel(stringUserOut);
+        JLabel LabelUserOutTime = new JLabel(sdfDateTime.format(userCarOut));
         JLabel amount = new JLabel("결제금액 : ");
         JLabel LabelUserAmount = new JLabel(String.valueOf(userTotalFee));
         JLabel point = new JLabel("적립금사용: ");
@@ -182,14 +166,10 @@ class NormalPay extends JFrame implements ActionListener{
 
         //적립금 사용 전 결제금액, 예정적립금 대입 시키기
         LocalDateTime currentDate = LocalDateTime.now();
-        diffMin = calculateTime(userCarIn, currentDate);
-        userTotalFee = calculateFee(diffMin); //결제금액 계산
+        diffMin = Calculate.calculateTime(currentDate, userCarIn); //출차시간 계산
+        userTotalFee = Calculate.calculateFee(diffMin); //결제금액 계산
         userAddPoint = (int) (userTotalFee * 0.05); //예정 적립금 계산
-        calculatePoint(userTotalFee, 0, userAddPoint); //총적립금 계산해서 update 할 거임
-
-        DBconnection.insertDB("purchase", "total_fee", userTotalFee); //결제금액 DB 추가
-        DBconnection.updateDB("user", "point", userPoint, "id", userId); //적립금 업데이트
-        //hours 업데이트는 calculateTime()에서 시간 계산하면서 했음
+        Calculate.calculatePoint(userTotalFee, 0, userAddPoint); //총적립금 계산해서 update 할 거임
 
         JButton btnPoint = new JButton("전액사용");
         btnPoint.addActionListener(this);
@@ -220,34 +200,19 @@ class NormalPay extends JFrame implements ActionListener{
 
         btnPay.setBounds(100, 300, 100, 20);
 
-
-        ct.add(name);
-        ct.add(LabelUserName);
-        ct.add(carNum);
-        ct.add(LabelUserCarNum);
-        ct.add(inTime);
-        ct.add(LabelUserInTime);
-        ct.add(outTime);
-        ct.add(LabelUserOutTime);
-        ct.add(amount);
-        ct.add(LabelUserAmount);
-        ct.add(point);
-        ct.add(jtfPoint);
-        ct.add(btnPoint);
-        ct.add(nowPoint);
-        ct.add(LabelUserPoint);
-        ct.add(total);
-        ct.add(LabelUserTotalFee);
-        ct.add(addPoint);
-        ct.add(LabelUserAddPoint);
+        ct.add(name);     ct.add(LabelUserName);
+        ct.add(carNum);   ct.add(LabelUserCarNum);
+        ct.add(inTime);   ct.add(LabelUserInTime);
+        ct.add(outTime);  ct.add(LabelUserOutTime);
+        ct.add(amount);   ct.add(LabelUserAmount);
+        ct.add(point);    ct.add(jtfPoint);         ct.add(btnPoint);
+        ct.add(nowPoint); ct.add(LabelUserPoint);
+        ct.add(total);    ct.add(LabelUserTotalFee);
+        ct.add(addPoint); ct.add(LabelUserAddPoint);
         ct.add(btnPay);
 
-
         System.out.println(userCarIn);
-
     }
-
-
     public void actionPerformed(ActionEvent ae) {
         String s = ae.getActionCommand();
         if (s == "결제") {
@@ -264,19 +229,22 @@ class NormalPay extends JFrame implements ActionListener{
             }.start();
             JOptionPane.showOptionDialog(getParent(), "결제중...", null, JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "결제되었습니다.");
-        }
-        else {
+
+            //DB 업데이트 - 결제금액, 적립금, hours
+            DBconnection.insertDB("purchase", "total_fee", String.valueOf(userTotalFee)); //결제금액 DB 추가
+            DBconnection.updateDB("user", "point", userPoint, "id", userId); //적립금 업데이트
+        } else {
             if (s == "전액사용") jtfPoint.setText(Integer.toString(userPoint));
             try {
                 LocalDateTime currentDate = LocalDateTime.now();
-                diffMin = calculateTime(userCarIn, currentDate);
+                diffMin = Calculate.calculateTime(userCarIn, currentDate);
                 int usePoint = Integer.parseInt(jtfPoint.getText());
 
-                userTotalFee = calculateFee(diffMin) - usePoint; //총 결제금액
+                userTotalFee = Calculate.calculateFee(diffMin) - usePoint; //총 결제금액
                 DBconnection.updateDB("purchase", "total_fee", userTotalFee, "user_id", userId); //사용한 적립금만큼 결제금액 업데이트
 
                 userAddPoint = (int) (userTotalFee * 0.05);//예정 적립금 업데이트
-                NormalPay.calculatePoint(userTotalFee, usePoint, userAddPoint); //총적립금 업데이트
+                Calculate.calculatePoint(userTotalFee, usePoint, userAddPoint); //총적립금 업데이트
                 DBconnection.updateDB("user", "point", userPoint, "id", userId);
 
                 JLabel LabelUserPoint = new JLabel(String.valueOf(userPoint));
@@ -286,28 +254,9 @@ class NormalPay extends JFrame implements ActionListener{
                 throw new RuntimeException(e);
             }
         }
-     }
-    public static String calculateTime(LocalDateTime inTime, LocalDateTime outTime) throws ParseException {
-        long diffTime = (outTime.getNano() - inTime.getNano()); //Hours 저장
-
-        //TODO 일반주차시 Db-Hours 저장할 때는 insert
-        DBconnection.insertDB("purchase", "hours", diffTime);
-        long diffMin = diffTime / 60000; //분 차이
-
-        return String.valueOf(diffMin);
-    }
-    public static int calculateFee(String diffMin) {
-        int totalFee = Integer.parseInt(diffMin) / 10 * 500;
-        //TODO 경차, 장애인 시 10% 할인 -> 작성 완료
-        if (DBconnection.searchDB())
-            totalFee *= 0.1;
-        return totalFee;
-    }
-    public static void calculatePoint(int totalFee, int usePoint, int addPoint) {
-        int totalPoint = totalFee - usePoint + addPoint;
-        DBconnection.updateDB("user", "point", totalPoint, "id", userId);
     }
 }
+
 class RsvPopUp extends JFrame implements ActionListener {// 예약 하고 출차. JDialog 클래스 객체 생성
     String userName, userCarNum;
     RsvPopUp(String uName, String uCarNum) {
@@ -342,17 +291,18 @@ class RsvPopUp extends JFrame implements ActionListener {// 예약 하고 출차
 }
 class ExcessFeePay extends JFrame implements ActionListener {// 예약했는데 시간초과. JDialog 클래스 객체 생성
     String userId, userName, userCarNum;
-    LocalDateTime userCarOut, userHours;
+    LocalDateTime userCarOut;
+    LocalTime userHours;
     //예약했는데 시간초과면 userCarOut, userHours 도 현재시간 기준으로 Update 해줘야 함 !!
     int userTotalFee, userPoint;
 
     LocalDateTime currentDate = LocalDateTime.now();
 
-    String diffMin;     //시간 다른거
+    long diffMin;     //시간 다른거
     int userAddFee, userAddPoint; //예정 추가적립금
     Date diffDate = new Date(diffMin); //분단위 초과시간을 date형으로 바꿈
     //LocalDateTime localDateTime = new java.sql.Timestamp(diff.getTime()).toLocalDateTime(); TODO : 오류 고치기
-    ExcessFeePay(String uId, String uName, String uCarNum, LocalDateTime uCarOut, LocalDateTime uHours, int uTotalFee, int uPoint) throws ParseException {
+    ExcessFeePay(String uId, String uName, String uCarNum, LocalDateTime uCarOut, LocalTime uHours, int uTotalFee, int uPoint) throws ParseException {
         userId = uId;
         userName = uName;
         userCarNum = uCarNum;
@@ -361,15 +311,12 @@ class ExcessFeePay extends JFrame implements ActionListener {// 예약했는데 
         userTotalFee = uTotalFee; //초과이용자는 이미 예약하기 했을 때 userTotalFee가 정해져있음.
         userPoint = uPoint;
 
-        diffMin = NormalPay.calculateTime(userCarOut, currentDate);    //초과시간(분단위)
-        userAddFee = NormalPay.calculateFee(diffMin);                  //초과금액 계산
+        diffMin = Calculate.calculateTime(userCarOut, currentDate);    //초과시간(분단위)
+        userAddFee = Calculate.calculateFee(diffMin);                  //초과금액 계산
         String diffDateToString = String.valueOf(diffDate);
 
         userTotalFee += userAddFee;
         userPoint = (int) (userAddFee * 0.05);
-
-        DBconnection.updateDB("purchase", "total_fee", userAddFee, "user_id", userId);
-        DBconnection.updateDB("user", "point", userPoint, "id", userId);
 
         setTitle("초과 금액 결제");
         Container ct = getContentPane();
@@ -411,6 +358,10 @@ class ExcessFeePay extends JFrame implements ActionListener {// 예약했는데 
         }.start();
         JOptionPane.showOptionDialog(getParent(), "결제중...", null, JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
         JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "결제되었습니다.");
+
+        //DB 업데이트 - 결제금액, 적립금
+        DBconnection.updateDB("purchase", "total_fee", userAddFee, "user_id", userId);
+        DBconnection.updateDB("user", "point", userPoint, "id", userId);
     }
 }
 
@@ -421,10 +372,33 @@ class PayMain {
     win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     win.setVisible(true);
     }
-
 }
 
+class Calculate {
+    public static long calculateTime(LocalDateTime outTime, LocalDateTime inTime) throws ParseException {
+        //long diffTime = (outTime.getNano() - inTime.getNano()); //Hours 저장
+        long diffMin = ChronoUnit.MINUTES.between(outTime, inTime);
 
+        //시간차(분단위)를 HH:mm:ss로 변환하여 DB hours 업데이트
+        Date second = new Date(diffMin * 60);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String toHours = sdf.format(second);
+        DBconnection.insertDB("purchase", "hours", toHours);
+
+        return diffMin;
+    }
+    public static int calculateFee(long diffMin) {
+        int totalFee = Long.valueOf(diffMin).intValue() / 10 * 500;
+        //TODO 경차, 장애인 시 10% 할인 -> 작성 완료
+        if (DBconnection.searchDB())
+            totalFee *= 0.1;
+        return totalFee;
+    }
+    public static void calculatePoint(int totalFee, int usePoint, int addPoint) {
+        int totalPoint = totalFee - usePoint + addPoint;
+        DBconnection.updateDB("user", "point", totalPoint, "id", NormalPay.userId);
+    }
+}
 class DBconnection {
     static boolean discount;
     //경차, 장애인 할인여부
@@ -444,7 +418,7 @@ class DBconnection {
             String strSql;
 
             //purchase 값 가져오기
-            strSql = "SELECT small_car, handicap FROM user_special_needs WHERE id='juwonsong';";
+            strSql = "SELECT small_car, handicap FROM user_special_needs WHERE id='daeunlee';";
             ResultSet result = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
 
             boolean userIsSmallCar=false, userIsDandicap = false;
@@ -464,38 +438,9 @@ class DBconnection {
         }
         return discount;
     }
-/*
-    //total_fee insert
-    public static void insertDB(int index) {
-        try { //mysql의 jdbc Driver 연결
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");
-        } catch (ClassNotFoundException e) {
-            System.err.println("드라이버 로드에 실패했습니다.");
-        }
-        try { //내가 mysql에 만든 student 데이터베이스 연결
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", "root", "wldmsdl38!");
-            System.out.println("DB 연결 완료");
-            Statement dbSt = con.createStatement(); //질의어 생성해서 적용
-            System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
-            String strSql;
-
-            //purchase 값 가져오기
-            strSql = "INSERT INTO purchase (total_fee) VALUES ('" + index +"')";
-            dbSt.executeQuery(strSql);
-
-            dbSt.close();
-            con.close(); //DB연동 끊기
-        } catch (SQLException e) {
-            System.out.println("SQLException3 : " + e.getMessage());
-        }
-    }
-
- */
 
     //Hours insert
-    public static void insertDB(String table, String columns, long index) {
+    public static void insertDB(String table, String columns, String index) {
         try { //mysql의 jdbc Driver 연결
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");
