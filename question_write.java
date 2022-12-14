@@ -13,7 +13,7 @@ import java.sql.*;
 public class question_write extends JFrame implements ActionListener {
 	JTextArea jta; //문의작성내용
 	JTextField title; //제목
-	private int t_question_id;
+	
 	
 	
 	public question_write() {
@@ -63,7 +63,7 @@ public class question_write extends JFrame implements ActionListener {
 	
 	public void actionPerformed(ActionEvent ae) {
 		String s=ae.getActionCommand();
-		String t_question_title="",t_question_contents="",t_question_date="",t_user_id=""; 
+		String t_question_title="",t_question_contents="",t_question_date="",t_user_id="";
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		Date from = new Date();
@@ -76,13 +76,13 @@ public class question_write extends JFrame implements ActionListener {
 		  System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함"); }
 		  catch(ClassNotFoundException e) { System.err.println("드라이버 로드에 실패했습니다."); }
 		  
-		  try { Connection con=DriverManager.getConnection(
-		  "jdbc:mysql://localhost:3306/dbtest?serverTimezone=UTC", "root", "root");
+		  try { 
+		 Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/parkingt?serverTimezone=UTC", "root", "root");
 		  System.out.println("DB 연결 완료."); Statement dbSt = con.createStatement();
 		  System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다."); 
 		  String strSql;
 		 
-			strSql="select*from user;";
+			strSql="select*from parking.user;";
 			ResultSet result=dbSt.executeQuery(strSql); 
 			while(result.next()) {
 			t_user_id=result.getString("id");}
@@ -96,12 +96,12 @@ public class question_write extends JFrame implements ActionListener {
 		JOptionPane.showMessageDialog
 			(this, "문의 등록이 완료되었습니다.","등록완료",JOptionPane.INFORMATION_MESSAGE);
 		
-		 Random ran = new Random(4);
-		t_question_id=ran.nextInt(9999); //문의번호 부여
+		Random ran = new Random(4);
+		int t_question_id=ran.nextInt(9999); //문의번호 부여
 		t_question_date= transFormat.format(from); //Date에서 String으로 형변환 후 문의일자 들어감
 		dispose();
 		
-	strSql="INSERT INTO question(question_id,question_title, question_contents, question_date,user_id) "+" VALUES(" + t_question_id + ",'" + t_question_title + "','" + t_question_contents + "','"+ t_question_date+"','"+t_user_id+"')";
+	strSql="INSERT INTO parking.question(question_id,question_title, question_contents, question_date,user_id) "+" VALUES(" + t_question_id + ",'" + t_question_title + "','" + t_question_contents + "','"+ t_question_date+"','"+t_user_id+"')";
 	dbSt.executeUpdate(strSql);
 		//문의 번호, 작성 일자는 등록완료 시 번호랑 일자 들어감
 		} 
