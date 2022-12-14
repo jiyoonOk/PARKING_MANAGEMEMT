@@ -92,7 +92,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 				card2.setBounds(80, 240, 100, 30);
 			}
 
-			special = new JLabel("특이사항 :                 (*해당되는 사항을 다시 선택해주세요*)");
+			special = new JLabel("특이사항 :                 (*해당되는 사항을 선택해주세요*)");
 			special.setBounds(20, 270, 400, 30);
 
 			smallcar = new JCheckBox("경차");
@@ -185,7 +185,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 
 				strSql = "UPDATE user SET name='" + t_name + "',id='" + t_id + "',passwd='" + t_passwd + "',car_num='"
 						+ t_carn + "',phone_num='" + t_call + "',card_num='" + t_card + "',email='" + t_email
-						+ "'WHERE id='" + id2.getText() + "';"; // !한줄로 작성!
+						+ "'WHERE id='" + id2.getText() + "';";
 				dbSt.executeUpdate(strSql); // 개인정보 수정
 				strSql = "UPDATE parking.user_special_needs SET id='" + t_id + "',woman='" + is_femail + "',small_car='"
 						+ is_smallcar + "',handicap='" + is_handicap + "'WHERE id='" + id2.getText() + "';";

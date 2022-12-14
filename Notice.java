@@ -32,6 +32,7 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 		ct.add(center, BorderLayout.CENTER);
 		ct.add(bottom, BorderLayout.SOUTH);
 		ct.add(rightP, BorderLayout.EAST);
+		tableSP = new JScrollPane(jta);
 
 ////////////// 표 만들기 ////////////////////////
 		columnName = new Vector<String>(); // 표의 컬럼 제목 만들기
@@ -57,9 +58,9 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 		bottom.setLayout(new FlowLayout());
 		bottom.add(quiryB);
 		bottom.add(returnB);
+		
 
-//		jta. setEditable(false);
-//		notice_title. setEditable(false);
+
 
 //////////////////// 오른쪽 공지사항 제목,내용 확인 /////////////////////////
 		rightP.setLayout(new GridLayout(6, 1));
@@ -82,7 +83,6 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 		p4.setLayout(new FlowLayout(FlowLayout.LEFT));
 		jta = new JTextArea("", 40, 20);
 		p4.add(jta);
-		p4.setPreferredSize(new Dimension(200, 200));
 
 		rightP.add(p1);
 		rightP.add(p2);
@@ -158,7 +158,7 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 	public static void main(String args[]) {
 		Notice win = new Notice();
 		win.setTitle("공지사항");
-		win.setSize(750, 550);
+		win.setSize(800, 550);
 		win.setLocation(400, 0);
 		win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		win.setVisible(true);

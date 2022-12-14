@@ -16,7 +16,7 @@ public class question extends JFrame implements ActionListener, MouseListener {
 	int row; // 테이블에서 선택된 행 번호
 	JButton quiryB; // 조회 버튼
 	JTextField notice_title; // 공지사항 제목
-	JTextArea jta;
+	JTextArea jta; 
 
 	JButton returnB, cancelB, questionB; // 오른쪽 화면의 학생정보 - 수정, 삭제, 취소
 
@@ -157,7 +157,7 @@ public class question extends JFrame implements ActionListener, MouseListener {
 			while (result.next()) {
 				notice_title.setText(result.getString("answer_title"));
 				jta.setText(result.getString("answer_contents"));
-			}
+			} 
 
 			dbSt.close();
 			con.close(); // DB연동 끊기
@@ -183,7 +183,7 @@ public class question extends JFrame implements ActionListener, MouseListener {
 	public static void main(String args[]) {
 		question win = new question();
 		win.setTitle("문의사항");
-		win.setSize(750, 550);
+		win.setSize(800, 550);
 		win.setLocation(400, 0);
 		win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		win.setVisible(true);

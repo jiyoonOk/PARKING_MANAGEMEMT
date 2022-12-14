@@ -64,7 +64,7 @@ public class question_write extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		String s=ae.getActionCommand();
 		String t_question_title="",t_question_contents="",t_question_date="",t_user_id="";
-		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //일자,시간 변수
 		
 		Date from = new Date();
 
@@ -77,7 +77,7 @@ public class question_write extends JFrame implements ActionListener {
 		  catch(ClassNotFoundException e) { System.err.println("드라이버 로드에 실패했습니다."); }
 		  
 		  try { 
-		 Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/parkingt?serverTimezone=UTC", "root", "root");
+		 Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", "root", "root");
 		  System.out.println("DB 연결 완료."); Statement dbSt = con.createStatement();
 		  System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다."); 
 		  String strSql;
@@ -97,7 +97,7 @@ public class question_write extends JFrame implements ActionListener {
 			(this, "문의 등록이 완료되었습니다.","등록완료",JOptionPane.INFORMATION_MESSAGE);
 		
 		Random ran = new Random(4);
-		int t_question_id=ran.nextInt(9999); //문의번호 부여
+		int t_question_id=ran.nextInt(9999);  //문의번호 부여
 		t_question_date= transFormat.format(from); //Date에서 String으로 형변환 후 문의일자 들어감
 		dispose();
 		
