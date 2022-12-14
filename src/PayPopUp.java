@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,9 +63,8 @@ class Pay extends JFrame implements ActionListener {
                 userArea = result.getString("area");
             }
             dbSt.close();
-
             //user 값 가져오기
-            strSql = "SELECT name, car_num, point FROM user WHERE user_id='jieunyang';";
+            strSql = "SELECT name, car_num, point FROM user WHERE id='jieunyang';";
 
             result = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
 
@@ -323,7 +321,7 @@ class ExcessFeePay extends JFrame implements ActionListener {// 예약했는데 
         name.setBounds(50,100,100,20);           labelUserName.setBounds(120,100,100,20);
         carNum.setBounds(50,120,100,20);         labelUserCarNum.setBounds(120,120,100,20);
         timeOut.setBounds(50,140,100,20);        labelUserTimeOut.setBounds(120,140,300,20);
-        timeOutFee.setBounds(50,200,300,20);     labelUserTimeOutFee.setBounds(120,160,150,20);
+        timeOutFee.setBounds(50,200,300,20);     labelUserTimeOutFee.setBounds(120,200,150,20);
         b.setBounds(100,300,100,20);
 
         ct.add(name);            ct.add(labelUserName);
