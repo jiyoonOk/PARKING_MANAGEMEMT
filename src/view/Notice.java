@@ -1,4 +1,4 @@
-
+package view;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -7,7 +7,7 @@ import javax.swing.table.*;
 import java.util.*;
 import java.sql.*;
 
-class Notice extends JFrame implements ActionListener, MouseListener {
+public class Notice extends JFrame implements ActionListener, MouseListener {
 	Vector<String> columnName; // 표의 각 컬럼 제목
 	Vector<Vector<String>> rowData;
 	JTable table = null;
@@ -20,7 +20,7 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 	
 	JButton  returnB, cancelB,questionB; // 오른쪽 화면의 학생정보 - 수정, 삭제, 취소
 
-	Notice() // 생성자
+	public Notice() // 생성자
 	{
 		Container ct = getContentPane();
 		ct.setLayout(new BorderLayout());

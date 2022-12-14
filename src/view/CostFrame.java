@@ -18,7 +18,7 @@ public class CostFrame extends JFrame {       //요금표 popup 클래스 객체
         JLabel notice1 = new JLabel("· 예약 회원은 시간당 예약 가능(최대 3시간)");
         JLabel notice2 = new JLabel("· 예약자는 선결제 시 10% 할인");
         JLabel notice3 = new JLabel("· 추가요금 할인 불가");
-        JLabel notice4 = new JLabel("· 결제 금액의 3% 포인트 적립");
+        JLabel notice4 = new JLabel("· 결제 금액의 5% 포인트 적립");
 
         min.setBounds(80, 50, 100, 20);
         min_cost.setBounds(150, 50, 100, 20);

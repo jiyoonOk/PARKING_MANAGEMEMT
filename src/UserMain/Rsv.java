@@ -14,14 +14,14 @@ import common.ParkingLot;
 
 
 public class Rsv extends JFrame {
-    static String classname = "C://lib";
+    static String classname = "com.mysql.cj.jdbc.Driver";
     static String user = "root", passwd = "0000"; //DB 사용자,비번
     static Connection con = null;
     static String userName = "";
     static int userPoint = 10000; //DB 사용자 보유 포인트
     double plusPoint = 0;
 
-    static String userId = "daeunlee"/*테스트용 상수*/, userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
+    String userId = "daeunlee"/*테스트용 상수*/, userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
 
     //===============================================================================================
 
@@ -140,18 +140,22 @@ public class Rsv extends JFrame {
             Statement dbSt = con.createStatement();
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
+            String strSql;
             //user 테이블에서 로그인한 id에 맞는 userPoint 가져오기
-            String strSql = "SELECT user.point FROM user WHERE user.id=" + userId + ";";
-            userPoint = dbSt.executeUpdate(strSql);
+            strSql = "SELECT user.point FROM parking.user WHERE id='"+userId+"';";
+            ResultSet r = dbSt.executeQuery(strSql);
+            while(r.next()){userPoint = r.getInt("user.point");};
             System.out.println("포인트 추출 완료");
 
-            strSql = "SELECT user.name FROM user WHERE user.id=" + userId +";";
-            userName = String.valueOf(dbSt.executeUpdate(strSql));
+            strSql = "SELECT user.name FROM parking.user WHERE user.id='" + userId +"';";
+            r = dbSt.executeQuery(strSql);
+            while (r.next()) { userName = r.getString("user.name");}
             System.out.println("이름 추출 완료");
 
-            strSql = "SELECT user.car_num FROM user WHERE user.id=" + userId +";";
-            userCarNu = String.valueOf(dbSt.executeUpdate(strSql));
-            System.out.println("차번호 추출 완료");
+            strSql = "SELECT user.car_num FROM parking.user WHERE user.id='" + userId +"';";
+            r = dbSt.executeQuery(strSql);
+            while (r.next()) { userCarNu = r.getString("user.car_num");}
+            System.out.println("차량번호 추출 완료");
 
             dbSt.close();
             con.close();    //DB 연동 끊기
@@ -201,6 +205,7 @@ public class Rsv extends JFrame {
                     showMyPoint.setText("보유 포인트: 0");
                     prieceAfter.setText("최종금액: " + (paidMoney_int - userPoint) + "원");
                 }
+                inputPoint_JTF.setText("");
             }
         });//포인트 전액사용버튼 이벤트 끝
 
@@ -214,6 +219,30 @@ public class Rsv extends JFrame {
                 int result = JOptionPane.showConfirmDialog(null, "예약 하시겠습니까?\n(확인 시 결제로 넘어감)", "주차예약", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
                     //TODO !# 결제창으로 넘어가기
+                    try {
+                        Class.forName(classname);  //mysql jdbc Driver 연결
+                        System.err.println("JDBC 드라이버를 정상적으로 로드함");
+                    } catch (ClassNotFoundException ce) {
+                        System.err.println("드라이버 로드에 실패했습니다.");
+                    }
+                    try {
+                        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", user, passwd);
+                        System.out.println("DB 연결 완료");
+                        Statement dbSt = con.createStatement();
+                        System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+
+                        String strSql;
+                        // TODO #### 예약정보 어떻게 넘겨
+                        strSql = "";
+                        dbSt.executeUpdate(strSql);
+                        System.out.println("결제 정보 업데이트 완료");
+
+
+                        dbSt.close();
+                        con.close();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     //TODO !# : 결제정보 넘기기
                     // (선택한 연월일시), userPoint(보유포인트), timeComBox.getSelectedItem()(선택시간)
                     dispose();

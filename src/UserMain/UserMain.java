@@ -36,17 +36,25 @@ public class UserMain extends JFrame{
         myPage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //마이페이지 클래스 불러오기
+                /*
+                Mypage mg=new Mypage();
+                mg.setSize(400,430);
+                mg.setLocation(400, 0);
+                mg.setTitle("마이페이지");
+                mg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                mg.setVisible(true);
+
+                 */
             }
         });
         notion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Notice nt=new Notice();
-                nt.setSize(400,500);
+                nt.setSize(700,550);
                 nt.setLocation(400, 0);
                 nt.setTitle("공지사항");
-                nt.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                nt.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 nt.setVisible(true);
             }
         });
