@@ -10,7 +10,10 @@ import java.util.Vector;
 import static javax.swing.JOptionPane.YES_OPTION;
 
 public class AdminMain extends JFrame {
-    String question_id = "";
+    DBconnection usingDB = new DBconnection(); //DBConnection 안에 함수 쓰기 위한 용
+    static int row;
+    static String rowClickedPrimaryKey;
+    //String question_id = "";
     static AdminMain admin;
     //main에 필요한 변수
     private JTabbedPane tab;
@@ -98,36 +101,49 @@ public class AdminMain extends JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
-                int row = userTable.getSelectedRow();
-                String clickedId = userTable.getModel().getValueAt(row, 0).toString();
+                row = userTable.getSelectedRow();
+                rowClickedPrimaryKey = userTable.getModel().getValueAt(row, 0).toString();
+
                 nameField.setText(userTable.getModel().getValueAt(row, 1).toString());
-                idField.setText(clickedId);
+                idField.setText(rowClickedPrimaryKey);
                 carField.setText(userTable.getModel().getValueAt(row, 3).toString());
                 numberField.setText(userTable.getModel().getValueAt(row, 2).toString());
 
-                DBconnection card = new DBconnection();
-                String card_num = card.getData("SELECT card_num FROM parking.user where id = '" + clickedId + "';");
+                usingDB = new DBconnection();
+                String card_num = usingDB.getData("SELECT card_num FROM parking.user where id = '" + rowClickedPrimaryKey + "';");
                 cardField.setText(card_num);
+
+                changeUserButton.setEnabled(true);
+                deleteUserButton.setEnabled(true);
             }
         });
         qnaJTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mousePressed(e);
-                int row = qnaJTable.getSelectedRow();
-                question_id = qnaJTable.getModel().getValueAt(row, 0).toString();
+                row = qnaJTable.getSelectedRow();
+                rowClickedPrimaryKey = qnaJTable.getModel().getValueAt(row, 0).toString();
+
                 qnaTitleField.setText(qnaJTable.getModel().getValueAt(row, 1).toString());
                 qnaIDField.setText(qnaJTable.getModel().getValueAt(row, 4).toString());
                 qnaContensArea.setText(qnaJTable.getModel().getValueAt(row, 2).toString());
+
+                qnaAddButton.setEnabled(true);
+                qnaDeleteButton.setEnabled(true);
             }
         });
         noticeJTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mousePressed(e);
-                int row = noticeJTable.getSelectedRow();
+                row = noticeJTable.getSelectedRow();
+                rowClickedPrimaryKey = noticeJTable.getModel().getValueAt(row,0).toString();
+
                 noticeTitleField.setText(noticeJTable.getModel().getValueAt(row, 1).toString());
                 noticeContentsArea.setText(noticeJTable.getModel().getValueAt(row, 2).toString());
+
+                noticeChangeButton.setEnabled(true);
+                noticeDeleteButton.setEnabled(true);
             }
         });
 
@@ -350,7 +366,7 @@ public class AdminMain extends JFrame {
             //문의 답변, 삭제
             @Override
             public void actionPerformed(ActionEvent e) {
-                int a = Integer.parseInt(question_id);
+                int a = Integer.parseInt(rowClickedPrimaryKey);
                 switch (e.getActionCommand()) {
                     case "답변 작성":{
                         if (qnaTitleField.getText() == null) {
@@ -393,6 +409,9 @@ public class AdminMain extends JFrame {
                         int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                         if (notice_delete == YES_OPTION) {
                             //TODO : DB에서 공지사항 삭제
+
+
+
                             JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         }
                         ;

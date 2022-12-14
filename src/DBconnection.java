@@ -175,6 +175,28 @@ class DBconnection {
         return data;
     }
 
+    //attribute 삭제!
+    public void DelectAttribute(String sql){
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+
+            AdminMain.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", AdminMain.user_name, AdminMain.password);
+            System.out.println("연결 완료!");
+
+            Statement stmt = AdminMain.con.createStatement();
+
+            stmt.executeUpdate(sql);
+            stmt.close();
+            AdminMain.con.close();
+        } catch (SQLException e) {
+            System.err.println("연결 오류" + e.getMessage());
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.err.println("드라이버 로드에 실패했습니다.");
+        }
+    }
+
     public int idNum(JTable table) {
 
         int count = table.getModel().getRowCount();
