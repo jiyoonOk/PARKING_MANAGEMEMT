@@ -276,7 +276,6 @@ public class AdminMain extends JFrame {
                 });
             }
 
-            //TODO : 선택 안 하면 선택하라고 알림창 -> 할 시간 없을 듯^^
             //TODO : 계정 변경, 저장
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -305,7 +304,9 @@ public class AdminMain extends JFrame {
                 } else if (s.equals("계정 삭제")) {
                     int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                     if (user_delete == YES_OPTION) {
-                        //TODO : DB에서 계정 삭제
+
+                        usingDB.DelectAttribute("user");
+
                         JOptionPane.showMessageDialog(admin, "계정이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
@@ -377,7 +378,9 @@ public class AdminMain extends JFrame {
                     case "삭제":{
                         int question_delete = JOptionPane.showConfirmDialog(admin, "정말 문의를 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                         if (question_delete == YES_OPTION) {
-                            //TODO : DB에서 계정 삭제
+
+                            usingDB.DelectAttribute("question");
+
                             JOptionPane.showMessageDialog(admin, "문의가 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         };} break;
                 }
@@ -408,9 +411,8 @@ public class AdminMain extends JFrame {
                     case "삭제": {
                         int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                         if (notice_delete == YES_OPTION) {
-                            //TODO : DB에서 공지사항 삭제
 
-
+                            usingDB.DelectAttribute("notice");
 
                             JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         }

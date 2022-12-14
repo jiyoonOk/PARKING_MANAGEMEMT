@@ -176,7 +176,7 @@ class DBconnection {
     }
 
     //attribute 삭제!
-    public void DelectAttribute(String sql){
+    public void DelectAttribute(String DBTableName){
         try {
             Class.forName("com.mysql.jdbc.Driver");
             System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -185,6 +185,7 @@ class DBconnection {
             System.out.println("연결 완료!");
 
             Statement stmt = AdminMain.con.createStatement();
+            String sql = "DELETE FROM `parking`.`"+DBTableName+"` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
 
             stmt.executeUpdate(sql);
             stmt.close();
