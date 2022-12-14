@@ -1,13 +1,16 @@
-package test_Javateam;
+package Login;
 
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.*;
+import UserMain.*;
 
 class Login extends JFrame implements ActionListener {
+
 	JTextField lgId;
 	JPasswordField lgPw;
+	String id, pw;
 
 	Login() {
 		ImageIcon carImg = new ImageIcon("images/carImg.jpg");
@@ -64,13 +67,19 @@ class Login extends JFrame implements ActionListener {
 				System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
 				String strSql;
-				String id, pw;
+
 				id = lgId.getText();
 				pw = lgPw.getText();
 				strSql = "SELECT * FROM user WHERE id='" + id + "'and passwd = '" + pw + "';";
 				ResultSet result = dbSt.executeQuery(strSql);
 				if (result.next()) {
 					JOptionPane.showMessageDialog(this, "반갑습니다.", "로그인창", JOptionPane.INFORMATION_MESSAGE);
+					UserMain m = new UserMain("daeunlee");
+					m.setTitle("주차 프로그램 - UserMain");
+					m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					m.setSize(1000, 700);
+					m.setVisible(true);
+					m.setLocationRelativeTo(null);
 				} else {
 					JOptionPane.showMessageDialog(this, "아이디나 비밀번호를 다시 확인해주세요.", "로그인실패창",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -272,11 +281,10 @@ class Join extends JFrame implements ActionListener, ItemListener {
 						strSql = "UPDATE `parking`.`user` set `point` = point + '5000' WHERE (`id` = '" + referral_id
 								+ "');";
 						dbSt.executeUpdate(strSql);
-						System.out.println(strSql);
 					}
 					JOptionPane.showMessageDialog(this, "회원가입되었습니다", "확인창", JOptionPane.INFORMATION_MESSAGE);// 회원가입되었다는
 																												// 메시지 창
-																												// 띄우기
+					// 회원가입하고 나서 입력한 값 청소 // 띄우기
 					j_name.setText("");
 					j_id.setText("");
 					j_email.setText("");
@@ -382,6 +390,7 @@ public class Total_Login {
 		login.setLocationRelativeTo(null);
 		login.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		login.setVisible(true);
+
 	}
 
 }
