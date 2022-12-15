@@ -185,7 +185,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 
 			if (s == "수정하기") { // 수정하기 버튼 누를 시 팝업 이벤트발생, 적힌 정보 DB에 업데이트
 
-				strSql = "UPDATE user SET name='" + t_name + "',id='" + t_id + "',passwd='" + t_passwd + "',car_num='"
+				strSql = "UPDATE parking.user SET name='" + t_name + "',id='" + t_id + "',passwd='" + t_passwd + "',car_num='"
 						+ t_carn + "',phone_num='" + t_call + "',card_num='" + t_card + "',email='" + t_email
 						+ "'WHERE id='" + id2.getText() + "';";
 				dbSt.executeUpdate(strSql); // 개인정보 수정
@@ -202,7 +202,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 						JOptionPane.OK_CANCEL_OPTION);
 
 				if (answer == JOptionPane.YES_OPTION) { // 사용자가 확인을 눌렀을 떄 DB 정보 삭제
-					strSql = "DELETE FROM user WHERE id='" + id2.getText() + "';";
+					strSql = "DELETE FROM parking.user WHERE id='" + id2.getText() + "';";
 					dbSt.executeUpdate(strSql);
 					JOptionPane.showMessageDialog(this, "계정이 삭제되었습니다.", "계정탈퇴", JOptionPane.INFORMATION_MESSAGE);
 
