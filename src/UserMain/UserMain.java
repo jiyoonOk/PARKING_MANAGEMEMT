@@ -38,6 +38,7 @@ public class UserMain extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
+
                 Mypage mg=new Mypage();
                 mg.setSize(400,430);
                 mg.setLocation(400, 0);
@@ -64,6 +65,17 @@ public class UserMain extends JFrame{
                 //문의사항 클래스 불러오기
             }
         });
+
+        logout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int r = JOptionPane.showConfirmDialog(null, "정말 로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION);
+                if (r == JOptionPane.YES_OPTION) {
+                    dispose();
+
+                }
+            }
+        })
 
 
 
@@ -118,16 +130,14 @@ public class UserMain extends JFrame{
         checkButton.addActionListener(new ActionListener() {      //조회 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                Inquire win = null;
-                try {
-                    win = new Inquire();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
+                /*
+                Inquire win = new Inquire();
                 win.setSize(900, 600);
                 win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 win.setVisible(true);
                 win.setLocationRelativeTo(null);
+
+                 */
             }
         });
 

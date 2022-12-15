@@ -16,11 +16,11 @@ import common.ParkingLot;
 public class Rsv extends JFrame {
     static String classname = "com.mysql.cj.jdbc.Driver";
     static String user = "root", passwd = "wldbs1004"; //DB 사용자,비번
-    static String userName = "";
+    static String userName = ""; //TODO 로그인에서 아이디 받아오기
     static int userPoint=0; //DB 사용자 보유 포인트
     double plusPoint = 0;
 
-    String userId = "", userCarNu = ""; //로그인한 사용자 정보 TODO 로그인에서 아이디 받아오기
+    String userId = "", userCarNu = ""; //로그인한 사용자 정보
 
     //===============================================================================================
 
