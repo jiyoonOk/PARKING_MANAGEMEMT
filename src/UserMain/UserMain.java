@@ -75,7 +75,7 @@ public class UserMain extends JFrame{
 
                 }
             }
-        })
+        });
 
 
 
@@ -130,14 +130,12 @@ public class UserMain extends JFrame{
         checkButton.addActionListener(new ActionListener() {      //조회 액션이벤트
             @Override
             public void actionPerformed(ActionEvent e) {
-                /*
                 Inquire win = new Inquire();
                 win.setSize(900, 600);
                 win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 win.setVisible(true);
                 win.setLocationRelativeTo(null);
 
-                 */
             }
         });
 
