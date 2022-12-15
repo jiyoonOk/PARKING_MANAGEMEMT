@@ -35,7 +35,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 			System.err.println("드라이버 로드에 실패했습니다.");
 		}
 		try {
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "root");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
 			System.out.println("DB 연결 완료.");
 			Statement dbSt = con.createStatement();
 			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -177,7 +177,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 			System.err.println("드라이버 로드에 실패했습니다.");
 		}
 		try {
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "root");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
 			System.out.println("DB 연결 완료.");
 			Statement dbSt = con.createStatement();
 			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
