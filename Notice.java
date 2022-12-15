@@ -101,7 +101,7 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 			Class.forName("com.mysql.cj.jdbc.Driver"); // mysql의 jdbc Driver 연결하기
 			System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "root");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
 			System.out.println("DB 연결 완료.");
 			Statement dbSt = con.createStatement();
 			String strSql;
@@ -112,12 +112,12 @@ class Notice extends JFrame implements ActionListener, MouseListener {
 				clearTable();
 				table.updateUI(); // 테이블에 출력하기 전에 테이블 클리어하기
 
-				while (result.next()) { // DB에서 학생정보 읽어와 표에 출력하기
+				while (result.next()) { 
 					Vector<String> txt = new Vector<String>();
 					txt.add(result.getString("notice_title"));
 					txt.add(result.getString("notice_contents"));
 					rowData.add(txt);
-				} // while
+				} // DB에서 학생정보 읽어와 표에 출력하기
 			} // 조회 버튼 클릭시
 
 			table.updateUI();
