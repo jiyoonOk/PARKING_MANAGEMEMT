@@ -22,10 +22,11 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 	JTextField name2, id2, passwd2, carn2, call2, card2, email2;
 	JCheckBox smallcar, femail, handicap;
 	int is_femail, is_handicap, is_smallcar;
+	static String idd;
 
 	// 중복확인 버튼 클릭 유무
 
-	public Mypage() {
+	public Mypage(String idd) {
 
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -34,7 +35,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 			System.err.println("드라이버 로드에 실패했습니다.");
 		}
 		try {
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "root");
 			System.out.println("DB 연결 완료.");
 			Statement dbSt = con.createStatement();
 			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -160,6 +161,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 
 		t_name = name2.getText();
 		t_id = id2.getText();
+		idd = id2.getText();
 		t_passwd = passwd2.getText();
 		t_carn = carn2.getText();
 		t_call = call2.getText();
@@ -175,7 +177,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 			System.err.println("드라이버 로드에 실패했습니다.");
 		}
 		try {
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "root");
 			System.out.println("DB 연결 완료.");
 			Statement dbSt = con.createStatement();
 			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -204,11 +206,12 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 					dbSt.executeUpdate(strSql);
 					JOptionPane.showMessageDialog(this, "계정이 삭제되었습니다.", "계정탈퇴", JOptionPane.INFORMATION_MESSAGE);
 
-					Login login = new Login();
-					login.setTitle("LOGIN");
-					login.setSize(400, 600);
-					login.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-					login.setVisible(true); // DB정보 삭제 후 로그인화면으로 전환!!!!!!!
+					Login in2 = new Login();
+					in2.setSize(400, 600);
+					in2.setTitle("문의사항");
+					in2.setLocationRelativeTo(null);
+					in2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					in2.setVisible(true); // DB정보 삭제 후 로그인화면으로 전환!!!!!!!
 					dispose();
 				} 
 
@@ -249,7 +252,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public static void main(String[] args) {
-		Mypage mg = new Mypage();
+		Mypage mg = new Mypage(idd);
 		mg.setSize(400, 430);
 		mg.setLocation(400, 0);
 		mg.setTitle("마이페이지");

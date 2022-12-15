@@ -109,7 +109,7 @@ public class question extends JFrame implements ActionListener, MouseListener {
 			Class.forName("com.mysql.cj.jdbc.Driver"); // mysql의 jdbc Driver 연결하기
 			System.err.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "root");
 			System.out.println("DB 연결 완료.");
 			Statement dbSt = con.createStatement();
 			String strSql;
@@ -147,7 +147,7 @@ public class question extends JFrame implements ActionListener, MouseListener {
 
 	public void mouseClicked(MouseEvent ae) {
 		try {
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "root");
 			Statement dbSt = con.createStatement();
 			String strSql;
 			strSql = "SELECT * FROM parking.answer"; // where question_id=t_question_id;
