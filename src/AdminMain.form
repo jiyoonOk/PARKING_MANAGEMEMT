@@ -213,7 +213,7 @@
               </scrollpane>
             </children>
           </grid>
-          <grid id="63665" binding="salesAdminJp" layout-manager="GridLayoutManager" row-count="4" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="63665" binding="salesAdminJp" layout-manager="GridLayoutManager" row-count="4" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="매출관리"/>
@@ -233,44 +233,17 @@
                   </model>
                 </properties>
               </component>
-              <component id="75cbe" class="javax.swing.JRadioButton" binding="monthRB">
-                <constraints>
-                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="1개월"/>
-                </properties>
-              </component>
-              <component id="934d4" class="javax.swing.JRadioButton" binding="weekRB">
-                <constraints>
-                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="일주일"/>
-                </properties>
-              </component>
               <component id="674a1" class="javax.swing.JLabel" binding="purchaseLabel">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="9" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value=""/>
                 </properties>
               </component>
-              <component id="5d826" class="javax.swing.JRadioButton" binding="dayRB">
-                <constraints>
-                  <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <focusCycleRoot value="false"/>
-                  <opaque value="true"/>
-                  <selected value="true"/>
-                  <text value="오늘"/>
-                </properties>
-              </component>
               <scrollpane id="94c01" binding="salesScrollPane" custom-create="true">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="8" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="9" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -283,25 +256,52 @@
                   </component>
                 </children>
               </scrollpane>
-              <component id="7065f" class="javax.swing.JRadioButton" binding="halfRB">
-                <constraints>
-                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="6개월"/>
-                </properties>
-              </component>
               <component id="ffb62" class="javax.swing.JRadioButton" binding="yearRB">
                 <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="1년"/>
                 </properties>
               </component>
+              <component id="75cbe" class="javax.swing.JRadioButton" binding="monthRB">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="1개월"/>
+                </properties>
+              </component>
+              <component id="934d4" class="javax.swing.JRadioButton" binding="weekRB">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="일주일"/>
+                </properties>
+              </component>
+              <component id="5d826" class="javax.swing.JRadioButton" binding="dayRB">
+                <constraints>
+                  <grid row="0" column="5" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <focusCycleRoot value="false"/>
+                  <opaque value="true"/>
+                  <selected value="true"/>
+                  <text value="오늘"/>
+                </properties>
+              </component>
+              <component id="e8993" class="javax.swing.JRadioButton" binding="allRB">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="전체"/>
+                </properties>
+              </component>
               <component id="eca38" class="javax.swing.JLabel" binding="total">
                 <constraints>
-                  <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Label"/>

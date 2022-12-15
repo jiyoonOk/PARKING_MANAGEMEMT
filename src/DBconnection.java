@@ -77,7 +77,7 @@ class DBconnection {
                     break;
                     case "answerJTable": {
                         txt.add(result.getString("answer_id"));
-                        txt.add(result.getString("question_title"));
+                        txt.add(result.getString("question_id"));
                         txt.add(result.getString("answer_title"));
                         txt.add(result.getString("answer_contents"));
                         txt.add(result.getString("answer_date"));
@@ -115,7 +115,7 @@ class DBconnection {
 
             Statement stmt = AdminMain.con.createStatement();
 
-            stmt.executeUpdate(sql);
+            stmt.execute(sql);
             stmt.close();
             AdminMain.con.close();
         } catch (SQLException e) {

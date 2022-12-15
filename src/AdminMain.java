@@ -3,8 +3,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.Random;
 import java.util.Vector;
 
 import static javax.swing.JOptionPane.YES_OPTION;
@@ -33,7 +31,7 @@ public class AdminMain extends JFrame {
 
     //salesAdmin에 필요한 변수
     private JComboBox purchaseCombo;
-    private JRadioButton yearRB, halfRB, monthRB, weekRB, dayRB;
+    private JRadioButton yearRB, monthRB, weekRB, dayRB, allRB;
     private JLabel purchaseLabel;
     JTable salesTable;
     private UserAdmin user;
@@ -91,6 +89,7 @@ public class AdminMain extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int a = JOptionPane.showConfirmDialog(admin, "정말 로그아웃 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                 if (a == JOptionPane.YES_OPTION) {
+                    Total_Login tl = new Total_Login();
                     dispose();
                 }
             }
@@ -105,10 +104,10 @@ public class AdminMain extends JFrame {
             public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
                 row = userTable.getSelectedRow();
-                rowClickedPrimaryKey = userTable.getModel().getValueAt(row, 0).toString();
+                AdminMain.rowClickedPrimaryKey = userTable.getModel().getValueAt(row, 0).toString();
 
                 nameField.setText(userTable.getModel().getValueAt(row, 1).toString());
-                idField.setText(rowClickedPrimaryKey);
+                idField.setText(AdminMain.rowClickedPrimaryKey);
                 carField.setText(userTable.getModel().getValueAt(row, 3).toString());
                 numberField.setText(userTable.getModel().getValueAt(row, 2).toString());
 
@@ -124,7 +123,7 @@ public class AdminMain extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mousePressed(e);
                 row = qnaJTable.getSelectedRow();
-                rowClickedPrimaryKey = qnaJTable.getModel().getValueAt(row, 0).toString();
+                AdminMain.rowClickedPrimaryKey = qnaJTable.getModel().getValueAt(row, 0).toString();
 
                 qnaTitleField.setText(qnaJTable.getModel().getValueAt(row, 1).toString());
                 qnaIDField.setText(qnaJTable.getModel().getValueAt(row, 4).toString());
@@ -140,7 +139,7 @@ public class AdminMain extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mousePressed(e);
                 row = answerJTable.getSelectedRow();
-                rowClickedPrimaryKey = answerJTable.getModel().getValueAt(row, 0).toString();
+               AdminMain.rowClickedPrimaryKey = answerJTable.getModel().getValueAt(row, 0).toString();
 
                 qnaTitleField.setText(answerJTable.getModel().getValueAt(row, 2).toString());
                 qnaIDField.setText("");
@@ -156,7 +155,7 @@ public class AdminMain extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mousePressed(e);
                 row = noticeJTable.getSelectedRow();
-                rowClickedPrimaryKey = noticeJTable.getModel().getValueAt(row,0).toString();
+                AdminMain.rowClickedPrimaryKey = noticeJTable.getModel().getValueAt(row,0).toString();
 
                 noticeTitleField.setText(noticeJTable.getModel().getValueAt(row, 1).toString());
                 noticeContentsArea.setText(noticeJTable.getModel().getValueAt(row, 2).toString());
@@ -238,8 +237,8 @@ public class AdminMain extends JFrame {
 
         // 문의답변 JTable
         Vector<String> columnName6 = new Vector<String>();
-        columnName6.add("답변번호");
-        columnName6.add("문의제목");
+        columnName6.add("답변 번호");
+        columnName6.add("문의 번호");
         columnName6.add("답변 제목");
         columnName6.add("답변 내용");
         columnName6.add("날짜");
@@ -348,13 +347,13 @@ public class AdminMain extends JFrame {
                     int user_delete = JOptionPane.showConfirmDialog(admin, "정말 계정을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                     if (user_delete == YES_OPTION) {
 
-                        String sql = "DELETE FROM `parking`.`user` WHERE (`notice_id` = '"+ rowClickedPrimaryKey +"');";
+                        String sql = "DELETE FROM `parking`.`user` WHERE (`id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
 
                         usingDB.DBInstruct(sql);
 
                         JOptionPane.showMessageDialog(admin, "계정이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                        allUserDB.JTableUpdate();
                     }
-                    allUserDB.JTableUpdate();
                 }
             }
         }//user admin 끝
@@ -367,14 +366,15 @@ public class AdminMain extends JFrame {
 
                 ButtonGroup g = new ButtonGroup();
                 yearRB.addActionListener(this);
-                halfRB.addActionListener(this);
                 monthRB.addActionListener(this);
                 weekRB.addActionListener(this);
+                dayRB.addActionListener(this);
+                allRB.addActionListener(this);
                 g.add(yearRB);
-                g.add(halfRB);
                 g.add(monthRB);
                 g.add(weekRB);
                 g.add(dayRB);
+                g.add(allRB);
 
                 salesDB = new DBconnection("SELECT * from parking.purchase order by car_out;", rowData5, salesTable);
                 salesDB.JTableUpdate();
@@ -383,16 +383,77 @@ public class AdminMain extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         System.out.println(e.getActionCommand() + " 버튼 누름");
                         //TODO : 쿼리문으로 결제완료 / 결제취소 구분
+                        JComboBox cb = (JComboBox)e.getSource();
+                        String select = cb.getSelectedItem().toString();
+
+                        switch (select){
+                            case "결제완료" : {
+                                salesDB = new DBconnection("select * from parking.purchase where is_cancel=0;", rowData5, salesTable);
+                                salesDB.JTableUpdate();
+                                totalFee();
+                            } break;
+                            case "결제취소" : {
+                                salesDB = new DBconnection("select * from parking.purchase where is_cancel=1;", rowData5, salesTable);
+                                salesDB.JTableUpdate();
+                                totalFee();
+                            }break;
+                            case "전체" : {
+                                salesDB = new DBconnection("SELECT * from parking.purchase;", rowData5, salesTable);
+                                salesDB.JTableUpdate();
+                                totalFee();
+                            }break;
+                        }
+
                     }
                 });
             }
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(e.getActionCommand() + " 버튼 누름");
+                String rdo = e.getActionCommand();
                 //TODO : 년 / 6개월 / 1달 / 일주일 단위로 JTable 출력
+                switch (rdo) {
+                    case "오늘": {
+                        salesDB = new DBconnection("SELECT * from parking.purchase where car_in between date_add(now(), interval -1 day) and now();", rowData5, salesTable);
+                        salesDB.JTableUpdate();
+                        totalFee();
+                    }
+                    break;
+                    case "일주일": {
+                        salesDB = new DBconnection("SELECT * from parking.purchase where car_in between date_add(now(), interval -1 week) and now();", rowData5, salesTable);
+                        salesDB.JTableUpdate();
+                        totalFee();
+                    }
+                    break;
+                    case "1개월": {
+                        salesDB = new DBconnection("SELECT * from parking.purchase where car_in between date_add(now(), interval -1 month) and now();", rowData5, salesTable);
+                        salesDB.JTableUpdate();
+                        totalFee();
+                    }
+                    break;
+                    case "1년": {
+                        salesDB = new DBconnection("SELECT * from parking.purchase where car_in between date_add(now(), interval -1 year) and now();", rowData5, salesTable);
+                        salesDB.JTableUpdate();
+                        totalFee();
+                    }
+                    break;
+                    case "전체" : {
+                        salesDB = new DBconnection("SELECT * from parking.purchase;", rowData5, salesTable);
+                        salesDB.JTableUpdate();
+                        totalFee();
+                    }
 
+                }
+            }
 
+            public void totalFee() {
+                int sum = 0;
+                for (int i = 0; i < salesTable.getRowCount(); i++) {
+                    String a = salesTable.getModel().getValueAt(i, 1).toString();
+                    sum = sum + Integer.parseInt(a);
+                    //here i is the row wise iteration and 2 is the column number of mycalculation attribute
+                }
+                total.setText("총 매출 : " + sum + " 원");
             }
 
         }//salesAdmin 클래스 종료
@@ -404,7 +465,7 @@ public class AdminMain extends JFrame {
             public QnaAdmin() {
 
                 qnaDB = new DBconnection("SELECT * from parking.question order by question_date;", rowData3, qnaJTable);
-                answerDB = new DBconnection("select answer.answer_id, question.question_title, answer.answer_title, answer.answer_contents, answer.answer_date from parking.answer, parking.question;", rowData6, answerJTable);
+                answerDB = new DBconnection("select * from parking.answer order by answer_date;", rowData6, answerJTable);
                 qnaDB.JTableUpdate();
                 answerDB.JTableUpdate();
 
@@ -415,7 +476,7 @@ public class AdminMain extends JFrame {
             //문의 답변, 삭제
             @Override
             public void actionPerformed(ActionEvent e) {
-                int a = Integer.parseInt(rowClickedPrimaryKey);
+                int a = Integer.parseInt(AdminMain.rowClickedPrimaryKey);
                 String s = e.getActionCommand();
                 if (s.equals("답변 작성")) {
 
@@ -430,7 +491,7 @@ public class AdminMain extends JFrame {
 
                 } else if (s.equals("저장")){
 
-                    sql = "update parking.answer set answer_title = '" + qnaTitleField.getText() + "', answer_contents='"+ qnaContensArea.getText() + "' WHERE (answer_id = '" + rowClickedPrimaryKey + "');";
+                    sql = "update parking.answer set answer_title = '" + qnaTitleField.getText() + "', answer_contents='"+ qnaContensArea.getText() + "' WHERE (answer_id = '" + AdminMain.rowClickedPrimaryKey + "');";
 
                     usingDB.DBInstruct(sql);
 
@@ -449,7 +510,7 @@ public class AdminMain extends JFrame {
                     int question_delete = JOptionPane.showConfirmDialog(admin, "정말 답변을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
                     if (question_delete == YES_OPTION) {
 
-                        String sql = "DELETE FROM `parking`.`answer` WHERE (`answer_id` = '" + rowClickedPrimaryKey + "');";
+                        String sql = "DELETE FROM `parking`.`answer` WHERE (`answer_id` = '" + AdminMain.rowClickedPrimaryKey + "');";
 
                         usingDB.DBInstruct(sql);
 
@@ -478,36 +539,37 @@ public class AdminMain extends JFrame {
             }
             @Override
             public void actionPerformed(ActionEvent e) {
+                String s = e.getActionCommand();
+                if (s.equals("추가")) {
 
-                switch (e.getActionCommand()) {
-                    case "추가": {
-                        AddText add = new AddText();
-                    }break;
-                    case "수정": {
-                        noticeTitleField.setEditable(true);
-                        noticeContentsArea.setEditable(true);
+                    AddText add = new AddText();
 
-                        noticeChangeButton.setText("저장");
-                    }break;
-                    case "저장" : {
+                }else if (s.equals("수정")) {
 
-                        sql = "update parking.notice set notice_title = '" + noticeTitleField.getText() + "', notice_contents='"+ noticeContentsArea.getText() + "' WHERE (id = '" + rowClickedPrimaryKey + "');";
+                    noticeTitleField.setEditable(true);
+                    noticeContentsArea.setEditable(true);
+
+                    noticeChangeButton.setText("저장");
+
+                }else if (s.equals("저장")){
+
+                    sql = "update parking.notice set notice_title = '" + noticeTitleField.getText() + "', notice_contents='"+ noticeContentsArea.getText() + "' WHERE (notice_id = '" + AdminMain.rowClickedPrimaryKey + "');";
+
+                    usingDB.DBInstruct(sql);
+
+                    noticeDB.JTableUpdate();
+
+                } else if (s.equals("삭제")) {
+
+                    int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
+                    if (notice_delete == YES_OPTION) {
+
+                        String sql = "DELETE FROM `parking`.`notice` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
 
                         usingDB.DBInstruct(sql);
-                        noticeDB.JTableUpdate();
-                    }break;
-                    case "삭제": {
-                        int notice_delete = JOptionPane.showConfirmDialog(admin, "정말 공지사항을 삭제 하시겠습니까?", "확인창", JOptionPane.YES_NO_OPTION);
-                        if (notice_delete == YES_OPTION) {
 
-                            String sql = "DELETE FROM `parking`.`notice` WHERE (`notice_id` = '"+ AdminMain.rowClickedPrimaryKey +"');";
-
-                            usingDB.DBInstruct(sql);
-
-                            JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                        ;
-                    }break;
+                        JOptionPane.showMessageDialog(admin, "공지사항이 삭제되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
                 noticeDB.JTableUpdate();
             }

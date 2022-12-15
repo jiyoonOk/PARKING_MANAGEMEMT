@@ -85,8 +85,8 @@ class PwChange extends JDialog implements ActionListener {
             Statement stmt = AdminMain.con.createStatement();
 
             switch (s) {
-                case "확인":
-                    sql = "select manager_pw from parking.manager where manager_pw='" + currentPw.getText() + "';";
+                case "확인":{
+                    sql = "select * from parking.manager where manager='" + currentPw.getText() + "';";
                     result = stmt.executeQuery(sql);
                     if (result.next()) {
                         JOptionPane.showMessageDialog(p, "비밀번호가 동일합니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
@@ -96,13 +96,13 @@ class PwChange extends JDialog implements ActionListener {
                     } else {
                         JOptionPane.showMessageDialog(p, "비밀번호가 동일하지 않습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
                         currentPw.setText("");
-                    }
+                    }}
                     break;
-                case "변경":
-                    sql = "update parking.manager set manager_pw = '" + newPw.getText() + "' where (manager_pw = '" + currentPw.getText() + "');";
-                    stmt.executeQuery(sql);
+                case "변경": {
+                    sql = "update `parking`.`manager` set `manager` = '" + newPw.getText() + "' where (`manager` = '" + currentPw.getText() + "');";
+                    stmt.executeUpdate(sql);
                     JOptionPane.showMessageDialog(p, "비밀번호가 변경되었습니다!", "알림창", JOptionPane.INFORMATION_MESSAGE);
-                    break;
+                }break;
             }
             stmt.close();
             AdminMain.con.close();
