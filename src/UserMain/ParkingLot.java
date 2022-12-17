@@ -90,7 +90,7 @@ public class ParkingLot extends JFrame {
             String strSql;
             strSql = "SELECT user_special_needs.woman, user_special_needs.small_car, user_special_needs.handicap " +
                     "FROM parking.user_special_needs " +
-                    "WHERE id='"+userId+"';";
+                    "WHERE user_special_needs.id='"+userId+"';";
             ResultSet r = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
             System.out.println("user_special_needs 추출 완료");
 

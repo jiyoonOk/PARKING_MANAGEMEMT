@@ -19,7 +19,6 @@ public class Reservation extends JFrame {
     int userPoint;
     String userName, userCarNu;
     int plusPoint;
-    ParkingLot park = new ParkingLot(userId);
     public static final int FIRST_OF_FRAME = 50, FIRST_OF_INFO = 725; //x 축
     public static final int TOP_OF_PARK = 90; //y 축
     public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
@@ -237,8 +236,8 @@ public class Reservation extends JFrame {
         JLabel carNum           = new JLabel(userCarNu);               //차량번호 -(2,2)
         JLabel location_JLabel  = new JLabel("주차구역: ");         //주차선택 -(3,1)
         ParkingLot park = new ParkingLot(userId);
-        JLabel choose_areaFloor = new JLabel(park.userFloor);                //주차위치(층)
-        JLabel choose_areaNum   = new JLabel(park.userArea);                  //주차위치(구역)
+        JLabel userFloorNum = new JLabel(park.userFloor);                //주차위치(층)
+        JLabel userArea   = new JLabel(park.userArea);                  //주차위치(구역)
         JLabel rsv              = new JLabel("예약일시: ");         //시간선택
         JLabel month            = new JLabel("월");                //월
         JLabel date             = new JLabel("일");                //일
@@ -257,8 +256,8 @@ public class Reservation extends JFrame {
         carNum_JLabel.setBounds(FIRST_OF_INFO, 130, DEFAULT_SIZE, 25);
         carNum.setBounds(FIRST_OF_HALF_INFO, 130, DEFAULT_SIZE, 25);
         location_JLabel.setBounds(FIRST_OF_INFO, 160, DEFAULT_SIZE, 25);
-        choose_areaFloor.setBounds(FIRST_OF_HALF_INFO, 160, 25, 25);
-        choose_areaNum.setBounds(870, 160, 25, 25);
+        userFloorNum.setBounds(FIRST_OF_HALF_INFO, 160, 25, 25);
+        userArea.setBounds(870, 160, 25, 25);
 
         rsv.setBounds(FIRST_OF_INFO, 190, DEFAULT_SIZE, 25);
         monthComBox.setBounds(FIRST_OF_INFO, 220, 80, 25);
@@ -296,8 +295,8 @@ public class Reservation extends JFrame {
         rsvCt.add(carNum_JLabel);
         rsvCt.add(carNum);
         rsvCt.add(location_JLabel);
-        rsvCt.add(choose_areaFloor);
-        rsvCt.add(choose_areaNum);
+        rsvCt.add(userFloorNum);
+        rsvCt.add(userArea);
 
         rsvCt.add(rsv);
         rsvCt.add(monthComBox);

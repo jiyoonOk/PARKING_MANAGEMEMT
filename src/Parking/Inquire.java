@@ -10,14 +10,14 @@ import java.sql.*;
 
 // TODO 221217 03:52 SQL문 수정
 // TODO 221217 15:10 (다은) 일반출차 수정
-// TODO 221217 21:10 (다은) 107# 오류 수정 필요함,,
 
 public class Inquire extends JFrame implements ActionListener {
     public JLabel userNum;
     public Component floor;
     public Component car;
     JPanel searchPanel;
-    JLabel userName, userId, userCarNum, userFloor, userArea, userInTime, userRsvOutTime;
+    JLabel userName = new JLabel(), userId = new JLabel(), userCarNum = new JLabel();
+    JLabel userFloor = new JLabel(), userArea = new JLabel(), userInTime = new JLabel(), userRsvOutTime = new JLabel();
     String userTotalFee;
     boolean isReserved;
 
@@ -200,12 +200,13 @@ public class Inquire extends JFrame implements ActionListener {
         if (s == "확인") dispose();
         else {
             /* TODO 221217 05:34 예약 취소 시 결제금액(total_fee) n원 -> 0원, 결제취소유무(is_cancel) 0->1 변경
+               TODO 221217 23:55 (다은) DBconnection 수정
             1. is_cancel 1로 업데이트 하기
             2. total_fee 금액 0으로 업데이트 하기
             3. 예약이 취소되었습니다! 팝업창 게시
              */
-            DBconnection.updateDB("purchase", "total_fee", "0", "user_id", String.valueOf(userId)); //출차시간 업데이트
-            DBconnection.updateDB("purchase", "is_cancel", "1", "user_id", String.valueOf(userId)); //결제취소유무 업데이트 (0:결제O 1:결제O취소O)
+            DBconnection.updateDB("parking.purchase", "purchase.total_fee", "0", "purchase.user_id", String.valueOf(userId)); //출차시간 업데이트
+            DBconnection.updateDB("parking.purchase", "purchase.is_cancel", "1", "purchase.user_id", String.valueOf(userId)); //결제취소유무 업데이트 (0:결제O 1:결제O취소O)
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "예약이 취소되었습니다.");
         }
     }
