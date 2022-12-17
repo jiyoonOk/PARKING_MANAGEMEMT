@@ -1,5 +1,8 @@
-package UserMain;
+package Parking;
 
+
+import UserMain.ParkingLot;
+import UserMain.UserMain;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,33 +13,31 @@ import java.time.LocalTime;
 import java.util.Vector;
 import java.sql.*;
 
-import common.ParkingLot;
-
-
-public class Rsv extends JFrame {
-    static String classname = "com.mysql.cj.jdbc.Driver";
-    static String user = "root", passwd = "wldbs1004"; //DB 사용자,비번
-    static String userName = ""; //TODO 로그인에서 아이디 받아오기
-    static int userPoint=0; //DB 사용자 보유 포인트
-    double plusPoint = 0;
-
-    String userId = "", userCarNu = ""; //로그인한 사용자 정보
-
-    //===============================================================================================
-
+// TODO 221217 13:45 (다은) 생성자 매개변수 아이디로 변경
+// TODO 221217 13:55 (다은) 전역변수 수정
+// TODO 221217 19:22 (다은) 상수 변경
+public class Reservation extends JFrame {
+    String userId; //로그인한 사용자 정보
+    int userPoint;
+    String userName, userCarNu;
+    int plusPoint;
+    public static final int FIRST_OF_FRAME = 50, FIRST_OF_INFO = 725; //x 축
+    public static final int TOP_OF_PARK = 90; //y 축
     public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
 
-    String[] month, time;           //월, 선택시간
+    String[] month, time; //월, 선택시간
     JComboBox monthComBox, dateComBox, hourComBox, minComBox, timeComBox; //월일시분 시간선택
     JTextField inputPoint_JTF; //사용할 포인트 입력
     public static int usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
     JButton usePointBtn, useAllPointBtn, rsvBtn, cancelBtn; //포인트 사용, 전액사용, 예약, 취소 버튼
+    public JLabel pointMention = new JLabel(); //포인트 적립 안내
 
-    public JLabel pointMention = new JLabel();
-    //===============================================================================================
-
-    public Rsv(String t) {
-        super(t);
+    public Reservation(String id) {
+        String classname = "com.mysql.cj.jdbc.Driver";
+        String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
+        String user = "root";
+        String passwd = "wldbs1004";
+        userId = id;
 
         //===============================================================================================
 
@@ -132,27 +133,20 @@ public class Rsv extends JFrame {
             System.err.println("드라이버 로드에 실패했습니다.");
         }
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC", user, passwd);
+            Connection con = DriverManager.getConnection(url, user, passwd);
             System.out.println("DB 연결 완료");
             Statement dbSt = con.createStatement();
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-
             String strSql;
             //user 테이블에서 로그인한 id에 맞는 userPoint 가져오기
-            strSql = "SELECT user.point FROM parking.user WHERE id='"+userId+"';";
+            strSql = "SELECT user.point, user.name, user.car_num FROM parking.user WHERE id='"+userId+"';";
             ResultSet r = dbSt.executeQuery(strSql);
-            while(r.next()){userPoint = r.getInt("user.point");};
-            System.out.println("포인트 추출 완료");
-
-            strSql = "SELECT user.name FROM parking.user WHERE user.id='" + userId +"';";
-            r = dbSt.executeQuery(strSql);
-            while (r.next()) { userName = r.getString("user.name");}
-            System.out.println("이름 추출 완료");
-
-            strSql = "SELECT user.car_num FROM parking.user WHERE user.id='" + userId +"';";
-            r = dbSt.executeQuery(strSql);
-            while (r.next()) { userCarNu = r.getString("user.car_num");}
-            System.out.println("차량번호 추출 완료");
+            while(r.next()){
+                userPoint = r.getInt("user.point");
+                userName = r.getString("user.name");
+                userCarNu = r.getString("user.car_num");
+            };
+            System.out.println("포인트,이름,차량번호 추출 완료");
 
             dbSt.close();
             con.close();    //DB 연동 끊기
@@ -175,12 +169,13 @@ public class Rsv extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                     int i = 0;
-                    if (!(inputPoint_JTF.getText().equals(""))) i = Integer.parseInt(inputPoint_JTF.getText());
+                    if (!(inputPoint_JTF.getText().equals(""))) //빈칸이 아닐 때만 입력받음
+                        i = Integer.parseInt(inputPoint_JTF.getText());
                     getCost();
                     if (i <= userPoint) { //보유 포인트 내에서 사용하는지 확인
-                        if (i > paidMoney_int) {
+                        if (i > paidMoney_int) { //사용포인트 > 결제금액
                             JOptionPane.showMessageDialog(null, "결제 금액 이상으로 사용할 수 없습니다.");
-                        } else {
+                        } else { //사용포인트 < 결제금액
                             usePoint_int = i; // 확인 후 저장
                             paidMoney_int -= usePoint_int; //결제금액에서 포인트금액만큼 빼기
                             showMyPoint.setText("보유 포인트: " + (userPoint - usePoint_int));
@@ -195,10 +190,10 @@ public class Rsv extends JFrame {
         useAllPointBtn.addActionListener(new ActionListener() { //포인트 전액사용 버튼 클릭 시
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (userPoint > paidMoney_int) {
+                if (userPoint > paidMoney_int) { //보유포인트 > 결제금액
                     showMyPoint.setText("보유 포인트: " + (userPoint - paidMoney_int - usePoint_int));
                     prieceAfter.setText("최종금액: 0원");
-                } else {
+                } else {                         //보유포인트 < 결제금액
                     showMyPoint.setText("보유 포인트: 0");
                     prieceAfter.setText("최종금액: " + (paidMoney_int - userPoint) + "원");
                 }
@@ -210,19 +205,7 @@ public class Rsv extends JFrame {
 
 
         rsvBtn = new JButton("예약하기");
-        rsvBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(null, "예약 하시겠습니까?\n(확인 시 결제로 넘어감)", "주차예약", JOptionPane.YES_NO_OPTION);
-                if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
-                    //TODO !# 결제창으로 넘어가기
-
-                    //TODO !# : 결제정보 넘기기
-                    // (선택한 연월일시), userPoint(보유포인트), timeComBox.getSelectedItem()(선택시간)
-                    dispose();
-                }
-            }
-        });//예약버튼 이벤트 끝
+        rsvBtn.addActionListener(this);//예약버튼 이벤트 끝
 
         cancelBtn = new JButton("취소");
         cancelBtn.addActionListener(new ActionListener() { //취소 버튼 클릭 시
@@ -231,8 +214,7 @@ public class Rsv extends JFrame {
                 userPoint += usePoint_int; //TODO !# 이거 필요한가?
                 JOptionPane.showMessageDialog(null, "취소 되었습니다!");
                 dispose();
-            }
-        });//취소버튼 이벤트 끝
+            }});//취소버튼 이벤트 끝
 
         //===============================================================================================
 
@@ -249,8 +231,9 @@ public class Rsv extends JFrame {
         JLabel carNum_JLabel    = new JLabel("차량번호: ");         //차량번호 -(2,1)
         JLabel carNum           = new JLabel(userCarNu);               //차량번호 -(2,2)
         JLabel location_JLabel  = new JLabel("주차구역: ");         //주차선택 -(3,1)
-        JLabel choose_areaFloor = ParkingLot.userFloor;                //주차위치(층)
-        JLabel choose_areaNum   = ParkingLot.userNum;                  //주차위치(구역)
+        ParkingLot park = new ParkingLot(userId);
+        JLabel choose_areaFloor = park.userFloor;                //주차위치(층)
+        JLabel choose_areaNum   = park.userNum;                  //주차위치(구역)
         JLabel rsv              = new JLabel("예약일시: ");         //시간선택
         JLabel month            = new JLabel("월");                //월
         JLabel date             = new JLabel("일");                //일
@@ -264,44 +247,45 @@ public class Rsv extends JFrame {
 
         title.setBounds(800, 50, 75, 30);
 
-        name_JLabel.setBounds(UserMain.FIRST_OF_INFO, 100, DEFAULT_SIZE, 25);
+        name_JLabel.setBounds(FIRST_OF_INFO, 100, DEFAULT_SIZE, 25);
         name.setBounds(FIRST_OF_HALF_INFO, 100, DEFAULT_SIZE, 25);
-        carNum_JLabel.setBounds(UserMain.FIRST_OF_INFO, 130, DEFAULT_SIZE, 25);
+        carNum_JLabel.setBounds(FIRST_OF_INFO, 130, DEFAULT_SIZE, 25);
         carNum.setBounds(FIRST_OF_HALF_INFO, 130, DEFAULT_SIZE, 25);
-        location_JLabel.setBounds(UserMain.FIRST_OF_INFO, 160, DEFAULT_SIZE, 25);
+        location_JLabel.setBounds(FIRST_OF_INFO, 160, DEFAULT_SIZE, 25);
         choose_areaFloor.setBounds(FIRST_OF_HALF_INFO, 160, 25, 25);
         choose_areaNum.setBounds(870, 160, 25, 25);
 
-        rsv.setBounds(UserMain.FIRST_OF_INFO, 190, DEFAULT_SIZE, 25);
-        monthComBox.setBounds(UserMain.FIRST_OF_INFO, 220, 80, 25);
+        rsv.setBounds(FIRST_OF_INFO, 190, DEFAULT_SIZE, 25);
+        monthComBox.setBounds(FIRST_OF_INFO, 220, 80, 25);
         month.setBounds(810, 220, 25, 25);
         dateComBox.setBounds(FIRST_OF_HALF_INFO, 220, 80, 25);
         date.setBounds(925, 220, 25, 25);
-        hourComBox.setBounds(UserMain.FIRST_OF_INFO, 250, 80, 25);
+        hourComBox.setBounds(FIRST_OF_INFO, 250, 80, 25);
         hour.setBounds(810, 250, 25, 25);
         minComBox.setBounds(FIRST_OF_HALF_INFO, 250, 80, 25);
         minute.setBounds(925, 250, 25, 25);
 
-        time.setBounds(UserMain.FIRST_OF_INFO, 280, DEFAULT_SIZE, 25);
+        time.setBounds(FIRST_OF_INFO, 280, DEFAULT_SIZE, 25);
         timeComBox.setBounds(FIRST_OF_HALF_INFO, 280, DEFAULT_SIZE, 25);
 
-        point.setBounds(UserMain.FIRST_OF_INFO, 310, DEFAULT_SIZE, 25);
-        inputPoint_JTF.setBounds(UserMain.FIRST_OF_INFO, 340, 95, 25);
+        point.setBounds(FIRST_OF_INFO, 310, DEFAULT_SIZE, 25);
+        inputPoint_JTF.setBounds(FIRST_OF_INFO, 340, 95, 25);
         usePointBtn.setBounds(825, 340, 60, 25);
         useAllPointBtn.setBounds(890, 340, 60, 25);
-        showMyPoint.setBounds(UserMain.FIRST_OF_INFO, 370, 110, 25);
+        showMyPoint.setBounds(FIRST_OF_INFO, 370, 110, 25);
 
-        priceBefore.setBounds(UserMain.FIRST_OF_INFO, 400, 200, 25);
-        prieceAfter.setBounds(UserMain.FIRST_OF_INFO, 425, 200, 25);
-        pointMention.setBounds(UserMain.FIRST_OF_INFO, 450, 200, 25);
+        priceBefore.setBounds(FIRST_OF_INFO, 400, 200, 25);
+        prieceAfter.setBounds(FIRST_OF_INFO, 425, 200, 25);
+        pointMention.setBounds(FIRST_OF_INFO, 450, 200, 25);
 
-        rsvBtn.setBounds(UserMain.FIRST_OF_INFO, 480, DEFAULT_SIZE, 50);
+        rsvBtn.setBounds(FIRST_OF_INFO, 480, DEFAULT_SIZE, 50);
         cancelBtn.setBounds(FIRST_OF_HALF_INFO, 480, DEFAULT_SIZE, 50);
 
+        ParkingLot park = new ParkingLot(userId);
 
         rsvCt.add(specialInfo);
-        rsvCt.add(ParkingLot.floor);
-        rsvCt.add(ParkingLot.car);
+        rsvCt.add(park.floor);
+        rsvCt.add(park.car);
         rsvCt.add(title);
 
         rsvCt.add(name_JLabel);
@@ -339,7 +323,19 @@ public class Rsv extends JFrame {
         rsvCt.add(cancelBtn); //예약, 취소 버튼
 
 
-    }//Rsv 생성자 끝
+    }//Reservation 생성자 끝
+
+    public void actionPerformed(ActionEvent e) { //예약결제
+        int result = JOptionPane.showConfirmDialog(null, "예약 하시겠습니까?\n(확인 시 결제로 넘어감)", "주차예약", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
+            //TODO !# 결제창으로 넘어가기
+            //TODO !# : 결제정보 넘기기
+            // (선택한 연월일시) -> purchase.car_in 으로 바꿔서
+            // userPoint(보유포인트) -> user.userPoint
+            // timeComBox.getSelectedItem()(선택시간) -> purchase.car_out = purchase.car_in + 3시간
+            dispose();
+        }
+    }
 
 
     public void getCost() { //선택시간에 따른 금액 저장 / 10% 할인 적용
@@ -350,9 +346,8 @@ public class Rsv extends JFrame {
         } else if (timeComBox.getSelectedItem().equals("3시간")) {
             paidMoney_int = 8100;
         }
-        plusPoint = (paidMoney_int - usePoint_int) * 0.05;
+        plusPoint = (int)((paidMoney_int - usePoint_int) * 0.05);
         pointMention.setText("( "+(int)plusPoint+" point 적립 예정)");
     }//getCost() 메소드 끝
 
-}//Rsv 클래스 끝
-
+}//Reservation 클래스 끝

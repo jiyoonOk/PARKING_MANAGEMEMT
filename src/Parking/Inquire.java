@@ -1,37 +1,37 @@
-package UserMain;
+package Parking;
+
+import Pay.DBconnection;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-//주차 조회 클래스
-//TODO : 로그인 정보 id 값 얻어와서 db와 비교한 후 DB값 출력하기
+
+// TODO 221217 03:52 SQL문 수정
+// TODO 221217 15:10 (다은) 일반출차 수정
+// TODO 221217 21:10 (다은) 107# 오류 수정 필요함,,
 
 public class Inquire extends JFrame implements ActionListener {
-    JButton b;
+    public JLabel userNum;
+    public Component floor;
+    public Component car;
     JPanel searchPanel;
-    JLabel userName;
-    JLabel userId;
-    JLabel userCarNum;
-    JLabel userFloor;
-    JLabel userArea;
-    JLabel userInTime;
-    JLabel userRsvOutTime;
+    JLabel userName, userId, userCarNum, userFloor, userArea, userInTime, userRsvOutTime;
+    String userTotalFee;
     boolean isReserved;
 
-    Inquire() throws SQLException {
+    public Inquire(String Id)  {
         Container ct = getContentPane();
         ct.setLayout(null);
-        boolean is_reserved = false; //주차 예약 유무. 임시로 true 해놓음
+        boolean is_reserved = false; //주차 예약 유무. 임시로 false 해놓음
         searchPanel = new JPanel();
-        JButton b = new JButton("확인");
-        b.addActionListener(this);
 
 
         String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
         String user = "root";
-        String password = "wldmsdl38!";
+        String password = "root";
+
         try { //mysql의 jdbc Driver 연결
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");
@@ -46,24 +46,27 @@ public class Inquire extends JFrame implements ActionListener {
 
             String strSql, checkReservedSql;
 
-            strSql = "SELECT user.name, purchase.user_id, user.car_num, purchase.floor_num, purchase.area, purchase.car_in, purchase.car_out, purchase.is_reserved FROM purchase, user WHERE purchase.user_id='jieunyang' and user.id='jieunyang';";
+            strSql = "SELECT user.name, purchase.user_id, user.car_num, purchase.floor_num, purchase.area, purchase.car_in, purchase.car_out FROM purchase, user WHERE purchase.user_id='"+Id+"' and user.id='"+Id+"';";
             ResultSet result = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
 
 
             while(result.next()) {
                 userName   = new JLabel(result.getString("name"));
-                userId     = new JLabel(result.getString("purchase.user_id"));
                 userCarNum = new JLabel(result.getString("user.car_num"));
                 userFloor  = new JLabel("B"+result.getString("purchase.floor_num"));
                 userArea   = new JLabel(result.getString("purchase.area"));
                 userInTime = new JLabel(result.getString("purchase.car_in")); //입차시간
                 userRsvOutTime = new JLabel(result.getString("purchase.car_out")); //예약-출차예정시간
-                isReserved = result.getBoolean("is_reserved");
             }
 
             dbSt.close();
-            con.close();
 
+            checkReservedSql = "SELECT is_reserved FROM purchase WHERE user_id='user2';";
+            ResultSet Reservedresult = dbSt.executeQuery(checkReservedSql);
+            isReserved = Reservedresult.getBoolean("is_reserved");
+
+            dbSt.close();
+            con.close(); //DB연동 끊기
         } catch (SQLException e) {
             System.out.println("SQLException : " + e.getMessage());
         }
@@ -87,12 +90,12 @@ public class Inquire extends JFrame implements ActionListener {
         for (int i = 0; i < p.length; i++)
             carPanel.add(p[i] = new JPanel());
 
-        p[0].setLayout(new GridLayout(1, 2)); //A열
+        p[0].setLayout    (new GridLayout(1, 2)); //A열
         p[1].setBackground(Color.LIGHT_GRAY); //통로
-        p[2].setLayout(new GridLayout(1, 2)); //B열
-        p[3].setLayout(new GridLayout(1, 2)); //C열
+        p[2].setLayout    (new GridLayout(1, 2)); //B열
+        p[3].setLayout    (new GridLayout(1, 2)); //C열
         p[4].setBackground(Color.LIGHT_GRAY); //통로
-        p[5].setLayout(new GridLayout(1, 2)); //D열
+        p[5].setLayout    (new GridLayout(1, 2)); //D열
 
         //주차구역 버튼 꾸미기
         String[] parkingLot = {"A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"}; //주차구역
@@ -147,14 +150,19 @@ public class Inquire extends JFrame implements ActionListener {
         }
         JLabel normalTitle = new JLabel("주차 일반 조회");
         normalTitle.setFont(new Font("D2Coding", Font.BOLD, 20));
-        JLabel rsvtitle = new JLabel("주차 예약 조회");
+        JLabel rsvtitle    = new JLabel("주차 예약 조회");
         rsvtitle.setFont(new Font("D2Coding", Font.BOLD, 20));
-        JLabel name = new JLabel("이        름 : ");
-        JLabel id = new JLabel("아 이 디 : ");
-        JLabel carNum = new JLabel("차량번호 : ");
-        JLabel area = new JLabel("주차구역 : ");
-        JLabel inTime = new JLabel("입차시간 : ");
-        JLabel rsvOutTime = new JLabel("출차예정시간 : ");
+        JLabel name        = new JLabel("이        름 : ");
+        JLabel id          = new JLabel("아 이 디 : ");
+        JLabel carNum      = new JLabel("차량번호 : ");
+        JLabel area        = new JLabel("주차구역 : ");
+        JLabel inTime      = new JLabel("입차시간 : ");
+        JLabel rsvOutTime  = new JLabel("출차예정시간 : ");
+
+        JButton OKButton     = new JButton("확인");
+        JButton cancelButton = new JButton("예약 취소");
+        OKButton.addActionListener(this);
+        cancelButton.addActionListener(this);
 
         p2[1].add(name);   p2[1].add(userName);
         p2[2].add(id);     p2[2].add(userId);
@@ -162,11 +170,15 @@ public class Inquire extends JFrame implements ActionListener {
         p2[4].add(area);   p2[4].add(userFloor);   p2[4].add(userArea);
         p2[5].add(inTime); p2[5].add(userInTime);
 
-
         //예약 유무에 따른 패널 출력값 설정
-        if (isReserved) {
+        if (isReserved == true) {
             p2[0].add(rsvtitle);
             p2[6].add(rsvOutTime); p2[6].add(userRsvOutTime);
+            /*
+            예약 취소 버튼 나타나게 하기
+            p2[7].add(cancelButton);
+            ct.add(cancelButton);
+             */
         } else {
             p2[0].add(normalTitle);
         }
@@ -174,24 +186,27 @@ public class Inquire extends JFrame implements ActionListener {
 
         carPanel.setBounds(20, 100, 500, 400);
         searchPanel.setBounds(600, 100, 500, 400);
-        b.setBounds(650, 500, 100, 40);
+        OKButton.setBounds(650, 500, 100, 40);
+        cancelButton.setBounds(750, 500, 100, 40);
         ct.add(carPanel);
         ct.add(searchPanel);
-        ct.add(b);
+        ct.add(OKButton);
 
         searchPanel.updateUI();
     }
 
     public void actionPerformed(ActionEvent ae) {
-        dispose();
-    }
-}
-class InquireMain {
-    public static void main(String[] args) throws SQLException {
-        Inquire win = new Inquire();
-        win.setSize(900, 600);
-        win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        win.setVisible(true);
-        win.setLocationRelativeTo(null);
+        String s = ae.getActionCommand();
+        if (s == "확인") dispose();
+        else {
+            /* TODO 221217 05:34 예약 취소 시 결제금액(total_fee) n원 -> 0원, 결제취소유무(is_cancel) 0->1 변경
+            1. is_cancel 1로 업데이트 하기
+            2. total_fee 금액 0으로 업데이트 하기
+            3. 예약이 취소되었습니다! 팝업창 게시
+             */
+            DBconnection.updateDB("purchase", "total_fee", "0", "user_id", String.valueOf(userId)); //출차시간 업데이트
+            DBconnection.updateDB("purchase", "is_cancel", "1", "user_id", String.valueOf(userId)); //결제취소유무 업데이트 (0:결제O 1:결제O취소O)
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "예약이 취소되었습니다.");
+        }
     }
 }

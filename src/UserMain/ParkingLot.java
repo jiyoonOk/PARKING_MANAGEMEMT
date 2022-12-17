@@ -1,4 +1,4 @@
-package common;
+package UserMain;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,17 +6,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.*;
 
+// TODO 221217 19:40 (다은) user_special_needs 정보 불러오는 sql 추가
+// TODO 221217 22:20 (다은) 지역변수 수정
 public class ParkingLot extends JFrame {
-    public static JLabel userFloor, userNum;
-    public static JComboBox floor; //층수 콤보박스
-    public static JPanel car;
-    public ParkingLot() {
+    String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
+    String user = "root";
+    String password = "wldbs1004";
+    String userId;                                       //TODO 221217 03:52 sql 추가됨
+    Boolean userIsWoman, userIsSmallCar, userIsHandicap; //TODO 221217 03:52 sql 추가됨
+    public JLabel userFloor;
+    public JLabel userNum;
+    public static JComboBox floor;
+    public static JLabel car;
+
+    public ParkingLot(String id) {
+        userId = id;
 
         JButton[][] btn = new JButton[3][16]; //구역 버튼
-
-        userFloor = new JLabel(); //사용자선택값 층수(초기값-B1층)
-        userNum   = new JLabel(); //사용자선택값 구역
+        JComboBox floor; //층수 콤보박스
+        JLabel area = new JLabel("주차구역 : ");
+        JLabel userFloor = new JLabel(); //사용자선택값 층수(초기값-B1층)
+        JLabel userNum = new JLabel(); //사용자선택값 구역
         ImageIcon[] carIcons = {
                 new ImageIcon("images/Car.jpg"), //일반, checked
                 new ImageIcon("images/woman.jpg"), //여성
@@ -28,9 +40,9 @@ public class ParkingLot extends JFrame {
         };
 
         //주차 현황 panel
-        car = new JPanel();
+        JPanel car = new JPanel();
         car.setLayout(new GridLayout(6, 1));
-        JPanel[] p = new JPanel[6];
+        JPanel p[] = new JPanel[6];
         for (int i = 0; i < p.length; i++)
             car.add(p[i] = new JPanel());
 
@@ -67,12 +79,47 @@ public class ParkingLot extends JFrame {
             }
         }
 
+        try { //mysql의 jdbc Driver 연결
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");
+        } catch (ClassNotFoundException e) {
+            System.err.println("드라이버 로드에 실패했습니다.");
+        }
+        try { //내가 mysql에 만든 student 데이터베이스 연결
+            Connection con = DriverManager.getConnection(url, user, password);
+            System.out.println("DB 연결 완료");
+            Statement dbSt = con.createStatement(); //질의어 생성해서 적용
+            System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+
+            String strSql;
+            strSql = "SELECT * FROM parking.user_special_needs WHERE id='"+userId+"';";
+            ResultSet r = dbSt.executeQuery(strSql); //DB로부터 읽어온 레코드 객체화
+            System.out.println("user_special_needs 추출 완료");
+
+            while (r.next()) {
+                userIsWoman = r.getBoolean("woman");
+                userIsSmallCar = r.getBoolean("small_car");
+                userIsHandicap = r.getBoolean("handicap");
+            }
+
+            dbSt.close();
+            con.close(); //DB연동 끊기
+        } catch (SQLException e) {
+            System.out.println("SQLException3 : " + e.getMessage());
+        }
+
+        //TODO DB 특이사항에 맞게 주차구역 막아놓음
+        for (int i=0; i<sfloor.length; i++) {
+            if (!userIsWoman)     for (int j = 0; j < 2; j++)    btn[i][j].setEnabled(false);
+            if (!userIsHandicap)  for (int j = 2; j < 4; j++)    btn[i][j].setEnabled(false);
+            if (!userIsSmallCar)  for (int j = 12; j < 16; j++)  btn[i][j].setEnabled(false);
+        }
+
         //초기값으로 Panel P에 B1층 주차구역 버튼들 추가
         for (int i = 0; i < 4; i++) p[0].add(btn[0][i]); //A열
         for (int i = 4; i < 8; i++) p[2].add(btn[0][i]); //B열
         for (int i = 8; i < 12; i++) p[3].add(btn[0][i]); //C열
         for (int i = 12; i < 16; i++) p[5].add(btn[0][i]); //D열
-
 
         //주차층수 리스너 객체 생성 및 선언
         FloorItemListener floorIL = new FloorItemListener(userNum, floor, p, btn, carIcons);

@@ -1,8 +1,9 @@
-package view;
+package UserMain;
 
 import javax.swing.*;
 import java.awt.*;
 
+// TODO @ 22# 포인트 적립률 수정함
 public class CostFrame extends JFrame {       //요금표 popup 클래스 객체 생성
     public CostFrame(String title) {
         setTitle(title);
