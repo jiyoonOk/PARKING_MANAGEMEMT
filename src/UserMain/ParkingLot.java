@@ -25,6 +25,8 @@ public class ParkingLot extends JFrame {
 
     public ParkingLot(String id) {
         userId = id;
+        userFloor = "";
+        userArea = "";
 
         JButton[][] btn = new JButton[3][16]; //구역 버튼
         ImageIcon[] carIcons = {
@@ -136,6 +138,7 @@ class FloorItemListener implements ItemListener {
     JButton[][] jBtn;
     ImageIcon[] jCarIcons;
     int i;
+    JComboBox jfloor = ParkingLot.floor;
     FloorItemListener(JPanel[] p, JButton[][] btn, ImageIcon[] carIcons) {
         jP = p.clone(); //패널(실인수-클래스 매개변수) 배열 복사
         jBtn = new JButton[btn.length][btn[0].length];
@@ -144,7 +147,7 @@ class FloorItemListener implements ItemListener {
             System.arraycopy(btn[i],0,jBtn[i],0,btn[0].length); //버튼(실인수-클래스 매개변수) 배열 복사
     }
     public void itemStateChanged(ItemEvent ie) {
-        String f = (String)ParkingLot.floor.getSelectedItem();
+        String f = (String)jfloor.getSelectedItem();
         switch (f) {
             case "B1" : //panel jP에 1층 버튼 추가 및 2,3층 버튼 삭제
                 for (i = 0; i < 4; i++  ) {jP[0].add(jBtn[0][i]); jP[0].remove(jBtn[1][i]); jP[0].remove(jBtn[2][i]);} //A열

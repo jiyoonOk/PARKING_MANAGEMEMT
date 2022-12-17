@@ -28,9 +28,10 @@ public class Inquire extends JFrame implements ActionListener {
         searchPanel = new JPanel();
 
 
+
         String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
         String user = "root";
-        String password = "root";
+        String password = "wldbs1004";
 
         try { //mysql의 jdbc Driver 연결
             Class.forName("com.mysql.cj.jdbc.Driver");

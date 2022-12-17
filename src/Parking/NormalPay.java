@@ -20,9 +20,9 @@ import static Pay.Calculate.calculateTime;
 
 
 public class NormalPay extends JFrame implements ActionListener {
-    String userId, userName, userCarNum, userHours;
+    String userId, userName, userCarNum, userHours = null;
     LocalDateTime userCarIn, userCarOut=LocalDateTime.now();
-    String userPoint, userTotalFee, userAddPoint, userTotalFeeAfterPoint;
+    String userPoint, userTotalFee = null, userAddPoint, userTotalFeeAfterPoint;
     Boolean userIsSmallCar, userIsHandicap;
     JTextField jtfPoint;
     JLabel LabelUserTotalFee, LabelUserAddPoint;
@@ -34,7 +34,7 @@ public class NormalPay extends JFrame implements ActionListener {
 
         String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
         String user = "root";
-        String password = "wldmsdl38!";
+        String password = "wldbs1004";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");

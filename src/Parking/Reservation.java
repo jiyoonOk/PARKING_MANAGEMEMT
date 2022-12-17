@@ -20,7 +20,7 @@ public class Reservation extends JFrame {
     String userName, userCarNu;
     int plusPoint;
     public static final int FIRST_OF_FRAME = 50, FIRST_OF_INFO = 725; //x 축
-    public static final int TOP_OF_PARK = 90; //y 축
+    public static final int TOP_OF_PARK = 100; //y 축
     public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
 
     String[] month, time; //월, 선택시간
@@ -130,12 +130,12 @@ public class Reservation extends JFrame {
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
             String strSql;
             //user 테이블에서 로그인한 id에 맞는 userPoint 가져오기
-            strSql = "SELECT user.point, user.name, user.car_num FROM parking.user WHERE user.id='"+userId+"';";
+            strSql = "SELECT user.name, user.car_num, user.point FROM parking.user WHERE user.id='"+userId+"';";
             ResultSet r = dbSt.executeQuery(strSql);
             while(r.next()){
-                userPoint = r.getInt("user.point");
                 userName = r.getString("user.name");
                 userCarNu = r.getString("user.car_num");
+                userPoint = r.getInt("user.point");
             };
             System.out.println("포인트,이름,차량번호 추출 완료");
 
@@ -230,14 +230,14 @@ public class Reservation extends JFrame {
         JLabel specialInfo      = new JLabel("특별구역 10% 할인");   //안내문구
         //TODO DB : 이름, 차량번호 가져오기
         JLabel title            = new JLabel("주차예약");
-        JLabel name_JLabel      = new JLabel("이    름: ");        //이름:  -(1,1)
-        JLabel name             = new JLabel(userId);                   //이름 -(1,2)
-        JLabel carNum_JLabel    = new JLabel("차량번호: ");         //차량번호 -(2,1)
-        JLabel carNum           = new JLabel(userCarNu);               //차량번호 -(2,2)
-        JLabel location_JLabel  = new JLabel("주차구역: ");         //주차선택 -(3,1)
-        ParkingLot park = new ParkingLot(userId);
-        JLabel userFloorNum = new JLabel(park.userFloor);                //주차위치(층)
-        JLabel userArea   = new JLabel(park.userArea);                  //주차위치(구역)
+        JLabel name_JLabel      = new JLabel("이    름: ");        //이름:
+        JLabel name             = new JLabel(userName);
+        JLabel carNum_JLabel    = new JLabel("차량번호: ");         //차량번호
+        JLabel carNum           = new JLabel(userCarNu);
+        JLabel location_JLabel  = new JLabel("주차구역: ");         //주차선택
+        ParkingLot park         = new ParkingLot(userId);
+        JLabel userFloorNum     = new JLabel(park.userFloor);          //주차위치(층)
+        JLabel userArea         = new JLabel(park.userArea);           //주차위치(구역)
         JLabel rsv              = new JLabel("예약일시: ");         //시간선택
         JLabel month            = new JLabel("월");                //월
         JLabel date             = new JLabel("일");                //일
@@ -248,6 +248,9 @@ public class Reservation extends JFrame {
 
 
         specialInfo.setBounds(590, 60, 130, 30);
+
+        park.floor.setBounds(FIRST_OF_FRAME, TOP_OF_PARK-50, 100, 30);
+        park.car.setBounds(FIRST_OF_FRAME, TOP_OF_PARK, 650, 450);
 
         title.setBounds(800, 50, 75, 30);
 
@@ -336,7 +339,7 @@ public class Reservation extends JFrame {
             paidMoney_int = 8100;
         }
         plusPoint = (int)((paidMoney_int - usePoint_int) * 0.05);
-        pointMention.setText("( "+(int)plusPoint+" point 적립 예정)");
+        pointMention.setText("( "+plusPoint+" point 적립 예정)");
     }//getCost() 메소드 끝
 
 }//Reservation 클래스 끝
