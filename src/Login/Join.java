@@ -163,8 +163,18 @@ public class Join extends JFrame implements ActionListener, ItemListener {
 					JOptionPane.showMessageDialog(this, "사용 중인 id 입니다.", "확인창", JOptionPane.INFORMATION_MESSAGE);
 					j_id.setText("");
 				}
-			} else if (s == "JOIN") { // 확인 버튼 선택시
-
+			} 
+			else if (s == "JOIN") { // 확인 버튼 선택시
+				
+				if(!referral_id.equals("")) {
+					strSql = "SELECT * FROM parking.user WHERE id='" + referral_id + "';";
+					ResultSet result = dbSt.executeQuery(strSql);
+					if (!result.next()) {
+						is_find_referral=false;
+					} else {
+						is_find_referral=true;
+					}
+				}
 				if (name.equals("") || id.equals("") || pw1.equals("") || pw2.equals("") || email.equals("")
 						|| carNum.equals("") || phone.equals("") || cardNum.equals("")) {
 					JOptionPane.showMessageDialog(this, "필수 사항을 입력해주세요!", "회원가입 안내창", JOptionPane.INFORMATION_MESSAGE);
@@ -193,7 +203,11 @@ public class Join extends JFrame implements ActionListener, ItemListener {
 				else if (isCardNumInt(cardNum) == 1 || cardNum.length() != 16) {
 					JOptionPane.showMessageDialog(this, "카드 길이 16자리를 지켜서 카드 번호의 숫자만 입력해주세요!", "회원가입 안내창",
 							JOptionPane.INFORMATION_MESSAGE);
-				} 
+				} else if(is_find_referral==false) {
+					JOptionPane.showMessageDialog(this, "존재하지 않은 회원 아이디입니다.", "로그인창",
+							JOptionPane.INFORMATION_MESSAGE); j_referral.setText(""); 
+				}
+				
 				else {
 					// 사항 입력
 					strSql = "INSERT INTO user(id, passwd, name, email, phone_num, car_num, card_num, referral_id, point )VALUES('"
@@ -204,18 +218,10 @@ public class Join extends JFrame implements ActionListener, ItemListener {
 					strSql = "INSERT INTO user_special_needs(id, woman, small_car, handicap)VALUES('" + id + " ',' "
 							+ is_femail + "','" + is_smallcar + "','" + is_handicap + " ');";
 					dbSt.executeUpdate(strSql);
-					if (!referral_id.equals("")) {
-						strSql = "SELECT * FROM parking.user WHERE id='" + referral_id + "';";
-						ResultSet result = dbSt.executeQuery(strSql);
-						if (!result.next()) {
-							JOptionPane.showMessageDialog(this, "존재하지 않은 회원 아이디입니다.", "로그인창",
-									JOptionPane.INFORMATION_MESSAGE);
-							j_referral.setText("");
-						} else {
+					if (is_find_referral==true) {
 							strSql = "UPDATE `parking`.`user` set `point` = point + '5000' WHERE (`id` = '" + referral_id
-									+ "');";
-							dbSt.executeUpdate(strSql);
-						}
+						+ "');";
+						dbSt.executeUpdate(strSql);	
 					} 
 
 					JOptionPane.showMessageDialog(this, "회원가입되었습니다", "확인창", JOptionPane.INFORMATION_MESSAGE);
