@@ -9,12 +9,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
 
-// TODO 211217 13:00 (다은) import 추가
-// TODO 211217 13:35 (다은) 조회,정산 class 연결
-// TODO 211217 14:10 (다은) 예약,주차 생성자 매개변수 변경
-// TODO 211217 18:30 (다은) UI 변경, 액션이벤트 수정
-// TODO 221217 19:22 (다은) 상수 변경
-
 public class UserMain extends JFrame{
     public static final int FIRST_OF_INFO = 0;
     JButton rsvButton, parkButton, checkButton, payButton;
@@ -157,14 +151,3 @@ public class UserMain extends JFrame{
 
     }//UserMain 생성자 끝
 }//UserMain 클래스 끝
-
-class Main2 extends JFrame{
-    public static void main(String[] args) {
-        UserMain m = new UserMain("user2"); // TODO 로그인 창으로 이부분 옮겨서 입력된 아이디 넣기
-        m.setTitle("주차 프로그램 - UserMain");
-        m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        m.setSize(700, 450);
-        m.setVisible(true);
-        m.setLocationRelativeTo(null);
-    }
-}

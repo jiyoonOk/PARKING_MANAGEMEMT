@@ -170,7 +170,7 @@ public class NormalPay extends JFrame implements ActionListener {
 
             userTotalFee = String.valueOf(Integer.parseInt(userTotalFee)-usePoint);
             userAddPoint = String.valueOf((int) (Integer.parseInt(userTotalFee)-usePoint) * 0.05);
-            userPoint = String.valueOf(Integer.parseInt(userPoint) - usePoint + userAddPoint);
+            userPoint = Integer.parseInt(userPoint) - usePoint + userAddPoint;
 
             LabelUserTotalFee.setText(userTotalFee);
             LabelUserAddPoint.setText(String.valueOf(userAddPoint));

@@ -1,53 +1,66 @@
 package Parking;
 
 
-import UserMain.ParkingLot;
+import ParkingLot.Car;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
+
+import static ParkingLot.Car.userArea;
+import static ParkingLot.Car.userFloor;
 
 // TODO 221217 13:45 (다은) 생성자 매개변수 아이디로 변경
 // TODO 221217 13:55 (다은) 전역변수 수정
 // TODO 221217 19:22 (다은) 상수 변경
 public class Reservation extends JFrame {
-    String userId; //로그인한 사용자 정보
-    int userPoint;
-    String userName, userCarNu;
-    int plusPoint;
+    String classname = "com.mysql.cj.jdbc.Driver";
+    String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
+    String user = "root";
+    String password = "wldbs1004";
     public static final int FIRST_OF_FRAME = 50, FIRST_OF_INFO = 725; //x 축
     public static final int TOP_OF_PARK = 100; //y 축
     public static final int FIRST_OF_HALF_INFO = 840, DEFAULT_SIZE = 110;
-
-    String[] month, time; //월, 선택시간
+    String[] monthArray, strTime; //월, 선택시간
     JComboBox monthComBox, dateComBox, hourComBox, minComBox, timeComBox; //월일시분 시간선택
     JTextField inputPoint_JTF; //사용할 포인트 입력
     public static int usePoint_int=0, paidMoney_int=0; //보유 포인트 값, 사용할 포인트 값, 결제금액
     JButton usePointBtn, useAllPointBtn, rsvBtn, cancelBtn; //포인트 사용, 전액사용, 예약, 취소 버튼
     public JLabel pointMention = new JLabel(); //포인트 적립 안내
+    String m,d,h,min;
+    String userId; //로그인한 사용자 정보
+    int userPoint, userHour_int, userTotalFee, userFloorNum;
+    String userName, userCarNu;
+    int plusPoint;
+    public static JLabel userFloor = Car.userFloor, userArea = Car.userArea;
+    public static JLabel location = new JLabel();
+
 
     public Reservation(String id) {
-        String classname = "com.mysql.cj.jdbc.Driver";
-        String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
-        String user = "root";
-        String passwd = "wldbs1004";
         userId = id;
 
-        //===============================================================================================
+        Container rsvCt = getContentPane();
+        rsvCt.setLayout(null);
+
 
         LocalDate now = LocalDate.now();
         LocalTime now2 = LocalTime.now();
 
-        month = new String[2];
-        month[0] = String.valueOf(now.getMonth().getValue());                      //이번달
-        if (month[0].equals("12")) month[1] = "1";
-        else month[1] = String.valueOf(now.plusMonths(1).getMonth());  //다음달
+        monthArray = new String[2];
+        monthArray[0] = String.valueOf(now.getMonth().getValue());                      //이번달
+        if (monthArray[0].equals("12")) monthArray[1] = "1";
+        else monthArray[1] = String.valueOf(now.plusMonths(1).getMonth());  //다음달
 
-        monthComBox = new JComboBox(month); //월 콤보박스 생성
+        monthComBox = new JComboBox(monthArray); //월 콤보박스 생성
         dateComBox  = new JComboBox();      //일 콤보박스 생성
         hourComBox  = new JComboBox();      //시 콤보박스 생성
         minComBox   = new JComboBox();      //분 콤보박스 생성
@@ -55,42 +68,45 @@ public class Reservation extends JFrame {
         int currDate = now.getDayOfMonth(); //현재 일
         int currHour = now2.getHour();      //현재 시간
         int currMinute = now2.getMinute();  //현재 분
+
         monthComBox.addActionListener(new ActionListener() { //월 선택 시
             @Override
             public void actionPerformed(ActionEvent e) {
                 dateComBox.removeAllItems();
-                if (monthComBox.getSelectedItem().equals(month[0])) {
+                if (monthComBox.getSelectedItem().equals(monthArray[0])) {
                     int amount = lastDate - currDate + 1; //선택 가능한 일수
                     for (int i = 0; i < amount; i++) {
                         dateComBox.addItem(String.valueOf(currDate + i));
                     }
+                    m = String.valueOf(monthArray[0]);
                 } else {
                     int nextMonthDate = now.plusMonths(1).lengthOfMonth(); //다음달 말일
                     for (int i = 0; i < nextMonthDate; i++) {
                         dateComBox.addItem(String.valueOf(i + 1));
                     }
+                    m = String.valueOf(e.getActionCommand());
                 }}}); //월선택 이벤트 끝
 
-        dateComBox.addActionListener(new ActionListener() { //일 선택 시
+        dateComBox.addItemListener(new ItemListener() { //일 선택 시
             @Override
-            public void actionPerformed(ActionEvent e) {
-                hourComBox.removeAllItems();
-                if (monthComBox.getSelectedItem().equals(month[0]) && dateComBox.getSelectedItem().equals(currDate+1)) {
+            public void itemStateChanged(ItemEvent e) {
+                if (monthComBox.getSelectedItem().equals(monthArray[0]) && dateComBox.getSelectedItem().equals(currDate+1)) {
                     for (int i = currHour; i < 24; i++) { //남은시간만 표시
-                        if (i < 9) hourComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
+                        if (i < 9) hourComBox.addItem(String.valueOf(i + 1)); //두자릿수로 나오게 하기
                         else hourComBox.addItem(String.valueOf(i + 1));
                     }
                 } else {
                     for (int i = 0; i < 24; i++) { //01~24시
-                        if (i < 9) hourComBox.addItem("0" + (i + 1)); //두자릿수로 나오게 하기
+                        if (i < 9) hourComBox.addItem(String.valueOf(i + 1)); //두자릿수로 나오게 하기
                         else hourComBox.addItem(String.valueOf(i + 1));
                     }
-                }}}); //일선택 이벤트 끝
+                }
+                d = String.valueOf(dateComBox.getSelectedItem());
+            }}); //일선택 이벤트 끝
 
-        hourComBox.addActionListener(new ActionListener() {
+        hourComBox.addItemListener(new ItemListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                minComBox.removeAllItems();
+            public void itemStateChanged(ItemEvent e) {
                 if (dateComBox.getSelectedItem().equals(currDate+1) && hourComBox.getSelectedItem().equals(currHour+1)) {
                     for (int i = currMinute/10; i < 6; i++) { //남은 분만 표시
                         minComBox.addItem(String.valueOf(i *10));
@@ -100,18 +116,28 @@ public class Reservation extends JFrame {
                         if (i == 0) minComBox.addItem("00"); //두자릿수로 나오게 하기
                         else minComBox.addItem(String.valueOf(i *10));
                     }
-                }}}); //시선택 이벤트 끝
+                }
+                h = String.valueOf(hourComBox.getSelectedItem());
+            }}); //시선택 이벤트 끝
+
+        minComBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                min = String.valueOf(minComBox.getSelectedItem());
+            }
+        });
 
 
-        time = new String[]{"1시간", "2시간", "3시간"};
-        timeComBox = new JComboBox(time);
+        strTime = new String[]{"1시간", "2시간", "3시간"};
+        timeComBox = new JComboBox(strTime);
         JLabel priceBefore = new JLabel("이용금액 : 0원");
         JLabel prieceAfter = new JLabel("최종금액 : 0원");
         timeComBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                getCost();
+                userHour_int = getCost();
                 priceBefore.setText("이용금액: " + paidMoney_int + "원");
+                userTotalFee = paidMoney_int;
             }});//사용시간선택 이벤트 끝
 
         //===============================================================================================
@@ -124,7 +150,7 @@ public class Reservation extends JFrame {
             System.err.println("드라이버 로드에 실패했습니다.");
         }
         try {
-            Connection con = DriverManager.getConnection(url, user, passwd);
+            Connection con = DriverManager.getConnection(url, user, password);
             System.out.println("DB 연결 완료");
             Statement dbSt = con.createStatement();
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
@@ -150,6 +176,8 @@ public class Reservation extends JFrame {
         }
 
 
+        //===============================================================================================
+
         inputPoint_JTF     = new JTextField(8);          //사용할 포인트 입력
         inputPoint_JTF.setHorizontalAlignment(JTextField.RIGHT); //우측정렬
         usePointBtn        = new JButton("사용");            //사용 버튼
@@ -169,6 +197,7 @@ public class Reservation extends JFrame {
                         } else { //사용포인트 < 결제금액
                             usePoint_int = i; // 확인 후 저장
                             paidMoney_int -= usePoint_int; //결제금액에서 포인트금액만큼 빼기
+                            userTotalFee = paidMoney_int;
                             showMyPoint.setText("보유 포인트: " + (userPoint - usePoint_int));
                             prieceAfter.setText("최종금액: " + paidMoney_int + "원");
                         }
@@ -182,18 +211,24 @@ public class Reservation extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (userPoint > paidMoney_int) { //보유포인트 > 결제금액
-                    showMyPoint.setText("보유 포인트: " + (userPoint - paidMoney_int - usePoint_int));
-                    prieceAfter.setText("최종금액: 0원");
+                    userPoint = userPoint - paidMoney_int - usePoint_int;
+                    userTotalFee = 0;
                 } else {                         //보유포인트 < 결제금액
-                    showMyPoint.setText("보유 포인트: 0");
-                    prieceAfter.setText("최종금액: " + (paidMoney_int - userPoint) + "원");
+                    userPoint = 0;
+                    userTotalFee = paidMoney_int - userPoint;
                 }
+                prieceAfter.setText("최종금액: " + userTotalFee + "원");
+                showMyPoint.setText("보유 포인트: " + userPoint);
                 inputPoint_JTF.setText("");
             }
         });//포인트 전액사용버튼 이벤트 끝
 
         //===============================================================================================
 
+        Car park = new Car(userId);
+        if      (park.floor.getSelectedItem() == "B1") userFloorNum = 1;
+        else if (park.floor.getSelectedItem() == "B2") userFloorNum = 2;
+        else if (park.floor.getSelectedItem() == "B3") userFloorNum = 3;
 
         rsvBtn = new JButton("예약하기");
         rsvBtn.addActionListener(new ActionListener() {
@@ -201,15 +236,46 @@ public class Reservation extends JFrame {
             public void actionPerformed(ActionEvent e) { //예약결제
                 int result = JOptionPane.showConfirmDialog(null, "예약 하시겠습니까?\n(확인 시 결제로 넘어감)", "주차예약", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) { //결제 yes 한 경우
-                    //TODO !# 결제창으로 넘어가기
-                    //TODO !# : 결제정보 넘기기
-                    // (선택한 연월일시) -> purchase.car_in 으로 바꿔서
-                    // userPoint(보유포인트) -> user.userPoint
-                    // timeComBox.getSelectedItem()(선택시간) -> purchase.car_out = purchase.car_in + 3시간
+
+                    String userCarIn = "2022-"+m+"-"+d+" "+h+":"+min+":"+"00";
+                    String userCarOut = "2022-"+m+"-"+d+" "+String.format("%02d",Integer.parseInt(h) + userHour_int)+":"+min+":"+"00";
+
+                    String userHour = "0"+userHour_int+":00:00";
+
+                    try {
+                        Class.forName(classname);  //mysql jdbc Driver 연결
+                        System.err.println("JDBC 드라이버를 정상적으로 로드함");
+                    } catch (ClassNotFoundException cnfe) {
+                        System.err.println("드라이버 로드에 실패했습니다.");
+                    }
+                    try {
+                        Connection con = DriverManager.getConnection(url, user, password);
+                        System.out.println("DB 연결 완료");
+                        Statement dbSt = con.createStatement();
+                        System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
+                        String strSql;
+
+                        strSql = "SELECT purchase.purchase_id FROM parking.purchase";
+                        ResultSet r = dbSt.executeQuery(strSql);
+                        int purchase_id = new Random().nextInt(9999);
+                        while (r.next()) {
+                            if ( purchase_id == r.getInt("purchase_id")){
+                                purchase_id = new Random().nextInt(9999);
+                            }
+                        }//purchase_id 생성
+
+                        strSql = "INSERT INTO parking.purchase VALUES ('"+purchase_id+"','"+userCarIn+"','"+userCarOut+"','"+userHour+"','"+1+"','"+userTotalFee+"','"+userFloorNum+"','"+userArea+"','"+userId+"','"+0+"');";
+                        r = dbSt.executeQuery(strSql);
+
+                        dbSt.close();
+                        con.close();    //DB 연동 끊기
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    JOptionPane.showMessageDialog(null, "결제가 완료되었습니다!");
                     dispose();
                 }
-            }
-        });//예약버튼 이벤트 끝
+        }});//예약버튼 이벤트 끝
 
         cancelBtn = new JButton("취소");
         cancelBtn.addActionListener(new ActionListener() { //취소 버튼 클릭 시
@@ -222,22 +288,15 @@ public class Reservation extends JFrame {
 
         //===============================================================================================
 
-
-        Container rsvCt = getContentPane();
-        rsvCt.setLayout(null);
-
-
         JLabel specialInfo      = new JLabel("특별구역 10% 할인");   //안내문구
-        //TODO DB : 이름, 차량번호 가져오기
         JLabel title            = new JLabel("주차예약");
         JLabel name_JLabel      = new JLabel("이    름: ");        //이름:
         JLabel name             = new JLabel(userName);
         JLabel carNum_JLabel    = new JLabel("차량번호: ");         //차량번호
         JLabel carNum           = new JLabel(userCarNu);
         JLabel location_JLabel  = new JLabel("주차구역: ");         //주차선택
-        ParkingLot park         = new ParkingLot(userId);
-        JLabel userFloorNum     = new JLabel(park.userFloor);          //주차위치(층)
-        JLabel userArea         = new JLabel(park.userArea);           //주차위치(구역)
+        location.setText(userFloor.getText()+"층 "+userArea.getText()+"구역");
+
         JLabel rsv              = new JLabel("예약일시: ");         //시간선택
         JLabel month            = new JLabel("월");                //월
         JLabel date             = new JLabel("일");                //일
@@ -245,7 +304,6 @@ public class Reservation extends JFrame {
         JLabel minute           = new JLabel("분");                //분
         JLabel time             = new JLabel("이용시간: ");         //이용시간 선택
         JLabel point            = new JLabel("포인트 사용: ");      //포인트
-
 
         specialInfo.setBounds(590, 60, 130, 30);
 
@@ -259,8 +317,7 @@ public class Reservation extends JFrame {
         carNum_JLabel.setBounds(FIRST_OF_INFO, 130, DEFAULT_SIZE, 25);
         carNum.setBounds(FIRST_OF_HALF_INFO, 130, DEFAULT_SIZE, 25);
         location_JLabel.setBounds(FIRST_OF_INFO, 160, DEFAULT_SIZE, 25);
-        userFloorNum.setBounds(FIRST_OF_HALF_INFO, 160, 25, 25);
-        userArea.setBounds(870, 160, 25, 25);
+        location.setBounds(FIRST_OF_HALF_INFO, 160, DEFAULT_SIZE, 25);
 
         rsv.setBounds(FIRST_OF_INFO, 190, DEFAULT_SIZE, 25);
         monthComBox.setBounds(FIRST_OF_INFO, 220, 80, 25);
@@ -298,8 +355,7 @@ public class Reservation extends JFrame {
         rsvCt.add(carNum_JLabel);
         rsvCt.add(carNum);
         rsvCt.add(location_JLabel);
-        rsvCt.add(userFloorNum);
-        rsvCt.add(userArea);
+        rsvCt.add(location);
 
         rsvCt.add(rsv);
         rsvCt.add(monthComBox);
@@ -327,19 +383,22 @@ public class Reservation extends JFrame {
         rsvCt.add(rsvBtn);
         rsvCt.add(cancelBtn); //예약, 취소 버튼
 
-
     }//Reservation 생성자 끝
 
-    public void getCost() { //선택시간에 따른 금액 저장 / 10% 할인 적용
+    public int getCost() { //선택시간에 따른 금액 저장 / 10% 할인 적용
         if (timeComBox.getSelectedItem().equals("1시간")) {
             paidMoney_int = 2700;
+            return 1;
         } else if (timeComBox.getSelectedItem().equals("2시간")) {
             paidMoney_int = 5400;
+            return 2;
         } else if (timeComBox.getSelectedItem().equals("3시간")) {
             paidMoney_int = 8100;
+            return 3;
         }
         plusPoint = (int)((paidMoney_int - usePoint_int) * 0.05);
         pointMention.setText("( "+plusPoint+" point 적립 예정)");
+        return 0;
     }//getCost() 메소드 끝
 
 }//Reservation 클래스 끝
