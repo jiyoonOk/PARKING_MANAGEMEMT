@@ -1,6 +1,7 @@
-package Parking;
+package Pay;
 
 import Pay.DBconnection;
+import com.oracle.tools.packager.Log;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -20,12 +22,14 @@ import static Pay.Calculate.calculateTime;
 
 
 public class NormalPay extends JFrame implements ActionListener {
-    String userId, userName, userCarNum, userHours = null;
-    LocalDateTime userCarIn, userCarOut=LocalDateTime.now();
-    String userPoint, userTotalFee = null, userAddPoint, userTotalFeeAfterPoint;
-    Boolean userIsSmallCar, userIsHandicap;
+    String userId, userName, userCarNum, userHours;
+    String formatCarIn, formatNow;
+    LocalDateTime userCarIn;
+    int userTotalFee, userPoint;
+    int calTotalFee, calAddPoint, calTotalPoint, discount;
+    boolean userIsSmallCar, userIsHandicap;
     JTextField jtfPoint;
-    JLabel LabelUserTotalFee, LabelUserAddPoint;
+    JLabel LabelSpecialNeeds = new JLabel();
 
     public NormalPay(String id) throws ParseException {
         setTitle("출차 결제");
@@ -41,7 +45,6 @@ public class NormalPay extends JFrame implements ActionListener {
         } catch (ClassNotFoundException e) {
             System.err.println("드라이버 로드에 실패했습니다.");
         }
-        userId = id;
         try {
             Connection con = DriverManager.getConnection(url, user, password);
             System.out.println("DB 연결 완료");
@@ -50,22 +53,22 @@ public class NormalPay extends JFrame implements ActionListener {
 
             String strSql;
             ResultSet result;
-
-            strSql = "SELECT user.name, user.car_num, user.point, purchase.car_in From purchase, user WHERE purchase.user_id='" + userId + "' and user.id='" + userId + "';";
+            userId = id;
+            strSql = "SELECT user.name, user.car_num, user.point, purchase.car_in, purchase.hours From purchase, user WHERE purchase.user_id='" + userId + "' and user.id='" + userId + "';";
             result = dbSt.executeQuery(strSql);
             while (result.next()) {
                 userName = result.getString("name");
                 userCarNum = result.getString("car_num");
-                userPoint = result.getString("point");
+                userPoint = result.getInt("point");
                 userCarIn = result.getTimestamp("car_in").toLocalDateTime();
+                userHours = String.valueOf(result.getTimestamp("hours"));
             }
-            dbSt.close();
 
             strSql = "SELECT small_car, handicap From user_special_needs WHERE id='" + userId + "';";
             result = dbSt.executeQuery(strSql);
             while (result.next()) {
                 userIsSmallCar = result.getBoolean("small_car");
-               userIsHandicap = result.getBoolean("handicap");
+                userIsHandicap = result.getBoolean("handicap");
             }
             dbSt.close();
             con.close();
@@ -73,41 +76,35 @@ public class NormalPay extends JFrame implements ActionListener {
             System.out.println("SQLException1 : " + e.getMessage());
         }
 
-        userHours = calculateTime(ChronoUnit.MINUTES.between(userCarIn, userCarOut)); //hours 계산
-        userTotalFee = calculateFee(ChronoUnit.MINUTES.between(userCarIn, userCarOut)); //total_fee 계산
-        userAddPoint = String.valueOf((int) (Integer.parseInt(userTotalFee) * 0.05)); //추가적립금 계산
+        LocalDateTime now = LocalDateTime.now();
+        formatCarIn = userCarIn.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        formatNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
+        userHours = calculateTime(ChronoUnit.MINUTES.between(userCarIn, now)); //hours 계산 TODO 완료!!
+
+        if (userIsSmallCar || userIsHandicap) {
+            if(userIsSmallCar) LabelSpecialNeeds.setText("경차");
+            else LabelSpecialNeeds.setText("장애인");
+            JLabel LabelDiscount = new JLabel("주차 구역 10% 할인");
+            LabelDiscount.setBounds(150, 200, 200, 20);
+            LabelDiscount.setBounds(150, 200, 200, 20);
+            discount = (int) (userTotalFee * 0.1);
+        }
 
 
         JLabel name = new JLabel("이름 : ");          JLabel LabelUserName = new JLabel(userName);
         JLabel carNum = new JLabel("차량번호 : ");     JLabel LabelUserCarNum = new JLabel(userCarNum);
-        JLabel inTime = new JLabel("입차시간 : ");     JLabel LabelUserInTime = new JLabel(String.valueOf(userCarIn));
-        JLabel outTime = new JLabel("출차시간 : ");    JLabel LabelUserOutTime = new JLabel(String.valueOf(userCarOut));
+        JLabel inTime = new JLabel("입차시간 : ");     JLabel LabelUserInTime = new JLabel(formatCarIn);
+        JLabel outTime = new JLabel("출차시간 : ");    JLabel LabelUserOutTime = new JLabel(formatNow);
         JLabel hours = new JLabel("주차시간 : ");      JLabel LabelUserHours = new JLabel(userHours);
-        JLabel amount = new JLabel("결제금액 : ");     JLabel LabelUserAmount = new JLabel(userTotalFee);
+        JLabel amount = new JLabel("결제금액 : ");     JLabel LabelUserAmount = new JLabel(String.valueOf(userTotalFee));
         JLabel point = new JLabel("적립금사용: ");      jtfPoint = new JTextField("0");
-        JLabel nowPoint = new JLabel("보유 적립금: ");  JLabel LabelUserPoint = new JLabel(userPoint);
-        JLabel total = new JLabel("총 결제금액: ");     LabelUserTotalFee = new JLabel(userTotalFee);
-        JLabel addPoint = new JLabel("예정 적립금: ");  LabelUserAddPoint = new JLabel(userAddPoint);
+        JLabel nowPoint = new JLabel("보유 적립금: ");  JLabel LabelUserPoint = new JLabel(String.valueOf(userPoint));
+        JLabel total = new JLabel("총 결제금액: ");     JLabel LabelUserTotalFee = new JLabel(String.valueOf(calTotalFee));
+        JLabel addPoint = new JLabel("예정 적립금: ");  JLabel LabelUserAddPoint = new JLabel(String.valueOf(calAddPoint));
         JButton btnUsePoint = new JButton("사용");
         JButton btnUseAllPoint = new JButton("전액사용");
         JButton btnPay = new JButton("결제");
-
-
-
-
-        if (userIsSmallCar) {
-            JLabel discountSmallCar = new JLabel("경차 구역 10% 할인");
-            discountSmallCar.setBounds(150, 200, 200, 20);
-            userTotalFee = String.valueOf(Integer.parseInt(userTotalFee) * 0.1);
-        }
-        if (userIsHandicap) {
-            JLabel discountHandicap = new JLabel("장애인 구역 10% 할인");
-            discountHandicap.setBounds(150, 200, 200, 20);
-            userTotalFee = String.valueOf(Integer.parseInt(userTotalFee) * 0.1);
-        }
-
-
 
 
         name.setBounds(50, 100, 100, 20);        LabelUserName.setBounds(120, 100, 100, 20);
@@ -135,10 +132,6 @@ public class NormalPay extends JFrame implements ActionListener {
         ct.add(addPoint); ct.add(LabelUserAddPoint);
         ct.add(btnPay);
 
-
-
-
-
         btnUsePoint.addActionListener(this);
         btnUseAllPoint.addActionListener(this);
         btnPay.addActionListener(this);
@@ -164,27 +157,22 @@ public class NormalPay extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "결제되었습니다.");
         }
         else {
-            if (s == "전액사용") jtfPoint.setText(userPoint);
-            int usePoint = Integer.parseInt(jtfPoint.getText());
+            int usePoint = 0;
+            if (s == "전액사용")
+                jtfPoint.setText(String.valueOf(userPoint));
+            else usePoint = Integer.parseInt(jtfPoint.getText());
             //userTotalFeeAfterPoint = userTotalFee; //총 결제금액
 
-            userTotalFee = String.valueOf(Integer.parseInt(userTotalFee)-usePoint);
-            userAddPoint = String.valueOf((int) (Integer.parseInt(userTotalFee)-usePoint) * 0.05);
-            userPoint = Integer.parseInt(userPoint) - usePoint + userAddPoint;
-
-            LabelUserTotalFee.setText(userTotalFee);
-            LabelUserAddPoint.setText(String.valueOf(userAddPoint));
-
-            //총 결제금액 = 결제금액 - 사용적립금
-            //총 적립금 = 보유적립금 - 사용적립금 + 추가적립금
-            //총 결제금액, 총 적립금을 같이 써도 되나?
-
+            calTotalFee = userTotalFee-usePoint-discount; //총 결제금액 = 결제금액-적립금-특이사항할인
+            calAddPoint = (int)(calTotalFee * 0.05); //예정 추가 적립금 계산
+            calTotalPoint = userPoint - usePoint + calAddPoint; //총 적립금 = 보유적립금 - 사용적립금 + 추가적립금;
         }
-        DBconnection.updateDB("purchase", "car_out", userCarOut, "user_id", userId); //출차시간 업데이트
+        DBconnection.updateDB("purchase", "car_out", formatNow, "user_id", userId); //출차시간 업데이트
         DBconnection.updateDB("purchase", "hours", userHours, "user_id", userId); //출차시간 업데이트
-        DBconnection.updateDB("purchase", "total_fee", userTotalFee, "user_id", userId); //출차시간 업데이트
-        DBconnection.updateDB("user", "point", userPoint, "id", userId); //출차시간 업데이트
+        DBconnection.updateDB("purchase", "total_fee", String.valueOf(calTotalFee), "user_id", userId); //출차시간 업데이트
+        DBconnection.updateDB("user", "point", String.valueOf(calTotalPoint), "id", userId); //출차시간 업데이트
         DBconnection.updateDB("purchase", "is_cancel", "0", "user_id", userId); //결제취소유무 업데이트 (0:결제O 1:결제O취소O)
+
         /*
         출차시간 insert <- LocalDateTime
         hours  insert <- String

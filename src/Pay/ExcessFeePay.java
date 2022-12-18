@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import static Pay.Calculate.calculateFee;
@@ -16,10 +18,10 @@ import static Pay.Calculate.calculateTime;
 
 public class ExcessFeePay extends JFrame implements ActionListener {// 예약했는데 시간초과. JDialog 클래스 객체 생성
     LocalDateTime userCarOut;
-    LocalDateTime currentDate = LocalDateTime.now();
     String userId, userName, userCarNum, userHours;
-    String userPoint, userTotalFee, userAddPoint, userAddFee;
-    Boolean userIsCancel;
+    int userTotalFee, userPoint;
+    int calAddFee;
+    boolean userIsCancel;
 
 
 
@@ -43,8 +45,6 @@ public class ExcessFeePay extends JFrame implements ActionListener {// 예약했
 
             String strSql;
 
-            //purchase 값 가져오기
-            //(이름, 차량번호, 출차시간, 최종요금, 취소여부)
             strSql = "SELECT user.name, user.car_num, purchase.car_out, , purchase.total_fee, purchase.is_cancel From purchase, user WHERE purchase.user_id='" + userId + "' and user.id='" + userId + "';";
             ResultSet result = dbSt.executeQuery(strSql);
 
@@ -52,9 +52,8 @@ public class ExcessFeePay extends JFrame implements ActionListener {// 예약했
                 userName = result.getString("name");
                 userCarNum = result.getString("car_num");
                 userCarOut = result.getTimestamp("car_out").toLocalDateTime();
-                userTotalFee = result.getString("total_fee");
-                userIsCancel = result.getBoolean("is_cancel");
-            }
+                userTotalFee = result.getInt("total_fee");
+                userIsCancel = result.getBoolean("is_cancel");}
             dbSt.close();
             con.close(); //DB연동 끊기
         } catch (SQLException e) {
@@ -62,14 +61,11 @@ public class ExcessFeePay extends JFrame implements ActionListener {// 예약했
         }
 
 
-
-        userHours = calculateTime(ChronoUnit.MINUTES.between(userCarOut, currentDate)); //hours 계산
-        userAddFee = calculateFee(ChronoUnit.MINUTES.between(userCarOut, currentDate)); //초과금액 계산
-
-        //String stringCurrentDatet = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-        userTotalFee += userAddFee;
-        userPoint = String.valueOf(Integer.parseInt(userPoint) + (Integer.parseInt(userAddFee) * 0.05));
+        LocalDateTime now = LocalDateTime.now();
+        userHours = calculateTime(ChronoUnit.MINUTES.between(userCarOut, now)); //hours 계산
+        calAddFee = calculateFee(ChronoUnit.MINUTES.between(userCarOut, now)); //초과금액 계산
+        userTotalFee += calAddFee;
+        userPoint = (int)(userPoint + (calAddFee * 0.05));
 
         setTitle("초과 금액 결제");
         Container ct = getContentPane();
@@ -82,12 +78,12 @@ public class ExcessFeePay extends JFrame implements ActionListener {// 예약했
         JLabel carOut = new JLabel("예정출차시간 : ");
         JLabel labelUserCarOut = new JLabel(String.valueOf(userCarOut));
         JLabel currunet = new JLabel("현재시간 : ");
-        JLabel labelCurrunet = new JLabel(String.valueOf(currentDate));
+        JLabel labelCurrunet = new JLabel(String.valueOf(now));
         JLabel timeOut = new JLabel("초과시간 : ");
         JLabel labelUserTimeOut = new JLabel(userHours);
 
         JLabel timeOutFee = new JLabel("총 초과 금액 : ");
-        JLabel labelUserTimeOutFee = new JLabel(userAddFee);
+        JLabel labelUserTimeOutFee = new JLabel(String.valueOf(calAddFee));
 
         JButton b = new JButton("결제");
         b.addActionListener(this);
@@ -133,8 +129,8 @@ public class ExcessFeePay extends JFrame implements ActionListener {// 예약했
 
         DBconnection.updateDB("purchase", "car_out", userCarOut, "user_id", userId); //출차시간 업데이트
         DBconnection.updateDB("purchase", "hours", userHours, "user_id", userId); //출차시간 업데이트
-        DBconnection.updateDB("purchase", "total_fee", userTotalFee, "user_id", userId); //출차시간 업데이트
-        DBconnection.updateDB("user", "point", userPoint, "id", userId); //출차시간 업데이트
+        DBconnection.updateDB("purchase", "total_fee", String.valueOf(userTotalFee), "user_id", userId); //출차시간 업데이트
+        DBconnection.updateDB("user", "point", String.valueOf(userPoint), "id", userId); //출차시간 업데이트
         DBconnection.updateDB("purchase", "is_cancel", "0", "user_id", userId); //결제취소유무 업데이트 (0:결제O 1:결제O취소O)
     }
 }

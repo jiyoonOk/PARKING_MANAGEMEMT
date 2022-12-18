@@ -3,8 +3,7 @@ package Pay;
 import java.sql.*;
 import java.time.LocalDateTime;
 
-// TODO 221217 03:52 insert에 where 조건문 입력 안 됨! 전부 update 쿼리문으로 작성
-// TODO 221217 15:00 (다은) 비번 변경
+//TODO 221217 03:52 insert에 where 조건문 입력 안 됨! 전부 update 쿼리문으로 작성
 
 public class DBconnection {
 
@@ -40,7 +39,7 @@ public class DBconnection {
     public static void updateDB(String table, String columns1, LocalDateTime index, String columns2, String condition) {
         String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
         String user = "root";
-        String password = "wlbds1004";
+        String password = "wldmsdl38!";
         try { //mysql의 jdbc Driver 연결
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.err.println("JDBC-ODBC 드라이버를 정상적으로 로드함");

@@ -1,11 +1,15 @@
 package Pay;
 
-import Parking.NormalPay;
+
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 //TODO 221217 03:52 SQL문 추가, 코드 간결하게 작성
 //TODO 221217 14:20 (다은) 생성자 Pay 내용 메소드 checkPayType()으로 옮김
@@ -15,9 +19,7 @@ public class Pay extends JFrame {
     static LocalDateTime userCarOut, currentDate = LocalDateTime.now();
     static boolean userIsReserved, userIsCancel;
 
-    public Pay(String id) { userId = id; }
-
-    public static void checkPayType() throws ParseException {
+    public Pay(String id) {
         String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
         String user = "root";
         String password = "wldbs1004";
@@ -35,10 +37,10 @@ public class Pay extends JFrame {
             System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
 
             String strSql;
-
+            userId = id;
             //purchase 값 가져오기
             //(출차시간, 결제유무, 취소여부)
-            strSql = "SELECT car_out, is_reserved, is_cancel From purchase WHERE user_id='" + userId + "';";
+            strSql = "SELECT is_reserved From purchase WHERE user_id='" + userId + "';";
             ResultSet result = dbSt.executeQuery(strSql);
 
             while (result.next()) {
@@ -46,11 +48,21 @@ public class Pay extends JFrame {
                 userIsReserved = result.getBoolean("is_reserved");
                 userIsCancel = result.getBoolean("is_cancel");
             }
+            if (!userIsReserved) userCarOut = LocalDateTime.now();
+
+
             dbSt.close();
             con.close(); //DB연동 끊기
         } catch (SQLException e) {
             System.out.println("SQLException1 : " + e.getMessage());
         }
+
+    } //생성자
+
+    public static void checkPayType() throws ParseException { //메소드 checkPayType로 예약 타입 구분
+        String url = "jdbc:mysql://localhost:3306/parking?serverTimezone=UTC";
+        String user = "root";
+        String password = "wldbs1004";
 
         if(userIsReserved) { //예약
             if (!userIsCancel && !(currentDate.isAfter(userCarOut))) { //초과 O, , 현재시간이 출차시간보다 이후면(초과)
