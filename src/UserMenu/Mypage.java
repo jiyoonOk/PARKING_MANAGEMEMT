@@ -1,14 +1,13 @@
 package UserMenu;
 
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
+import java.sql.*;
 import Login.*;
 
-import java.sql.*;
-
+// TODO 221218 17:25 (다은) 정보 불러오는 sql WHERE 조건 추가
+// TODO 221218 17:35 (다은) 정보 업데이트 하는 sql 수정
 public class Mypage extends JFrame implements ActionListener, ItemListener {
 
 	JLabel title; // 마이페이지
@@ -25,12 +24,13 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 	JButton del; // 계정탈퇴 버튼
 	JTextField name2, id2, passwd2, carn2, call2, card2, email2;
 	JCheckBox smallcar, femail, handicap;
-	int is_femail, is_handicap, is_smallcar;
-	static String idd;
+	int is_female, is_handicap, is_smallcar;
+	static String userId;
 
 	// 중복확인 버튼 클릭 유무
 
 	public Mypage(String idd) {
+		userId = idd;
 
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -43,7 +43,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 			System.out.println("DB 연결 완료.");
 			Statement dbSt = con.createStatement();
 			System.out.println("JDBC 드라이버가 정상적으로 연결되었습니다.");
-			String strSql = "SELECT * FROM parking.user;"; // where id=getText.jTextI() //jTextI에서 친 아이디로 정보가져오기,,,
+			String strSql = "SELECT * FROM parking.user WHERE id='"+userId+"';";
 			ResultSet result = dbSt.executeQuery(strSql);
 
 			Container ct = getContentPane();
@@ -165,7 +165,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 
 		t_name = name2.getText();
 		t_id = id2.getText();
-		idd = id2.getText();
+		userId = id2.getText();
 		t_passwd = passwd2.getText();
 		t_carn = carn2.getText();
 		t_call = call2.getText();
@@ -189,11 +189,10 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 
 			if (s == "수정하기") { // 수정하기 버튼 누를 시 팝업 이벤트발생, 적힌 정보 DB에 업데이트
 
-				strSql = "UPDATE parking.user SET name='" + t_name + "',id='" + t_id + "',passwd='" + t_passwd + "',car_num='"
-						+ t_carn + "',phone_num='" + t_call + "',card_num='" + t_card + "',email='" + t_email
-						+ "'WHERE id='" + id2.getText() + "';";
+				strSql = "UPDATE parking.user SET id='" + t_id + "',passwd='" + t_passwd + "', name='" + t_name + "', email='" + t_email+ "'," +
+						" phone_num='" + t_call + "', car_num='" + t_carn + "',card_num='" + t_card + "' WHERE id='" + userId + "';";
 				dbSt.executeUpdate(strSql); // 개인정보 수정
-				strSql = "UPDATE parking.user_special_needs SET id='" + t_id + "',woman='" + is_femail + "',small_car='"
+				strSql = "UPDATE parking.user_special_needs SET woman='" + is_female + "',small_car='"
 						+ is_smallcar + "',handicap='" + is_handicap + "'WHERE id='" + id2.getText() + "';";
 				dbSt.executeUpdate(strSql); // 특이사항 수정
 
@@ -206,7 +205,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 						JOptionPane.OK_CANCEL_OPTION);
 
 				if (answer == JOptionPane.YES_OPTION) { // 사용자가 확인을 눌렀을 떄 DB 정보 삭제
-					strSql = "DELETE FROM user WHERE id='" + id2.getText() + "';";
+					strSql = "DELETE FROM parking.user WHERE id='" + id2.getText() + "';";
 					dbSt.executeUpdate(strSql);
 					JOptionPane.showMessageDialog(this, "계정이 삭제되었습니다.", "계정탈퇴", JOptionPane.INFORMATION_MESSAGE);
 
@@ -236,7 +235,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			if (e.getItem() == femail) {
-				is_femail = 1;
+				is_female = 1;
 			} else if (e.getItem() == smallcar) {
 				is_smallcar = 1;
 			} else if (e.getItem() == handicap) {
@@ -245,7 +244,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 		}
 		if (e.getStateChange() == ItemEvent.DESELECTED) {
 			if (e.getItem() == femail) {
-				is_femail = 0;
+				is_female = 0;
 			} else if (e.getItem() == smallcar) {
 				is_smallcar = 0;
 			} else if (e.getItem() == handicap) {
@@ -256,7 +255,7 @@ public class Mypage extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public static void main(String[] args) {
-		Mypage mg = new Mypage(idd);
+		Mypage mg = new Mypage(userId);
 		mg.setSize(400, 430);
 		mg.setLocation(400, 0);
 		mg.setTitle("마이페이지");

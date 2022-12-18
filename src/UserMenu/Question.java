@@ -8,7 +8,7 @@ import java.util.*;
 import java.sql.*;
 
 public class Question extends JFrame implements ActionListener, MouseListener {
-	String loginId;
+	static String loginId;
 	Vector<String> columnName; // 표의 각 컬럼 제목
 	Vector<Vector<String>> rowData;
 	JTable table = null;
@@ -17,7 +17,7 @@ public class Question extends JFrame implements ActionListener, MouseListener {
 	int row; // 테이블에서 선택된 행 번호
 	JButton quiryB; // 조회 버튼
 	JTextField notice_title; // 공지사항 제목
-	JTextArea jta; 
+	JTextArea jta,jta2; 
 
 	JButton returnB, cancelB, questionB; // 오른쪽 화면의 학생정보 - 수정, 삭제, 취소
 
@@ -65,6 +65,18 @@ public class Question extends JFrame implements ActionListener, MouseListener {
 
 //////////////////// 오른쪽 공지사항 제목,내용 확인 /////////////////////////
 		rightP.setLayout(new GridLayout(6, 1));
+		
+		JPanel p5 = new JPanel();
+		p5.setLayout(new FlowLayout(FlowLayout.LEFT));
+		JLabel l5 = new JLabel("문의 내용   :");
+		p5.add(l5);
+		
+		
+		JPanel p6 = new JPanel();
+		p6.setLayout(new FlowLayout(FlowLayout.LEFT));
+		jta2 = new JTextArea("", 50, 20);
+		p6.add(jta2);
+		
 		JPanel p1 = new JPanel();
 		p1.setLayout(new FlowLayout(FlowLayout.LEFT));
 		JLabel l1 = new JLabel("답변 제목   :");
@@ -86,6 +98,8 @@ public class Question extends JFrame implements ActionListener, MouseListener {
 		p4.add(jta);
 		p4.setPreferredSize(new Dimension(200, 200));
 
+		rightP.add(p5);
+		rightP.add(p6);
 		rightP.add(p1);
 		rightP.add(p2);
 		rightP.add(p3);
@@ -122,7 +136,7 @@ public class Question extends JFrame implements ActionListener, MouseListener {
 				clearTable();
 				table.updateUI(); // 테이블에 출력하기 전에 테이블 클리어하기
 
-				while (result.next()) { // DB에서 학생정보 읽어와 표에 출력하기
+				while (result.next()) { // DB에서 문의정보 읽어와 표에 출력하기
 					Vector<String> txt = new Vector<String>();
 					txt.add(result.getString("question_title"));
 					txt.add(result.getString("question_contents"));
@@ -149,6 +163,9 @@ public class Question extends JFrame implements ActionListener, MouseListener {
 
 	public void mouseClicked(MouseEvent ae) {
 		try {
+			row = table.getSelectedRow();
+			jta2.setText((String) model.getValueAt(row, 1)); //문의내용
+			
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/parking?serverTimezone=UTC","root", "wldbs1004");
 			Statement dbSt = con.createStatement();
 			String strSql;
@@ -181,13 +198,13 @@ public class Question extends JFrame implements ActionListener, MouseListener {
 	public void mouseExited(MouseEvent ae) {
 	} // MouseListener가 상속해주는 추상메소드들을 모두 메소드 오버라이딩 해야 함
 
-	/*public static void main(String args[]) {
-		Question win = new Question();
+	public static void main(String args[]) {
+		Question win = new Question(loginId);
 		win.setTitle("문의사항");
 		win.setSize(800, 550);
 		win.setLocation(400, 0);
 		win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		win.setVisible(true);
-	}*/
+	}
 
 }

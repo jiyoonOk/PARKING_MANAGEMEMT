@@ -100,7 +100,7 @@ public class Question_write extends JFrame implements ActionListener {
 		t_question_date= transFormat.format(from); //Date에서 String으로 형변환 후 문의일자 들어감
 		dispose();
 		
-	strSql="INSERT INTO parking.question(question_id,question_title, question_contents, question_date,user_id) "+" VALUES(" + t_question_id + ",'" + t_question_title + "','" + t_question_contents + "','"+ t_question_date+"','"+t_user_id+"')";
+	strSql="INSERT INTO parking.question(question_id,question_title, question_contents, question_date,user_id) "+" VALUES('" + t_question_id + "','" + t_question_title + "','" + t_question_contents + "','"+ t_question_date+"','"+t_user_id+"')";
 	dbSt.executeUpdate(strSql);
 		//문의 번호, 작성 일자는 등록완료 시 번호랑 일자 들어감
 		} 
