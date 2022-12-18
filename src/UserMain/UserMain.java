@@ -135,7 +135,7 @@ public class UserMain extends JFrame{
         payButton.addActionListener(new ActionListener() {        //정산버튼 클릭
             @Override
             public void actionPerformed(ActionEvent e) {
-                int r = JOptionPane.showConfirmDialog(payButton, "출차 하시겠습니까?\n(확인 시 결제로 넘어감)", "안내", JOptionPane.YES_NO_OPTION);
+                int r = JOptionPane.showConfirmDialog(mainCt, "출차 하시겠습니까?\n(확인 시 결제로 넘어감)", "안내", JOptionPane.YES_NO_OPTION);
                 if(r == JOptionPane.YES_OPTION) {
                     Pay p = new Pay(userId);
                     try {

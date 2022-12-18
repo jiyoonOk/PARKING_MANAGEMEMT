@@ -30,6 +30,7 @@ public class NormalPay extends JFrame implements ActionListener {
     boolean userIsSmallCar, userIsHandicap;
     JTextField jtfPoint;
     JLabel LabelSpecialNeeds = new JLabel();
+    JLabel LabelUserTotalFee, LabelUserAddPoint;
 
     public NormalPay(String id) throws ParseException {
         setTitle("출차 결제");
@@ -81,6 +82,7 @@ public class NormalPay extends JFrame implements ActionListener {
         formatNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         userHours = calculateTime(ChronoUnit.MINUTES.between(userCarIn, now)); //hours 계산 TODO 완료!!
+        userTotalFee = calculateFee(ChronoUnit.MINUTES.between(userCarIn, now)); //초과금액 계산
 
         if (userIsSmallCar || userIsHandicap) {
             if(userIsSmallCar) LabelSpecialNeeds.setText("경차");
@@ -100,8 +102,8 @@ public class NormalPay extends JFrame implements ActionListener {
         JLabel amount = new JLabel("결제금액 : ");     JLabel LabelUserAmount = new JLabel(String.valueOf(userTotalFee));
         JLabel point = new JLabel("적립금사용: ");      jtfPoint = new JTextField("0");
         JLabel nowPoint = new JLabel("보유 적립금: ");  JLabel LabelUserPoint = new JLabel(String.valueOf(userPoint));
-        JLabel total = new JLabel("총 결제금액: ");     JLabel LabelUserTotalFee = new JLabel(String.valueOf(calTotalFee));
-        JLabel addPoint = new JLabel("예정 적립금: ");  JLabel LabelUserAddPoint = new JLabel(String.valueOf(calAddPoint));
+        JLabel total = new JLabel("총 결제금액: ");     LabelUserTotalFee = new JLabel(String.valueOf(userTotalFee));
+        JLabel addPoint = new JLabel("예정 적립금: ");  LabelUserAddPoint = new JLabel(String.valueOf(userTotalFee * 0.05));
         JButton btnUsePoint = new JButton("사용");
         JButton btnUseAllPoint = new JButton("전액사용");
         JButton btnPay = new JButton("결제");
@@ -155,6 +157,7 @@ public class NormalPay extends JFrame implements ActionListener {
             }.start();
             JOptionPane.showOptionDialog(getParent(), "결제중...", null, JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "결제되었습니다.");
+            dispose();
         }
         else {
             int usePoint = 0;
@@ -166,6 +169,8 @@ public class NormalPay extends JFrame implements ActionListener {
             calTotalFee = userTotalFee-usePoint-discount; //총 결제금액 = 결제금액-적립금-특이사항할인
             calAddPoint = (int)(calTotalFee * 0.05); //예정 추가 적립금 계산
             calTotalPoint = userPoint - usePoint + calAddPoint; //총 적립금 = 보유적립금 - 사용적립금 + 추가적립금;
+            LabelUserTotalFee.setText(String.valueOf(calTotalFee));
+            LabelUserAddPoint.setText(String.valueOf(calAddPoint));
         }
         DBconnection.updateDB("purchase", "car_out", formatNow, "user_id", userId); //출차시간 업데이트
         DBconnection.updateDB("purchase", "hours", userHours, "user_id", userId); //출차시간 업데이트
